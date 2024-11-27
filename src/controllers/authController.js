@@ -2,9 +2,11 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const User = require("../models/userModel");
 const PendingManager = require("../models/pendingManagerModel");
+const sendConfirmation = require("../utils/sendNotifications");
 const register = async (req, res) => {
   try {
     const { username, password, role, email, phone } = req.body;
+    console.log(req.body);
     if (role === "manager") {
       const hashedPassword = await bcrypt.hash(password, 10);
       const newPendingManager = new PendingManager({
@@ -14,10 +16,11 @@ const register = async (req, res) => {
         phone,
       });
       await newPendingManager.save();
+      await sendConfirmation(req.body);
       return res.status(201).json({
         message: `Manager registration request submitted for ${username}. Awaiting admin approval.`,
       });
-    } else {
+    } else if (role === "admin") {
       const hashedPassword = await bcrypt.hash(password, 10);
       const newUser = new User({
         username,
@@ -27,6 +30,24 @@ const register = async (req, res) => {
         phone,
       });
       await newUser.save();
+      return res.status(201).json({
+        message: `Admin registered successfully: ${username}`,
+      });
+    } else {
+      console.log(role);
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const newUser = new User({
+        username,
+        password: hashedPassword,
+        role,
+        email,
+        phone,
+      });
+      console.log(`1newUser is`);
+      console.log(res);
+      await newUser.save();
+      console.log(`2newUser is`);
+      console.log(res);
       res
         .status(201)
         .json({ message: `User Registered with username ${username}` });
