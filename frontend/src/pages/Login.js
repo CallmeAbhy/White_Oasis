@@ -1,11 +1,12 @@
 // src/pages/Login.js
 import React, { useState } from "react";
 import axios from "axios";
-
+import { useNavigate } from "react-router-dom";
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-
+  const [error, setError] = useState(null);
+  const navigate = useNavigate();
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -17,28 +18,39 @@ const Login = () => {
         }
       );
       console.log(response.data); // Handle successful login (e.g., save token)
+      const { token } = response.data;
+      localStorage.setItem("token", token); // Store token
+      navigate("/", { replace: true });
     } catch (error) {
+      setError(error.response.data.message);
       console.error(error);
     }
   };
   // https://www.blackbox.ai/chat/i0mdZkG
   return (
     <form onSubmit={handleSubmit}>
-      <h2>Sign In</h2>
+      <label>Username:</label>
+
       <input
         type="text"
-        placeholder="Username"
         value={username}
-        onChange={(e) => setUsername(e.target.value)}
-        required
+        onChange={(event) => setUsername(event.target.value)}
       />
+
+      <br />
+
+      <label>Password:</label>
+
       <input
         type="password"
-        placeholder="Password"
         value={password}
-        onChange={(e) => setPassword(e.target.value)}
-        required
+        onChange={(event) => setPassword(event.target.value)}
       />
+
+      <br />
+
+      {error && <div style={{ color: "red" }}>{error}</div>}
+
       <button type="submit">Login</button>
     </form>
   );

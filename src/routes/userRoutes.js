@@ -4,7 +4,7 @@ const authorizedRoles = require("../middlewares/roleMiddleware");
 const router = express.Router();
 // Only Admin can access
 router.get("/admin", verifyToken, authorizedRoles("admin"), (req, res) => {
-  res.json({ message: "Welcome Admin" });
+  res.json({ message: "Welcome Admin", user: req.user });
 });
 // Both Admin and Manager can access
 router.get(
@@ -12,7 +12,7 @@ router.get(
   verifyToken,
   authorizedRoles("admin", "manager"),
   (req, res) => {
-    res.json({ message: "Welcome Manager" });
+    res.json({ message: "Welcome Manager", user: req.user });
   }
 );
 // All can Access
@@ -21,7 +21,7 @@ router.get(
   verifyToken,
   authorizedRoles("admin", "manager", "user"),
   (req, res) => {
-    res.json({ message: "Welcome User" });
+    res.json({ message: "Welcome User", user: req.user });
   }
 );
 
