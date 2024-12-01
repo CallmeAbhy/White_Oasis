@@ -20,10 +20,42 @@ const pendingManagerSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    organization_name: {
+      type: String,
+      required: true,
+    },
+    address: {
+      type: String,
+      required: true,
+    },
+    city: {
+      type: String,
+      required: true,
+    },
+    governmentIssuedPhotoId: {
+      type: String,
+      required: true,
+    },
+    proofOfIncome: {
+      type: String,
+      required: true,
+    },
+    proofOfResidency: {
+      type: String,
+      required: true,
+    },
+    oldAgeHomePhoto: {
+      type: String,
+      required: true,
+    },
     status: {
       type: String,
       enum: ["pending", "approved", "rejected"],
       default: "pending",
+    },
+    feedback: {
+      type: String,
+      default: null,
     },
   },
   {

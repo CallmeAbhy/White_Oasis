@@ -1,54 +1,156 @@
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const User = require("../models/userModel");
+const { Admin, User, Manager } = require("../models/userModel");
+const { sendConfirmation } = require("../utils/notifications");
 const PendingManager = require("../models/pendingManagerModel");
+
 const register = async (req, res) => {
+  const { role, username, password, email, phone } = req.body;
+
   try {
-    const { username, password, role, email, phone } = req.body;
-    if (role === "manager") {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const newPendingManager = new PendingManager({
-        username,
-        password: hashedPassword,
-        email,
-        phone,
-      });
-      await newPendingManager.save();
-      return res.status(201).json({
-        message: `Manager registration request submitted for ${username}. Awaiting admin approval.`,
-      });
-    } else {
-      const hashedPassword = await bcrypt.hash(password, 10);
-      const newUser = new User({
-        username,
-        password: hashedPassword,
-        role,
-        email,
-        phone,
-      });
-      await newUser.save();
-      res
-        .status(201)
-        .json({ message: `User Registered with username ${username}` });
+    // Check for duplicate username, email, and phone
+    let existingUser;
+    switch (role) {
+      case "admin":
+        existingUser = await Admin.findOne({
+          $or: [{ username }, { email }, { phone }],
+        });
+        break;
+      case "user":
+        existingUser = await User.findOne({
+          $or: [{ username }, { email }, { phone }],
+        });
+        break;
+      case "manager":
+        existingUser = await PendingManager.findOne({
+          $or: [{ username }, { email }, { phone }],
+        });
+        break;
+      default:
+        return res.status(400).send("Invalid role");
     }
-  } catch (error) {
-    res.status(500).json({ message: `Something went Wrong` });
+
+    if (existingUser) {
+      const duplicateField =
+        existingUser.username === username
+          ? "Username"
+          : existingUser.email === email
+          ? "Email"
+          : existingUser.phone === phone
+          ? "Phone"
+          : null;
+      return res
+        .status(400)
+        .json({ message: `${duplicateField} is already taken` });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10); // Common hashing for all cases
+
+    switch (role) {
+      case "admin": {
+        const newAdmin = new Admin({
+          username,
+          password: hashedPassword,
+          role,
+          email,
+          phone,
+        });
+        await newAdmin.save();
+        return res
+          .status(201)
+          .json({ message: `Admin Registered with username ${username}` });
+      }
+
+      case "user": {
+        const {
+          address: userAddress,
+          city: userCity,
+          governmentIdCard,
+          yourPhoto,
+        } = req.body;
+        const newUser = new User({
+          username,
+          password: hashedPassword,
+          role,
+          email,
+          phone,
+          address: userAddress,
+          city: userCity,
+          governmentIdCard,
+          yourPhoto,
+        });
+        await newUser.save();
+        return res
+          .status(201)
+          .json({ message: `User  Registered with username ${username}` });
+      }
+
+      case "manager": {
+        const {
+          address: managerAddress,
+          city: managerCity,
+          governmentIssuedPhotoId,
+          proofOfIncome,
+          proofOfResidency,
+          oldAgeHomePhoto,
+          organization_name,
+        } = req.body;
+        const newPendingManager = new PendingManager({
+          username,
+          password: hashedPassword,
+          email,
+          phone,
+          address: managerAddress,
+          city: managerCity,
+          governmentIssuedPhotoId,
+          proofOfIncome,
+          proofOfResidency,
+          oldAgeHomePhoto,
+          organization_name,
+        });
+        await newPendingManager.save();
+        // email, organization_name, username, feedback
+        await sendConfirmation(email, organization_name, username);
+        return res.status(201).json({
+          message: `Manager registration request submitted for ${username}. Awaiting admin approval.`,
+        });
+      }
+
+      default:
+        return res.status(400).send("Invalid role");
+    }
+  } catch (e) {
+    res.status(500).json({ message: `Something went wrong: ${e.message}` });
   }
 };
+
 const login = async (req, res) => {
   try {
     const { username, password } = req.body;
-    const user = await User.findOne({ username });
+
+    // Check for the user in all collections
+    let user = await Admin.findOne({ username });
+    if (!user) {
+      user = await Manager.findOne({ username });
+    }
+    if (!user) {
+      user = await User.findOne({ username });
+    }
+
+    // If user is still not found, return an error
     if (!user) {
       return res
         .status(404)
-        .json({ message: `User with username ${username} not found` });
+        .json({ message: `User  with username ${username} not found` });
     }
 
+    // Compare the password
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) {
-      return res.status(400).json({ message: `Invallid Credentials` });
+      return res.status(400).json({ message: `Invalid Credentials` });
     }
+
+    // Generate a token
     const token = jwt.sign(
       {
         id: user._id,
@@ -60,7 +162,7 @@ const login = async (req, res) => {
 
     res.status(200).json({ token });
   } catch (error) {
-    res.status(500).json({ message: `Something went Wrong` });
+    res.status(500).json({ message: `Something went wrong: ${error.message}` });
   }
 };
 module.exports = {
