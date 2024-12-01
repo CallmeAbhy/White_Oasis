@@ -1,6 +1,7 @@
 const PendingManager = require("../models/pendingManagerModel");
 const { Manager } = require("../models/userModel");
 const { sendRejection, approval } = require("../utils/notifications");
+const { Admin } = require("../models/userModel");
 const getPendingManagers = async (req, res) => {
   try {
     const pendingManagers = await PendingManager.find();
@@ -12,7 +13,7 @@ const getPendingManagers = async (req, res) => {
 
 const approveManager = async (req, res) => {
   try {
-    const { id, email, organization_name, username } = req.params;
+    const { id } = req.params;
     const { feedback } = req.body;
     const pendingManager = await PendingManager.findById(id);
     if (!pendingManager)
@@ -33,27 +34,40 @@ const approveManager = async (req, res) => {
       organization_name: pendingManager.organization_name,
     });
     await newManager.save();
-    await approval(email, organization_name, username, feedback);
+    await approval(
+      pendingManager.email,
+      pendingManager.organization_name,
+      pendingManager.username,
+      feedback
+    );
     await PendingManager.findByIdAndDelete(id); // Remove from pending
     res
       .status(200)
       .json({ message: "Manager approved and registered.", feedback });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: "Something went wrong" });
   }
 };
 
 const rejectManager = async (req, res) => {
   try {
-    const { id, email, organization_name, username } = req.params;
+    const { id } = req.params;
+    let user = await PendingManager.findById(id);
     const { feedback } = req.body;
     if (!feedback) {
       return res.status(400).json({ message: "Feedback is required." });
     }
-    await rejectManager(email, organization_name, username, feedback);
+    await sendRejection(
+      user.email,
+      user.organization_name,
+      user.username,
+      feedback
+    );
     await PendingManager.findByIdAndDelete(id); // Remove from pending
     res.status(200).json({ message: "Manager registration request rejected." });
   } catch (error) {
+    console.log(error);
     res.status(500).json({ message: "Something went wrong" });
   }
 };

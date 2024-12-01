@@ -1,16 +1,16 @@
-const User = require("../models/userModel");
 const sendOtp = require("../utils/sendOtp");
 const bcrypt = require("bcryptjs");
+const { Admin, User, Manager } = require("../models/userModel");
 
 let otpStore = {};
 const requestPasswordReset = async (req, res) => {
   const { email } = req.body;
-  let user = await Admin.findOne({ username });
+  let user = await Admin.findOne({ email });
   if (!user) {
-    user = await Manager.findOne({ username });
+    user = await Manager.findOne({ email });
   }
   if (!user) {
-    user = await User.findOne({ username });
+    user = await User.findOne({ email });
   }
   if (!user) {
     return res.status(404).json({ message: "User not found" });

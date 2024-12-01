@@ -39,6 +39,6 @@ const managerSchema = new mongoose.Schema(
   { timestamps: true }
 );
 const Admin = mongoose.model("Admin", adminSchema);
-const User = mongoose.model("User ", userSchema);
+const User = mongoose.model("User", userSchema);
 const Manager = mongoose.model("Manager", managerSchema);
 module.exports = { Admin, User, Manager };

@@ -22,7 +22,7 @@ const sendConfirmation = async (email, organization_name, username) => {
   );
   const mailOptions = {
     from: process.env.EMAIL_USER,
-    to: obj.email,
+    to: email,
     subject: "Our team has processed your registration",
     html: htmlTemplate,
   };
@@ -40,7 +40,7 @@ const sendRejection = async (email, organization_name, username, feedback) => {
   htmlTemplate = htmlTemplate.replace(/{{feedback}}/g, feedback);
   const mailOptions = {
     from: process.env.EMAIL_USER,
-    to: obj.email,
+    to: email,
     subject: "Our team has Rejected Your Registration Please view Feedback",
     html: htmlTemplate,
   };
@@ -58,7 +58,7 @@ const approval = async (email, organization_name, username, feedback) => {
   htmlTemplate = htmlTemplate.replace(/{{feedback}}/g, feedback);
   const mailOptions = {
     from: process.env.EMAIL_USER,
-    to: obj.email,
+    to: email,
     subject: "Our team has Approved Your Registration",
     html: htmlTemplate,
   };
