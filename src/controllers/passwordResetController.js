@@ -5,7 +5,13 @@ const bcrypt = require("bcryptjs");
 let otpStore = {};
 const requestPasswordReset = async (req, res) => {
   const { email } = req.body;
-  const user = await User.findOne({ email });
+  let user = await Admin.findOne({ username });
+  if (!user) {
+    user = await Manager.findOne({ username });
+  }
+  if (!user) {
+    user = await User.findOne({ username });
+  }
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
