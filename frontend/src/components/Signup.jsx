@@ -8,6 +8,7 @@ const Signup = () => {
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
   const [role, setRole] = useState("");
+
   const navigate = useNavigate(); // Use useNavigate instead of useHistory
 
   const handleSignup = async (e) => {
@@ -82,3 +83,4 @@ const Signup = () => {
 };
 
 export default Signup;
+// https://www.blackbox.ai/chat/KUZSYec
