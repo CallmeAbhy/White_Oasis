@@ -2,11 +2,13 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
 
 const Login = () => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate(); // Use useNavigate instead of useHistory
+  const { setUser } = useAuth();
 
   const handleLogin = async (e) => {
     e.preventDefault();
@@ -15,7 +17,9 @@ const Login = () => {
         "http://localhost:7001/api/auth/login",
         { username, password }
       );
-      localStorage.setItem("token", response.data.token); // Store token for future requests
+      const { token, role } = response.data;
+      setUser({ token, role });
+      localStorage.setItem("token", token); // Store token for future requests
       navigate("/dashboard"); // Redirect to dashboard using navigate
     } catch (error) {
       alert("Login failed: " + error.response.data.message);

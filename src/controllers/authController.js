@@ -159,8 +159,9 @@ const login = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
-
-    res.status(200).json({ token });
+    const role = user.role;
+    console.log(role);
+    res.status(200).json({ token, role });
   } catch (error) {
     res.status(500).json({ message: `Something went wrong: ${error.message}` });
   }
