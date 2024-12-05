@@ -8,7 +8,7 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
 });
-const sendConfirmation = async (email, organization_name, username) => {
+const sendConfirmation = async (email, name_of_trust, username) => {
   const templatePath = path.join(
     __dirname,
     "../templates",
@@ -17,8 +17,8 @@ const sendConfirmation = async (email, organization_name, username) => {
   let htmlTemplate = fs.readFileSync(templatePath, "utf-8");
   htmlTemplate = htmlTemplate.replace(/{{username}}/g, username);
   htmlTemplate = htmlTemplate.replace(
-    /{{organization_name}}/g,
-    organization_name
+    /{{name_of_trust}}/g,
+    name_of_trust
   );
   const mailOptions = {
     from: process.env.EMAIL_USER,
@@ -29,13 +29,13 @@ const sendConfirmation = async (email, organization_name, username) => {
 
   await transporter.sendMail(mailOptions);
 };
-const sendRejection = async (email, organization_name, username, feedback) => {
+const sendRejection = async (email, name_of_trust, username, feedback) => {
   const templatePath = path.join(__dirname, "../templates", "reject.html");
   let htmlTemplate = fs.readFileSync(templatePath, "utf-8");
   htmlTemplate = htmlTemplate.replace(/{{username}}/g, username);
   htmlTemplate = htmlTemplate.replace(
-    /{{organization_name}}/g,
-    organization_name
+    /{{name_of_trust}}/g,
+    name_of_trust
   );
   htmlTemplate = htmlTemplate.replace(/{{feedback}}/g, feedback);
   const mailOptions = {
@@ -47,13 +47,13 @@ const sendRejection = async (email, organization_name, username, feedback) => {
 
   await transporter.sendMail(mailOptions);
 };
-const approval = async (email, organization_name, username, feedback) => {
+const approval = async (email, name_of_trust, username, feedback) => {
   const templatePath = path.join(__dirname, "../templates", "approval.html");
   let htmlTemplate = fs.readFileSync(templatePath, "utf-8");
   htmlTemplate = htmlTemplate.replace(/{{username}}/g, username);
   htmlTemplate = htmlTemplate.replace(
-    /{{organization_name}}/g,
-    organization_name
+    /{{name_of_trust}}/g,
+    name_of_trust
   );
   htmlTemplate = htmlTemplate.replace(/{{feedback}}/g, feedback);
   const mailOptions = {

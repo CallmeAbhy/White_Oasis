@@ -62,7 +62,7 @@ const register = async (req, res) => {
       }
 
       case "user": {
-        if (!req.files?.governmentIdCard || !req.files?.yourPhoto) {
+        if (!req.files?.governmentIdCard || !req.files?.userPhoto) {
           return res
             .status(400)
             .json({ message: "All required files must be uploaded" });
@@ -70,8 +70,10 @@ const register = async (req, res) => {
         const {
           address: userAddress,
           city: userCity,
+          country: userCountry,
+          state: userState,
           governmentIdCard,
-          yourPhoto,
+          userPhoto,
         } = req.body;
         const newUser = new User({
           username,
@@ -81,8 +83,10 @@ const register = async (req, res) => {
           phone,
           address: userAddress,
           city: userCity,
+          country: userCountry,
+          state: userState,
           governmentIdCard: req.files.governmentIdCard[0].path,
-          yourPhoto: req.files.yourPhoto[0].path,
+          userPhoto: req.files.userPhoto[0].path,
         });
         await newUser.save();
         return res
@@ -92,30 +96,34 @@ const register = async (req, res) => {
 
       case "manager": {
         const {
-          address: managerAddress,
-          city: managerCity,
-          governmentIssuedPhotoId,
-          proofOfIncome,
-          proofOfResidency,
-          oldAgeHomePhoto,
-          organization_name,
+          head_office_address: managerAddress,
+          head_office_city: managerCity,
+          head_office_country: managerCountry,
+          head_office_state: managerState,
+          trust_document,
+          financial_statements,
+          trust_domicile,
+          trust_logo,
+          name_of_trust,
         } = req.body;
         const newPendingManager = new PendingManager({
           username,
           password: hashedPassword,
           email,
           phone,
-          address: managerAddress,
-          city: managerCity,
-          governmentIssuedPhotoId: req.files.governmentIssuedPhotoId[0].path,
-          proofOfIncome: req.files.proofOfIncome[0].path,
-          proofOfResidency: req.files.proofOfResidency[0].path,
-          oldAgeHomePhoto: req.files.oldAgeHomePhoto[0].path,
-          organization_name,
+          head_office_address: managerAddress,
+          head_office_city: managerCity,
+          head_office_country: managerCountry,
+          head_office_state: managerState,
+          trust_document: req.files.trust_document[0].path,
+          financial_statements: req.files.financial_statements[0].path,
+          trust_domicile: req.files.trust_domicile[0].path,
+          trust_logo: req.files.trust_logo[0].path,
+          name_of_trust,
         });
         await newPendingManager.save();
-        // email, organization_name, username, feedback
-        await sendConfirmation(email, organization_name, username);
+        // email, name_of_trust, username, feedback
+        await sendConfirmation(email, name_of_trust, username);
         return res.status(201).json({
           message: `Manager registration request submitted for ${username}. Awaiting admin approval.`,
         });
