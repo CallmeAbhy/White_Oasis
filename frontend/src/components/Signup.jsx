@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom";
 // import { useAuth } from "../context/AuthContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
+import { Country, State, City } from "country-state-city";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -14,24 +15,144 @@ const Signup = () => {
     role: "",
     address: "",
     city: "",
+    country: "",
+    state: "",
     governmentIdCard: null,
-    yourPhoto: null,
-    organization_name: "",
-    governmentIssuedPhotoId: null,
-    proofOfIncome: null,
-    proofOfResidency: null,
-    oldAgeHomePhoto: null,
+    userPhoto: null,
+    name_of_trust: "",
+    trust_document: null,
+    financial_statements: null,
+    trust_domicile: null,
+    trust_logo: null,
+    head_office_city: "",
+    head_office_country: "",
+    head_office_address: "",
+    head_office_state: "",
   });
   const [showPassword, setShowPassword] = useState(false);
-  // const { setUser } = useAuth();
+  const [countrySuggestions, setCountrySuggestions] = useState([]);
+  const [stateSuggestions, setStateSuggestions] = useState([]);
+  const [citySuggestions, setCitySuggestions] = useState([]);
+  const [selectedCountryCode, setSelectedCountryCode] = useState("");
+  const [selectedStateCode, setSelectedStateCode] = useState("");
+  const [addressSuggestions, setAddressSuggestions] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState("");
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [headOfficeCountrySuggestions, setHeadOfficeCountrySuggestions] =
+    useState([]);
+  const [headOfficeStateSuggestions, setHeadOfficeStateSuggestions] = useState(
+    []
+  );
+  const [headOfficeCitySuggestions, setHeadOfficeCitySuggestions] = useState(
+    []
+  );
+  const [headOfficeAddressSuggestions, setHeadOfficeAddressSuggestions] =
+    useState([]);
+  const [selectedHeadOfficeCountryCode, setSelectedHeadOfficeCountryCode] =
+    useState("");
+  const [selectedHeadOfficeStateCode, setSelectedHeadOfficeStateCode] =
+    useState("");
   const navigate = useNavigate();
-
+  // https://www.blackbox.ai/chat/mcKwvAl
   const handleChange = (e) => {
     const { name, value } = e.target;
+
     setFormData((prev) => ({
       ...prev,
+
       [name]: value,
     }));
+
+    if (name === "address" && value.length > 2) {
+      setLoading(true);
+      axios
+        .get(`https://nominatim.openstreetmap.org/search`, {
+          params: {
+            q: value,
+            format: "json",
+            limit: 5,
+          },
+        })
+        .then((response) => {
+          setAddressSuggestions(response.data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error(error);
+          setLoading(false);
+        });
+    } else {
+      setAddressSuggestions([]);
+    }
+    if (name === "head_office_address" && value.length > 2) {
+      setLoading(true);
+      axios
+        .get(`https://nominatim.openstreetmap.org/search`, {
+          params: {
+            q: value,
+            format: "json",
+            limit: 5,
+          },
+        })
+        .then((response) => {
+          setHeadOfficeAddressSuggestions(response.data);
+          setLoading(false);
+        })
+        .catch((error) => {
+          console.error(error);
+          setLoading(false);
+        });
+    } else {
+      setHeadOfficeAddressSuggestions([]);
+    }
+    if (name === "country") {
+      const filteredCountries = Country.getAllCountries().filter((country) =>
+        country.name.toLowerCase().includes(value.toLowerCase())
+      );
+
+      setCountrySuggestions(filteredCountries);
+    }
+
+    if (name === "state") {
+      const filteredStates = State.getStatesOfCountry(
+        selectedCountryCode
+      ).filter((state) =>
+        state.name.toLowerCase().includes(value.toLowerCase())
+      );
+
+      setStateSuggestions(filteredStates);
+    }
+
+    if (name === "city") {
+      const filteredCities = City.getCitiesOfState(
+        selectedCountryCode,
+        selectedStateCode
+      ).filter((city) => city.name.toLowerCase().includes(value.toLowerCase()));
+
+      setCitySuggestions(filteredCities);
+    }
+    if (name === "head_office_country") {
+      const filteredHeadOfficeCountries = Country.getAllCountries().filter(
+        (country) => country.name.toLowerCase().includes(value.toLowerCase())
+      );
+      setHeadOfficeCountrySuggestions(filteredHeadOfficeCountries);
+    }
+    if (name === "head_office_state") {
+      const filteredHeadOfficeStates = State.getStatesOfCountry(
+        selectedHeadOfficeCountryCode
+      ).filter((state) =>
+        state.name.toLowerCase().includes(value.toLowerCase())
+      );
+      setHeadOfficeStateSuggestions(filteredHeadOfficeStates);
+    }
+    if (name === "head_office_city") {
+      const filteredHeadOfficeCities = City.getCitiesOfState(
+        selectedHeadOfficeCountryCode,
+        selectedHeadOfficeStateCode
+      ).filter((city) => city.name.toLowerCase().includes(value.toLowerCase()));
+      setHeadOfficeCitySuggestions(filteredHeadOfficeCities);
+    }
   };
 
   const handleFileChange = (e) => {
@@ -58,6 +179,7 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage("");
 
     if (!validateEmail(formData.email)) {
       alert("Please enter a valid email address.");
@@ -68,7 +190,7 @@ const Signup = () => {
       alert("Please enter a valid phone number (10 digits).");
       return;
     }
-
+    setIsSubmitting(true);
     try {
       const formDataToSend = new FormData();
       formDataToSend.append("username", formData.username);
@@ -80,19 +202,29 @@ const Signup = () => {
       if (formData.role === "user") {
         formDataToSend.append("address", formData.address);
         formDataToSend.append("city", formData.city);
+        formDataToSend.append("country", formData.country);
         formDataToSend.append("governmentIdCard", formData.governmentIdCard);
-        formDataToSend.append("yourPhoto", formData.yourPhoto);
+        formDataToSend.append("userPhoto", formData.userPhoto);
+        formDataToSend.append("state", formData.state);
       } else if (formData.role === "manager") {
-        formDataToSend.append("organization_name", formData.organization_name);
-        formDataToSend.append("address", formData.address);
-        formDataToSend.append("city", formData.city);
+        formDataToSend.append("name_of_trust", formData.name_of_trust);
         formDataToSend.append(
-          "governmentIssuedPhotoId",
-          formData.governmentIssuedPhotoId
+          "head_office_address",
+          formData.head_office_address
         );
-        formDataToSend.append("proofOfIncome", formData.proofOfIncome);
-        formDataToSend.append("proofOfResidency", formData.proofOfResidency);
-        formDataToSend.append("oldAgeHomePhoto", formData.oldAgeHomePhoto);
+        formDataToSend.append("head_office_city", formData.head_office_city);
+        formDataToSend.append(
+          "head_office_country",
+          formData.head_office_country
+        );
+        formDataToSend.append("head_office_state", formData.head_office_state);
+        formDataToSend.append("trust_document", formData.trust_document);
+        formDataToSend.append(
+          "financial_statements",
+          formData.financial_statements
+        );
+        formDataToSend.append("trust_domicile", formData.trust_domicile);
+        formDataToSend.append("trust_logo", formData.trust_logo);
       }
 
       const response = await axios.post(
@@ -107,25 +239,14 @@ const Signup = () => {
 
       if (response.status === 201) {
         alert(response.data.message);
-        // if (formData.role === "manager") {
         navigate("/login");
         return;
-        // }
-
-        // const loginResponse = await axios.post(
-        //   "http://localhost:7001/api/auth/login",
-        //   {
-        //     username: formData.username,
-        //     password: formData.password,
-        //   }
-        // );
-
-        // setUser({ token: loginResponse.data.token, role: formData.role });
-        // localStorage.setItem("token", loginResponse.data.token);
-        // navigate("/");
       }
     } catch (error) {
+      setErrorMessage(error.response?.data?.message || "Registration failed");
       alert(error.response?.data?.message || "Registration failed");
+    } finally {
+      setIsSubmitting(false); // Reset loading state
     }
   };
 
@@ -144,6 +265,7 @@ const Signup = () => {
         <p className="text-xs mt-2 text-[#002D74] text-center">
           If you are not a member, join us
         </p>
+        {errorMessage && <div className="text-red-500">{errorMessage}</div>}
         <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
           <input
             type="text"
@@ -201,21 +323,82 @@ const Signup = () => {
             className="p-2 mt-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#002D74]"
           >
             <option value="">Select Role</option>
-            <option value="user">User </option>
-            <option value="manager">Manager</option>
+            <option value="user">User</option>
+            <option value="manager">Trust</option>
             <option value="admin">Admin</option>
           </select>
           {formData.role === "user" && (
             <>
               <input
                 type="text"
-                name="address"
-                placeholder="Address"
-                value={formData.address}
+                name="country"
+                placeholder="Country"
+                value={formData.country}
                 onChange={handleChange}
                 required
                 className="p-2 mt-1 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#002D74]"
               />
+              {countrySuggestions.length > 0 && (
+                <div className="relative">
+                  <ul className="absolute bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto z-10">
+                    {countrySuggestions.map((country) => (
+                      <li
+                        key={country.isoCode}
+                        onClick={() => {
+                          setFormData((prev) => ({
+                            ...prev,
+
+                            country: country.name,
+                          }));
+                          setSelectedCountryCode(country.isoCode);
+                          setCountrySuggestions([]);
+                          setStateSuggestions([]);
+                          setCitySuggestions([]);
+                        }}
+                        className="p-2 cursor-pointer hover:bg-gray-200"
+                      >
+                        {country.name}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+
+              <input
+                type="text"
+                name="state"
+                placeholder="State"
+                value={formData.state}
+                onChange={handleChange}
+                required
+                className="p-2 mt-1 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#002D74]"
+              />
+              {stateSuggestions.length > 0 && (
+                <div className="relative">
+                  <ul className="absolute bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto z-10">
+                    {stateSuggestions.map((state) => (
+                      <li
+                        key={state.isoCode}
+                        onClick={() => {
+                          setFormData((prev) => ({
+                            ...prev,
+
+                            state: state.name,
+                          }));
+                          setSelectedStateCode(state.isoCode); // Store the selected state code
+
+                          setStateSuggestions([]);
+
+                          setCitySuggestions([]); // Clear city suggestions when state changes
+                        }}
+                        className="p-2 cursor-pointer hover:bg-gray-200"
+                      >
+                        {state.name}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
 
               <input
                 type="text"
@@ -226,7 +409,65 @@ const Signup = () => {
                 required
                 className="p-2 mt-1 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#002D74]"
               />
+              <div className="relative">
+                {citySuggestions.length > 0 && (
+                  <ul className="absolute bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto z-10">
+                    {citySuggestions.map((city) => (
+                      <li
+                        key={city.id}
+                        onClick={() => {
+                          setFormData((prev) => ({
+                            ...prev,
 
+                            city: city.name,
+                          }));
+
+                          setCitySuggestions([]);
+                        }}
+                        className="p-2 cursor-pointer hover:bg-gray-200"
+                      >
+                        {city.name}
+                      </li>
+                    ))}
+                  </ul>
+                )}
+              </div>
+              <input
+                type="text"
+                name="address"
+                placeholder="Address"
+                value={formData.address}
+                onChange={handleChange}
+                required
+                className="p-2 mt-1 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#002D74]"
+              />
+              {loading ? (
+                <div className="relative">Loading...</div>
+              ) : (
+                addressSuggestions.length > 0 && (
+                  <div className="relative">
+                    <ul className="absolute bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto z-10">
+                      {addressSuggestions.map((suggestion, index) => (
+                        <li key={index}>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setFormData((prev) => ({
+                                ...prev,
+                                address: suggestion.display_name,
+                              }));
+                              setAddressSuggestions([]);
+                            }}
+                            className="p-2 cursor-pointer hover:bg-gray-200 w-full text-left"
+                          >
+                            {suggestion.display_name}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )
+              )}
               <div className="flex flex-col mt-4">
                 <label className="mb-1" htmlFor="governmentIdCard">
                   Government ID Card
@@ -241,13 +482,13 @@ const Signup = () => {
                 />
               </div>
               <div className="flex flex-col mt-4">
-                <label className="mb-1" htmlFor="yourPhoto">
-                  Your Photo
+                <label className="mb-1" htmlFor="userPhoto">
+                  User Photo
                 </label>
                 <input
                   type="file"
-                  id="yourPhoto"
-                  name="yourPhoto"
+                  id="userPhoto"
+                  name="userPhoto"
                   onChange={handleFileChange}
                   required
                   className="p-2 rounded-xl border border-gray-300 focus:outline-none"
@@ -260,80 +501,195 @@ const Signup = () => {
             <>
               <input
                 type="text"
-                name="organization_name"
-                placeholder="Organization Name"
-                value={formData.organization_name}
+                name="name_of_trust"
+                placeholder="Trust Name"
+                value={formData.name_of_trust}
                 onChange={handleChange}
                 required
                 className="p-2 mt-1 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#002D74]"
               />
-
               <input
                 type="text"
-                name="address"
-                placeholder="Address"
-                value={formData.address}
+                name="head_office_country"
+                placeholder="Head Office Country"
+                value={formData.head_office_country}
                 onChange={handleChange}
                 required
                 className="p-2 mt-1 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#002D74]"
               />
+              {headOfficeCountrySuggestions.length > 0 && (
+                <div className="relative">
+                  <ul className="absolute bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto z-10">
+                    {headOfficeCountrySuggestions.map((country) => (
+                      <li
+                        key={country.isoCode}
+                        onClick={() => {
+                          setFormData((prev) => ({
+                            ...prev,
 
+                            head_office_country: country.name,
+                          }));
+                          setSelectedHeadOfficeCountryCode(country.isoCode);
+                          setHeadOfficeCountrySuggestions([]);
+                          setHeadOfficeStateSuggestions([]);
+                          setHeadOfficeCitySuggestions([]);
+                        }}
+                        className="p-2 cursor-pointer hover:bg-gray-200"
+                      >
+                        {country.name}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
               <input
                 type="text"
-                name="city"
-                placeholder="City"
-                value={formData.city}
+                name="head_office_state"
+                placeholder="Head Office State"
+                value={formData.head_office_state}
                 onChange={handleChange}
                 required
                 className="p-2 mt-1 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#002D74]"
               />
+              {headOfficeStateSuggestions.length > 0 && (
+                <div className="relative">
+                  <ul className="absolute bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto z-10">
+                    {headOfficeStateSuggestions.map((state) => (
+                      <li
+                        key={state.isoCode}
+                        onClick={() => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            head_office_state: state.name,
+                          }));
+                          setSelectedHeadOfficeStateCode(state.isoCode);
+                          setHeadOfficeStateSuggestions([]);
+                          setHeadOfficeCitySuggestions([]);
+                        }}
+                        className="p-2 cursor-pointer hover:bg-gray-200"
+                      >
+                        {state.name}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              <input
+                type="text"
+                name="head_office_city"
+                placeholder="Head Office City"
+                value={formData.head_office_city}
+                onChange={handleChange}
+                required
+                className="p-2 mt-1 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#002D74]"
+              />
+              {headOfficeCitySuggestions.length > 0 && (
+                <div className="relative">
+                  <ul className="absolute bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto z-10">
+                    {headOfficeCitySuggestions.map((city) => (
+                      <li
+                        key={city.id}
+                        onClick={() => {
+                          setFormData((prev) => ({
+                            ...prev,
+                            head_office_city: city.name,
+                          }));
+                          setHeadOfficeCitySuggestions([]);
+                        }}
+                        className="p-2 cursor-pointer hover:bg-gray-200"
+                      >
+                        {city.name}
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
+              <input
+                type="text"
+                name="head_office_address"
+                placeholder="Head Office Address"
+                value={formData.head_office_address}
+                onChange={handleChange}
+                required
+                className="p-2 mt-1 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#002D74]"
+              />
+              {loading ? (
+                <div className="relative">Loading...</div>
+              ) : (
+                headOfficeAddressSuggestions.length > 0 && (
+                  <div className="relative">
+                    <ul className="absolute bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto z-10">
+                      {headOfficeAddressSuggestions.map((suggestion, index) => (
+                        <li key={index}>
+                          <button
+                            type="button"
+                            onClick={() => {
+                              setFormData((prev) => ({
+                                ...prev,
+
+                                head_office_address: suggestion.display_name,
+                              }));
+
+                              setHeadOfficeAddressSuggestions([]);
+                            }}
+                            className="p-2 cursor-pointer hover:bg-gray-200 w-full text-left"
+                          >
+                            {suggestion.display_name}
+                          </button>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )
+              )}
+
               <div className="flex flex-col mt-4">
-                <label className="mb-1" htmlFor="governmentIssuedPhotoId">
-                  Goverment Issued Photo ID Card
+                <label className="mb-1" htmlFor="trust_document">
+                  Trust Document
                 </label>
                 <input
                   type="file"
-                  id="governmentIssuedPhotoId"
-                  name="governmentIssuedPhotoId"
+                  id="trust_document"
+                  name="trust_document"
                   onChange={handleFileChange}
                   required
                   className="p-2 rounded-xl border border-gray-300 focus:outline-none"
                 />
               </div>
               <div className="flex flex-col mt-4">
-                <label className="mb-1" htmlFor="proofOfIncome">
-                  Proof of Income
+                <label className="mb-1" htmlFor="financial_statements">
+                  Financial Statements
                 </label>
                 <input
                   type="file"
-                  id="proofOfIncome"
-                  name="proofOfIncome"
+                  id="financial_statements"
+                  name="financial_statements"
                   onChange={handleFileChange}
                   required
                   className="p-2 rounded-xl border border-gray-300 focus:outline-none"
                 />
               </div>
               <div className="flex flex-col mt-4">
-                <label className="mb-1" htmlFor="proofOfResidency">
-                  Proof of Residency
+                <label className="mb-1" htmlFor="trust_domicile">
+                  Trust Domicile
                 </label>
                 <input
                   type="file"
-                  id="proofOfResidency"
-                  name="proofOfResidency"
+                  id="trust_domicile"
+                  name="trust_domicile"
                   onChange={handleFileChange}
                   required
                   className="p-2 rounded-xl border border-gray-300 focus:outline-none"
                 />
               </div>
               <div className="flex flex-col mt-4">
-                <label className="mb-1" htmlFor="oldAgeHomePhoto">
-                  Old Age Home Photo
+                <label className="mb-1" htmlFor="trust_logo">
+                  Trust Logo
                 </label>
                 <input
                   type="file"
-                  id="oldAgeHomePhoto"
-                  name="oldAgeHomePhoto"
+                  id="trust_logo"
+                  name="trust_logo"
                   onChange={handleFileChange}
                   required
                   className="p-2 rounded-xl border border-gray-300 focus:outline-none"
@@ -341,99 +697,15 @@ const Signup = () => {
               </div>
             </>
           )}
-          {/* {formData.role === "user" && (
-            <>
-              <input
-                type="text"
-                name="address"
-                placeholder="Address"
-                value={formData.address}
-                onChange={handleChange}
-                required
-                className="p-2 mt-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#002D74]"
-              />
-              <input
-                type="text"
-                name="city"
-                placeholder="City"
-                value={formData.city}
-                onChange={handleChange}
-                required
-                className="p-2 mt-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#002D74]"
-              />
-              <input
-                type="file"
-                name="governmentIdCard"
-                onChange={handleFileChange}
-                required
-                className="p-2 mt-4 rounded-xl border border-gray-300 focus:outline-none"
-              />
-              <input
-                type="file"
-                name="yourPhoto"
-                onChange={handleFileChange}
-                required
-                className="p-2 mt-4 rounded-xl border border-gray-300 focus:outline-none"
-              />
-            </>
-          )}
-          {formData.role === "manager" && (
-            <>
-              <input
-                type="text"
-                name="organization_name"
-                placeholder="Organization Name"
-                value={formData.organization_name}
-                onChange={handleChange}
-                required
-                className="p-2 mt-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#002D74]"
-              />
-              <input
-                type="text"
-                name="address"
-                placeholder="Address"
-                value={formData.address}
-                onChange={handleChange}
-                required
-                className="p-2 mt-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#002D74]"
-              />
-              <input
-                type="text"
-                name="city"
-                placeholder="City"
-                value={formData.city}
-                onChange={handleChange}
-                required
-                className="p-2 mt-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#002D74]"
-              />
-              <input
-                type="file"
-                name="proofOfIncome"
-                onChange={handleFileChange}
-                required
-                className="p-2 mt-4 rounded-xl border border-gray-300 focus:outline-none"
-              />
-              <input
-                type="file"
-                name="proofOfResidency"
-                onChange={handleFileChange}
-                required
-                className="p-2 mt-4 rounded-xl border border-gray-300 focus:outline-none"
-              />
-              <input
-                type="file"
-                name="oldAgeHomePhoto"
-                onChange={handleFileChange}
-                required
-                className="p-2 mt-4 rounded-xl border border-gray-300 focus:outline-none"
-              />
-            </>
-          )} */}
+
           <button
             type="submit"
-            className="bg-[#002D74] rounded-xl text-white py-2 mt-4 hover:scale-105 duration-300"
+            disabled={isSubmitting} // Disable button while submitting
+            className={`bg-[#002D74] rounded-xl text-white py-2 mt-4 hover:scale-105 duration-300 ${
+              isSubmitting ? "opacity-50 cursor-not-allowed" : ""
+            }`}
           >
-            Register
+            {isSubmitting ? "Registering..." : "Register"}
           </button>
         </form>
         <div className="mt-3 text-xs flex justify-between items-center text-[#002D74]">

@@ -20,31 +20,39 @@ const pendingManagerSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
-    organization_name: {
+    name_of_trust: {
       type: String,
       required: true,
     },
-    address: {
+    head_office_address: {
       type: String,
       required: true,
     },
-    city: {
+    head_office_city: {
       type: String,
       required: true,
     },
-    governmentIssuedPhotoId: {
+    head_office_country: {
       type: String,
       required: true,
     },
-    proofOfIncome: {
+    head_office_state: {
       type: String,
       required: true,
     },
-    proofOfResidency: {
+    trust_document: {
       type: String,
       required: true,
     },
-    oldAgeHomePhoto: {
+    financial_statements: {
+      type: String,
+      required: true,
+    },
+    trust_domicile: {
+      type: String,
+      required: true,
+    },
+    trust_logo: {
       type: String,
       required: true,
     },

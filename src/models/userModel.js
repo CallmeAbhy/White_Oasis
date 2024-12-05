@@ -20,21 +20,25 @@ const userSchema = new mongoose.Schema(
     ...commonFields,
     address: { type: String, required: true },
     city: { type: String, required: true },
+    country: { type: String, required: true },
+    state: { type: String, required: true },
     governmentIdCard: { type: String, required: true },
-    yourPhoto: { type: String, required: true }, // Assuming this is a URL or path to the photo
+    userPhoto: { type: String, required: true }, // Assuming this is a URL or path to the photo
   },
   { timestamps: true }
 );
 const managerSchema = new mongoose.Schema(
   {
     ...commonFields,
-    organization_name: { type: String, required: true },
-    address: { type: String, required: true },
-    city: { type: String, required: true },
-    governmentIssuedPhotoId: { type: String, required: true },
-    proofOfIncome: { type: String, required: true }, // Assuming this is a URL or path to the document
-    proofOfResidency: { type: String, required: true }, // Assuming this is a URL or path to the document
-    oldAgeHomePhoto: { type: String, required: true }, // Assuming this is a URL or path to the photo
+    name_of_trust: { type: String, required: true },
+    head_office_address: { type: String, required: true },
+    head_office_city: { type: String, required: true },
+    head_office_country: { type: String, required: true },
+    head_office_state: { type: String, required: true },
+    trust_document: { type: String, required: true },
+    financial_statements: { type: String, required: true }, // Assuming this is a URL or path to the document
+    trust_domicile: { type: String, required: true }, // Assuming this is a URL or path to the document
+    trust_logo: { type: String, required: true }, // Assuming this is a URL or path to the photo
   },
   { timestamps: true }
 );

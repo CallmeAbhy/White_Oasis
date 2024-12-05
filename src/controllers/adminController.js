@@ -25,18 +25,20 @@ const approveManager = async (req, res) => {
       role: "manager",
       email: pendingManager.email,
       phone: pendingManager.phone,
-      address: pendingManager.address,
-      city: pendingManager.city,
-      governmentIssuedPhotoId: pendingManager.governmentIssuedPhotoId,
-      proofOfIncome: pendingManager.proofOfIncome,
-      proofOfResidency: pendingManager.proofOfResidency,
-      oldAgeHomePhoto: pendingManager.oldAgeHomePhoto,
-      organization_name: pendingManager.organization_name,
+      head_office_address: pendingManager.head_office_address,
+      head_office_city: pendingManager.head_office_city,
+      head_office_country: pendingManager.head_office_country,
+      head_office_state: pendingManager.head_office_state,
+      trust_document: pendingManager.trust_document,
+      financial_statements: pendingManager.financial_statements,
+      trust_domicile: pendingManager.trust_domicile,
+      trust_logo: pendingManager.trust_logo,
+      name_of_trust: pendingManager.name_of_trust,
     });
     await newManager.save();
     await approval(
       pendingManager.email,
-      pendingManager.organization_name,
+      pendingManager.name_of_trust,
       pendingManager.username,
       feedback
     );
@@ -60,7 +62,7 @@ const rejectManager = async (req, res) => {
     }
     await sendRejection(
       user.email,
-      user.organization_name,
+      user.name_of_trust,
       user.username,
       feedback
     );
