@@ -62,6 +62,11 @@ const register = async (req, res) => {
       }
 
       case "user": {
+        if (!req.files?.governmentIdCard || !req.files?.yourPhoto) {
+          return res
+            .status(400)
+            .json({ message: "All required files must be uploaded" });
+        }
         const {
           address: userAddress,
           city: userCity,
@@ -76,13 +81,13 @@ const register = async (req, res) => {
           phone,
           address: userAddress,
           city: userCity,
-          governmentIdCard,
-          yourPhoto,
+          governmentIdCard: req.files.governmentIdCard[0].path,
+          yourPhoto: req.files.yourPhoto[0].path,
         });
         await newUser.save();
         return res
           .status(201)
-          .json({ message: `User  Registered with username ${username}` });
+          .json({ message: `User Registered with username ${username}` });
       }
 
       case "manager": {
@@ -102,10 +107,10 @@ const register = async (req, res) => {
           phone,
           address: managerAddress,
           city: managerCity,
-          governmentIssuedPhotoId,
-          proofOfIncome,
-          proofOfResidency,
-          oldAgeHomePhoto,
+          governmentIssuedPhotoId: req.files.governmentIssuedPhotoId[0].path,
+          proofOfIncome: req.files.proofOfIncome[0].path,
+          proofOfResidency: req.files.proofOfResidency[0].path,
+          oldAgeHomePhoto: req.files.oldAgeHomePhoto[0].path,
           organization_name,
         });
         await newPendingManager.save();
@@ -120,6 +125,7 @@ const register = async (req, res) => {
         return res.status(400).send("Invalid role");
     }
   } catch (e) {
+    console.log(e);
     res.status(500).json({ message: `Something went wrong: ${e.message}` });
   }
 };
@@ -160,8 +166,9 @@ const login = async (req, res) => {
       { expiresIn: "1h" }
     );
     const role = user.role;
+    const profile = user;
     console.log(role);
-    res.status(200).json({ token, role });
+    res.status(200).json({ token, role, profile });
   } catch (error) {
     res.status(500).json({ message: `Something went wrong: ${error.message}` });
   }
