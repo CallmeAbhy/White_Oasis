@@ -33,8 +33,13 @@ const verifyOtp = (req, res) => {
 };
 const resetPassword = async (req, res) => {
   const { email, newPassword } = req.body;
-  const user = await User.findOne({ email });
-
+  let user = await Admin.findOne({ email });
+  if (!user) {
+    user = await Manager.findOne({ email });
+  }
+  if (!user) {
+    user = await User.findOne({ email });
+  }
   if (!user) {
     return res.status(404).json({ message: "User not found" });
   }
