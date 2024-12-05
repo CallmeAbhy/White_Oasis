@@ -53,6 +53,7 @@ const Signup = () => {
     useState("");
   const [selectedHeadOfficeStateCode, setSelectedHeadOfficeStateCode] =
     useState("");
+
   const navigate = useNavigate();
   // https://www.blackbox.ai/chat/mcKwvAl
   const handleChange = (e) => {
@@ -340,7 +341,7 @@ const Signup = () => {
               />
               {countrySuggestions.length > 0 && (
                 <div className="relative">
-                  <ul className="absolute bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto z-10">
+                  <ul className="absolute bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto z-10 w-full">
                     {countrySuggestions.map((country) => (
                       <li
                         key={country.isoCode}
@@ -375,7 +376,7 @@ const Signup = () => {
               />
               {stateSuggestions.length > 0 && (
                 <div className="relative">
-                  <ul className="absolute bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto z-10">
+                  <ul className="absolute bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto z-10 w-full">
                     {stateSuggestions.map((state) => (
                       <li
                         key={state.isoCode}
@@ -411,7 +412,7 @@ const Signup = () => {
               />
               <div className="relative">
                 {citySuggestions.length > 0 && (
-                  <ul className="absolute bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto z-10">
+                  <ul className="absolute bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto z-10 w-full">
                     {citySuggestions.map((city) => (
                       <li
                         key={city.id}
@@ -446,7 +447,7 @@ const Signup = () => {
               ) : (
                 addressSuggestions.length > 0 && (
                   <div className="relative">
-                    <ul className="absolute bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto z-10">
+                    <ul className="absolute bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto z-10 w-full">
                       {addressSuggestions.map((suggestion, index) => (
                         <li key={index}>
                           <button
@@ -469,8 +470,20 @@ const Signup = () => {
                 )
               )}
               <div className="flex flex-col mt-4">
-                <label className="mb-1" htmlFor="governmentIdCard">
+                <label
+                  className="mb-1 relative group"
+                  htmlFor="governmentIdCard"
+                >
                   Government ID Card
+                  <span className="absolute left-1/2 transform -translate-x-1/2 -translate-y-full bg-black text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    Upload Any of Following:
+                    <br />
+                    1) Aadhar Card
+                    <br />
+                    2) Pan Card
+                    <br />
+                    3) Election Card
+                  </span>
                 </label>
                 <input
                   type="file"
@@ -482,8 +495,17 @@ const Signup = () => {
                 />
               </div>
               <div className="flex flex-col mt-4">
-                <label className="mb-1" htmlFor="userPhoto">
+                <label className="mb-1 relative group" htmlFor="userPhoto">
                   User Photo
+                  <span className="absolute left-1/2 transform -translate-x-1/2 -translate-y-full bg-black text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    Must be in one of the following formats [Limit 5MB]:
+                    <br />
+                    1) JPEG
+                    <br />
+                    2) JPG
+                    <br />
+                    3) PNG
+                  </span>
                 </label>
                 <input
                   type="file"
@@ -519,7 +541,7 @@ const Signup = () => {
               />
               {headOfficeCountrySuggestions.length > 0 && (
                 <div className="relative">
-                  <ul className="absolute bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto z-10">
+                  <ul className="absolute bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto z-10 w-full">
                     {headOfficeCountrySuggestions.map((country) => (
                       <li
                         key={country.isoCode}
@@ -553,7 +575,7 @@ const Signup = () => {
               />
               {headOfficeStateSuggestions.length > 0 && (
                 <div className="relative">
-                  <ul className="absolute bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto z-10">
+                  <ul className="absolute bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto z-10 w-full">
                     {headOfficeStateSuggestions.map((state) => (
                       <li
                         key={state.isoCode}
@@ -585,7 +607,7 @@ const Signup = () => {
               />
               {headOfficeCitySuggestions.length > 0 && (
                 <div className="relative">
-                  <ul className="absolute bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto z-10">
+                  <ul className="absolute bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto z-10 w-full">
                     {headOfficeCitySuggestions.map((city) => (
                       <li
                         key={city.id}
@@ -618,7 +640,7 @@ const Signup = () => {
               ) : (
                 headOfficeAddressSuggestions.length > 0 && (
                   <div className="relative">
-                    <ul className="absolute bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto z-10">
+                    <ul className="absolute bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto z-10 w-full">
                       {headOfficeAddressSuggestions.map((suggestion, index) => (
                         <li key={index}>
                           <button
@@ -644,8 +666,17 @@ const Signup = () => {
               )}
 
               <div className="flex flex-col mt-4">
-                <label className="mb-1" htmlFor="trust_document">
+                <label className="mb-1 relative group" htmlFor="trust_document">
                   Trust Document
+                  <span className="absolute left-1/2 transform -translate-x-1/2 -translate-y-full bg-black text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    Must be in one of the following formats [Limit 5MB]:
+                    <br />
+                    1) Trust Deed
+                    <br />
+                    2) Certification of Trust
+                    <br />
+                    3) PAN Card of Trust
+                  </span>
                 </label>
                 <input
                   type="file"
@@ -657,8 +688,19 @@ const Signup = () => {
                 />
               </div>
               <div className="flex flex-col mt-4">
-                <label className="mb-1" htmlFor="financial_statements">
+                <label
+                  className="mb-1 relative group"
+                  htmlFor="financial_statements"
+                >
                   Financial Statements
+                  <span className="absolute left-1/2 transform -translate-x-1/2 -translate-y-full bg-black text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    Must be in one of the following formats [Limit 5MB]:
+                    <br />
+                    1) ITR Return
+                    <br />
+                    2) Annual Report
+                    <br />
+                  </span>
                 </label>
                 <input
                   type="file"
@@ -670,8 +712,16 @@ const Signup = () => {
                 />
               </div>
               <div className="flex flex-col mt-4">
-                <label className="mb-1" htmlFor="trust_domicile">
+                <label className="mb-1 relative group" htmlFor="trust_domicile">
                   Trust Domicile
+                  <span className="absolute left-1/2 transform -translate-x-1/2 -translate-y-full bg-black text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    Must be in one of the following formats [Limit 5MB]:
+                    <br />
+                    1) State Registration Document
+                    <br />
+                    2) Property Deeds
+                    <br />
+                  </span>
                 </label>
                 <input
                   type="file"
@@ -683,8 +733,17 @@ const Signup = () => {
                 />
               </div>
               <div className="flex flex-col mt-4">
-                <label className="mb-1" htmlFor="trust_logo">
+                <label className="mb-1 relative group" htmlFor="trust_logo">
                   Trust Logo
+                  <span className="absolute left-1/2 transform -translate-x-1/2 -translate-y-full bg-black text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                    Must be in one of the following formats [Limit 5MB]:
+                    <br />
+                    1) JPEG
+                    <br />
+                    2) JPG
+                    <br />
+                    3) PNG
+                  </span>
                 </label>
                 <input
                   type="file"
