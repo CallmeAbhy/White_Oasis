@@ -88,6 +88,7 @@ const register = async (req, res) => {
           governmentIdCard: req.files.governmentIdCard[0].path,
           userPhoto: req.files.userPhoto[0].path,
         });
+        
         await newUser.save();
         return res
           .status(201)
