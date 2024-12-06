@@ -1,43 +1,70 @@
 const multer = require("multer");
 const path = require("path");
 
-// Configure storage
-
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
-    cb(null, "uploads/"); // Make sure this directory exists
+    cb(null, "uploads/");
   },
-
   filename: function (req, file, cb) {
     cb(null, `${Date.now()}-${file.originalname}`);
   },
 });
 
-// File filter
+// Separate file filter for images
+const imageFileFilter = (req, file, cb) => {
+  const allowedImageTypes = ["image/jpeg", "image/jpg", "image/png"];
 
-const fileFilter = (req, file, cb) => {
-  const allowedTypes = ["image/jpeg", "image/png", "application/pdf"];
-
-  if (allowedTypes.includes(file.mimetype)) {
+  if (allowedImageTypes.includes(file.mimetype)) {
     cb(null, true);
   } else {
     cb(
-      new Error("Invalid file type. Only JPEG, PNG and PDF files are allowed."),
+      new Error(
+        "Invalid file type. Only JPEG, JPG and PNG files are allowed for images."
+      ),
       false
     );
   }
 };
 
-// Configure upload middleware
+// File filter for documents
+const documentFileFilter = (req, file, cb) => {
+  const allowedTypes = [
+    "image/jpeg",
+    "image/png",
+    "image/jpg",
+    "application/pdf",
+  ];
 
-const upload = multer({
+  if (allowedTypes.includes(file.mimetype)) {
+    cb(null, true);
+  } else {
+    cb(
+      new Error(
+        "Invalid file type. Only JPEG, JPG, PNG and PDF files are allowed for documents."
+      ),
+      false
+    );
+  }
+};
+
+// Configure separate upload middlewares for images and documents
+const uploadImages = multer({
   storage: storage,
-
-  fileFilter: fileFilter,
-
+  fileFilter: imageFileFilter,
   limits: {
     fileSize: 5 * 1024 * 1024, // 5MB limit
   },
 });
 
-module.exports = upload;
+const uploadDocuments = multer({
+  storage: storage,
+  fileFilter: documentFileFilter,
+  limits: {
+    fileSize: 5 * 1024 * 1024, // 5MB limit
+  },
+});
+
+module.exports = {
+  uploadImages,
+  uploadDocuments,
+};

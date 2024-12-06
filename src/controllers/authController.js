@@ -88,7 +88,7 @@ const register = async (req, res) => {
           governmentIdCard: req.files.governmentIdCard[0].path,
           userPhoto: req.files.userPhoto[0].path,
         });
-        
+
         await newUser.save();
         return res
           .status(201)
@@ -151,6 +151,7 @@ const login = async (req, res) => {
     if (!user) {
       user = await User.findOne({ username });
     }
+    console.log(user);
 
     // If user is still not found, return an error
     if (!user) {

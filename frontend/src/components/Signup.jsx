@@ -56,6 +56,15 @@ const Signup = () => {
 
   const navigate = useNavigate();
   // https://www.blackbox.ai/chat/mcKwvAl
+  const validateImageFile = (file) => {
+    const allowedTypes = ["image/jpeg", "image/jpg", "image/png"];
+
+    if (!allowedTypes.includes(file.type)) {
+      return false;
+    }
+
+    return true;
+  };
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -158,9 +167,19 @@ const Signup = () => {
 
   const handleFileChange = (e) => {
     const { name, files } = e.target;
+    const file = files[0];
+    if (name === "userPhoto" || name === "trust_logo") {
+      if (!validateImageFile(file)) {
+        alert(`${name} must be in JPEG, JPG, or PNG format`);
+
+        e.target.value = ""; // Clear the file input
+
+        return;
+      }
+    }
     setFormData((prev) => ({
       ...prev,
-      [name]: files[0],
+      [name]: file,
     }));
   };
 
@@ -511,6 +530,7 @@ const Signup = () => {
                   type="file"
                   id="userPhoto"
                   name="userPhoto"
+                  accept="image/jpeg,image/jpg,image/png"
                   onChange={handleFileChange}
                   required
                   className="p-2 rounded-xl border border-gray-300 focus:outline-none"
@@ -749,6 +769,7 @@ const Signup = () => {
                   type="file"
                   id="trust_logo"
                   name="trust_logo"
+                  accept="image/jpeg,image/jpg,image/png"
                   onChange={handleFileChange}
                   required
                   className="p-2 rounded-xl border border-gray-300 focus:outline-none"
