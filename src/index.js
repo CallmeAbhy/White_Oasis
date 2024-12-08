@@ -5,14 +5,20 @@ const dbConnect = require("./config/dbConnect");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const adminRoutes = require("./routes/adminRoutes");
+const fileRoutes = require("./routes/fileRoutes");
 const cors = require("cors");
 const passwordResetRoutes = require("./routes/passwordResetRoutes");
+const { initGridFS } = require("./config/gridfsConfig");
 dbConnect();
 const app = express();
 // Middleware
 app.use(express.json());
 app.use(cors());
+initGridFS(
+  "mongodb+srv://white:wash@cluster0.4hmjb.mongodb.net/White_Orchid?retryWrites=true&w=majority&appName=Cluster0"
+);
 //  Routes
+app.use("/api/files", fileRoutes);
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/admin", adminRoutes);

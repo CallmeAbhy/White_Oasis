@@ -85,10 +85,10 @@ const register = async (req, res) => {
           city: userCity,
           country: userCountry,
           state: userState,
-          governmentIdCard: req.files.governmentIdCard[0].path,
-          userPhoto: req.files.userPhoto[0].path,
+          governmentIdCard: req.files.governmentIdCard[0].filename,
+          userPhoto: req.files.userPhoto[0].filename,
         });
-        
+
         await newUser.save();
         return res
           .status(201)
@@ -116,10 +116,10 @@ const register = async (req, res) => {
           head_office_city: managerCity,
           head_office_country: managerCountry,
           head_office_state: managerState,
-          trust_document: req.files.trust_document[0].path,
-          financial_statements: req.files.financial_statements[0].path,
-          trust_domicile: req.files.trust_domicile[0].path,
-          trust_logo: req.files.trust_logo[0].path,
+          trust_document: req.files.trust_document[0].filename,
+          financial_statements: req.files.financial_statements[0].filename,
+          trust_domicile: req.files.trust_domicile[0].filename,
+          trust_logo: req.files.trust_logo[0].filename,
           name_of_trust,
         });
         await newPendingManager.save();
