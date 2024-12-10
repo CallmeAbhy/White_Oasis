@@ -13,6 +13,7 @@ const App = () => {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/login" element={<Login />} />{" "}
+        <Route path="/home/:id" element={<Home />} />
         {/* Define the login route */}
         <Route path="/signup" element={<Signup />} />{" "}
         {/* You can also define a separate signup route if needed */}

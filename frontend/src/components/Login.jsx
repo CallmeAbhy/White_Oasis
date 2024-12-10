@@ -2,7 +2,6 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { useAuth } from "../context/AuthContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons"; // Import the eye and eye-slash icons
 
@@ -11,7 +10,6 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
-  const { setUser } = useAuth();
   const handleRegister = () => {
     navigate("/signup");
   };
@@ -22,10 +20,12 @@ const Login = () => {
         "http://localhost:7001/api/auth/login",
         { username, password }
       );
-      const { token, role, profile } = response.data;
-      setUser({ token, role, profile });
+      const { token, profile } = response.data;
+      const { _id } = profile;
+      console.log(`The ID of ${profile.role} is ${_id}`);
       localStorage.setItem("token", token);
-      navigate("/", { state: { profile } });
+      // navigate("/", { state: { profile } });
+      navigate(`/home/${_id}`);
     } catch (error) {
       alert("Login failed: " + error.response.data.message);
     }
