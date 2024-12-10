@@ -3,10 +3,6 @@ import {
   Disclosure,
   DisclosureButton,
   DisclosurePanel,
-  Menu,
-  MenuButton,
-  MenuItem,
-  MenuItems,
 } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useState, useEffect } from "react";
@@ -25,11 +21,15 @@ function classNames(...classes) {
 
 const Navbar = ({ profile }) => {
   const [pendingCount, setPendingCount] = useState(0);
-
+  const [showProfileCard, setShowProfileCard] = useState(false); // Toggle profile card
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const handleRoute = () => {
     navigate("/dashboard", { state: { profile } });
+  };
+  const handleLogout = () => {
+    localStorage.removeItem("token"); // Clear token
+    navigate("/login"); // Redirect to login
   };
 
   useEffect(() => {
@@ -68,6 +68,16 @@ const Navbar = ({ profile }) => {
         return null;
     }
   };
+  const color =
+    profile && profile.role
+      ? profile.role === "admin"
+        ? "red-700"
+        : profile.role === "user"
+        ? "green-700"
+        : profile.role === "manager"
+        ? "yellow-700"
+        : ""
+      : "";
 
   return (
     <>
@@ -136,52 +146,65 @@ const Navbar = ({ profile }) => {
 
               {/* Profile dropdown */}
               {profile && Object.keys(profile).length > 0 ? (
-                <Menu as="div" className="relative ml-3">
-                  <div>
-                    <MenuButton className="relative flex rounded-full bg-gray-800 text-sm focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800">
-                      <span className="absolute -inset-1.5" />
-                      <span className="sr-only">Open user menu</span>
-                      <img
-                        alt=""
-                        src={getProfileImage()}
-                        className="size-8 rounded-full"
-                        onError={(e) => {
-                          e.target.src =
-                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRie6cb68TecGvf-EMmE-UocOT1soxDR6abNA&s";
-                        }}
-                      />
-                    </MenuButton>
-                  </div>
-                  <MenuItems
-                    transition
-                    className="absolute right-0 z-10 mt-2 w-48 origin-top-right rounded-md bg-white py-1 shadow-lg ring-1 ring-black/5 transition focus:outline-none data-[closed]:scale-95 data-[closed]:transform data-[closed]:opacity-0 data-[enter]:duration-100 data-[leave]:duration-75 data-[enter]:ease-out data-[leave]:ease-in"
-                  >
-                    <MenuItem>
-                      <a
-                        href="#"
-                        className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
-                      >
-                        Your Profile
-                      </a>
-                    </MenuItem>
-                    <MenuItem>
-                      <a
-                        href="#"
-                        className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
-                      >
-                        Settings
-                      </a>
-                    </MenuItem>
-                    <MenuItem>
-                      <a
-                        href="#"
-                        className="block px-4 py-2 text-sm text-gray-700 data-[focus]:bg-gray-100 data-[focus]:outline-none"
-                      >
-                        Sign out
-                      </a>
-                    </MenuItem>
-                  </MenuItems>
-                </Menu>
+                <div className="relative">
+                  <img
+                    alt=""
+                    src={getProfileImage()}
+                    className="size-8 rounded-full cursor-pointer"
+                    onClick={() => setShowProfileCard(!showProfileCard)}
+                    onError={(e) => {
+                      e.target.src =
+                        "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRie6cb68TecGvf-EMmE-UocOT1soxDR6abNA&s";
+                    }}
+                  />
+                  {showProfileCard && (
+                    <div className="absolute right-0 mt-2 w-80 max-w-sm rounded-lg border bg-white px-4 pt-8 pb-10 shadow-lg z-50">
+                      <div className="relative mx-auto w-24 h-24 rounded-full mb-4">
+                        <img
+                          src={getProfileImage()}
+                          alt="Logo"
+                          className="h-full w-full rounded-full border"
+                        />
+                        <span
+                          className={`absolute bottom-1 right-1 h-3 w-3 rounded-full bg-${color} ring-2 ring-white`}
+                        ></span>
+                      </div>
+                      <h1 className="text-center text-xl font-bold leading-8 text-gray-900">
+                        {profile.username}
+                      </h1>
+                      <h3 className="text-center text-sm leading-6 text-gray-600">
+                        {profile.email}
+                      </h3>
+                      <p className="text-center text-sm leading-6 text-gray-500">
+                        Phone: {profile.phone}
+                      </p>
+                      <ul className="mt-4 divide-y rounded bg-gray-100 py-2 px-3 text-gray-600 shadow-sm hover:text-gray-700 hover:shadow">
+                        <li className="flex items-center justify-between py-3 text-sm">
+                          <span>Status</span>
+                          <span
+                            className={`rounded-full bg-${color} py-1 px-2 text-xs font-medium text-gray-100`}
+                          >
+                            {profile.role}
+                          </span>
+                        </li>
+                        <li className="flex items-center justify-between py-3 text-sm">
+                          <span>Joined On</span>
+                          <span>
+                            {new Date(profile.createdAt).toLocaleDateString()}
+                          </span>
+                        </li>
+                        <li className="flex items-center justify-between py-3 text-sm">
+                          <button
+                            className="text-red-600 hover:underline"
+                            onClick={handleLogout}
+                          >
+                            Log Out
+                          </button>
+                        </li>
+                      </ul>
+                    </div>
+                  )}
+                </div>
               ) : (
                 <a
                   href="/login"
