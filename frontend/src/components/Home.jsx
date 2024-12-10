@@ -8,8 +8,12 @@ import {
   MenuItems,
 } from "@headlessui/react";
 import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
-import { useLocation } from "react-router-dom";
 
+import { useState, useEffect } from "react";
+
+import { useParams, useNavigate } from "react-router-dom";
+
+import axios from "axios";
 const navigation = [
   { name: "Home", href: "/home", current: true },
   { name: "About us", href: "#", current: false },
@@ -21,9 +25,82 @@ function classNames(...classes) {
 }
 
 const Home = () => {
-  const location = useLocation();
-  const profile = location.state?.profile || {};
+  const [profile, setProfile] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [pendingCount, setPendingCount] = useState(0);
+  const { id } = useParams();
+  const navigate = useNavigate();
+  const token = localStorage.getItem("token");
+  // const location = useLocation();
+  // const profile = location.state?.profile || {};
+  useEffect(() => {
+    const fetchProfile = async () => {
+      if (id && token) {
+        try {
+          const response = await axios.get(
+            `http://localhost:7001/api/users/profile/${id}`,
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          setProfile(response.data);
+        } catch (e) {
+          console.error(`Error Fetching Profile`, e);
+          navigate("/login");
+        } finally {
+          setLoading(false);
+        }
+      } else {
+        // If no ID or token, just set loading to false
+        setLoading(false);
+      }
+    };
+    fetchProfile();
+  }, [id, navigate, token]);
 
+  useEffect(() => {
+    const fetchPendingCount = async () => {
+      if (profile && profile.role === "admin") {
+        try {
+          const response = await fetch(
+            "http://localhost:7001/api/admin/pending-managers",
+            {
+              headers: {
+                Authorization: `Bearer ${token}`,
+              },
+            }
+          );
+          const data = await response.json();
+          setPendingCount(data.length);
+        } catch (e) {
+          console.error("Error Fetching the Pending Managers", e);
+        }
+      }
+    };
+    fetchPendingCount();
+  }, [profile, token]);
+  if (loading) {
+    return <div>Loading...</div>;
+  }
+  const getProfileImage = () => {
+    if (!profile) return null;
+
+    switch (profile.role) {
+      case "user":
+        return `http://localhost:7001/api/files/file/${profile.userPhoto}`; // Construct the URL for user photo
+
+      case "manager":
+        return `http://localhost:7001/api/files/file/${profile.trust_logo}`; // Construct the URL for manager logo
+
+      case "admin":
+        return "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRXvRLjvJ-BNF3VEjaP-c9Q-fentb3KZ-t5qw&s";
+
+      default:
+        return null;
+    }
+  };
   return (
     <>
       <Disclosure as="nav" className="bg-gray-800">
@@ -72,7 +149,7 @@ const Home = () => {
               </div>
             </div>
             <div className="absolute inset-y-0 right-0 flex items-center pr-2 sm:static sm:inset-auto sm:ml-6 sm:pr-0">
-              {profile.role === "admin" && (
+              {profile && profile.role === "admin" && (
                 <button
                   type="button"
                   className="relative rounded-full bg-gray-800 p-1 text-gray-400 hover:text-white focus:outline-none focus:ring-2 focus:ring-white focus:ring-offset-2 focus:ring-offset-gray-800"
@@ -80,6 +157,11 @@ const Home = () => {
                   <span className="absolute -inset-1.5" />
                   <span className="sr-only">View notifications</span>
                   <BellIcon aria-hidden="true" className="size-6" />
+                  {pendingCount > 0 && (
+                    <span className="absolute -top-2 -right-2 inline-flex items-center justify-center size-5 rounded-full bg-red-600 text-xs font-bold text-white">
+                      {pendingCount}
+                    </span>
+                  )}
                 </button>
               )}
 
@@ -92,8 +174,12 @@ const Home = () => {
                       <span className="sr-only">Open user menu</span>
                       <img
                         alt=""
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+                        src={getProfileImage()}
                         className="size-8 rounded-full"
+                        onError={(e) => {
+                          e.target.src =
+                            "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRie6cb68TecGvf-EMmE-UocOT1soxDR6abNA&s";
+                        }}
                       />
                     </MenuButton>
                   </div>
