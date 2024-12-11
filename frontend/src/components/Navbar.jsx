@@ -8,6 +8,7 @@ import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
+import { navigateToDashboard, navigateToLogin } from "../utils/navigationUtils";
 
 const navigation = [
   { name: "Home", href: "/home", current: true },
@@ -25,11 +26,13 @@ const Navbar = ({ profile }) => {
   const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const handleRoute = () => {
-    navigate("/dashboard", { state: { profile } });
+    // navigate("/dashboard", { state: { profile } });
+    navigateToDashboard(navigate, profile);
   };
   const handleLogout = () => {
     localStorage.removeItem("token"); // Clear token
-    navigate("/login"); // Redirect to login
+    // navigate("/login"); // Redirect to login
+    navigateToLogin(navigate);
   };
 
   useEffect(() => {
