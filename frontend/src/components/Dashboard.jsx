@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import Navbar from "./Navbar";
 import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-
+import { navigateToUserDetail } from "../utils/navigationUtils";
 const Dashboard = () => {
   const [message, setMessage] = useState("");
   const [applicants, setApplicants] = useState([]);
@@ -76,13 +76,13 @@ const Dashboard = () => {
                 <p className="text-sm text-gray-600">
                   Phone: {applicant.phone}
                 </p>
-
+                {/* navigate(`/user-detail`, {
+                      state: { user: applicant, profile },
+                    }) */}
                 {/* View Button */}
                 <button
                   onClick={() =>
-                    navigate(`/user-detail`, {
-                      state: { user: applicant, profile },
-                    })
+                    navigateToUserDetail(navigate, applicant, profile)
                   }
                   className="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded text-sm"
                 >

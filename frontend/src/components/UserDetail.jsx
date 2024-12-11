@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
+import { navigateToDashboard } from "../utils/navigationUtils";
 
 const UserDetail = () => {
   const location = useLocation();
@@ -26,7 +27,8 @@ const UserDetail = () => {
       console.log("The id is ", user._id);
       if (response.ok) {
         alert("User Approved Successfully!");
-        navigate("/dashboard", { state: { profile } });
+        // navigate("/dashboard", { state: { profile } });
+        navigateToDashboard(navigate, profile);
       } else {
         throw new Error("Approval failed!");
       }
@@ -56,7 +58,8 @@ const UserDetail = () => {
       );
       if (response.ok) {
         alert("User Rejected Successfully!");
-        navigate("/dashboard", { state: { profile } });
+        // navigate("/dashboard", { state: { profile } });
+        navigateToDashboard(navigate, profile);
       } else {
         const errorData = await response.json();
         console.error("Rejection failed:", errorData);

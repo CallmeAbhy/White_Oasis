@@ -4,6 +4,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons"; // Import the eye and eye-slash icons
+import { navigateToHome } from "../utils/navigationUtils";
 
 const Login = () => {
   const [username, setUsername] = useState("");
@@ -25,7 +26,8 @@ const Login = () => {
       console.log(`The ID of ${profile.role} is ${_id}`);
       localStorage.setItem("token", token);
       // navigate("/", { state: { profile } });
-      navigate(`/home/${_id}`);
+      // navigate(`/home/${_id}`);
+      navigateToHome(navigate, _id);
     } catch (error) {
       alert("Login failed: " + error.response.data.message);
     }
