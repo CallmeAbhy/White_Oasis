@@ -174,9 +174,9 @@ const login = async (req, res) => {
       process.env.JWT_SECRET,
       { expiresIn: "1h" }
     );
-    const userObject = user.toObject();
-    const { password: userPassword, ...profileWithoutPassword } = userObject;
-    res.status(200).json({ token, profile: profileWithoutPassword });
+    // const userObject = user.toObject();
+    // const { password: userPassword, ...profileWithoutPassword } = userObject;
+    res.status(200).json({ token });
   } catch (error) {
     res.status(500).json({ message: `Something went wrong: ${error.message}` });
   }

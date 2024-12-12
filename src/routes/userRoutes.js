@@ -4,17 +4,17 @@ const authorizedRoles = require("../middlewares/roleMiddleware");
 const { Admin, User, Manager } = require("../models/userModel");
 const router = express.Router();
 
-router.get("/profile/:id", verifyToken, async (req, res) => {
+router.get("/profile", verifyToken, async (req, res) => {
   try {
-    const { id } = req.params;
+    const userId = req.user.id;
     // Try to find the user in each collection
-    let profile = await Admin.findById(id);
+    let profile = await Admin.findById(userId);
 
     if (!profile) {
-      profile = await User.findById(id);
+      profile = await User.findById(userId);
     }
     if (!profile) {
-      profile = await Manager.findById(id);
+      profile = await Manager.findById(userId);
     }
     if (!profile) {
       return res.status(404).json({ message: "Profile not found" });

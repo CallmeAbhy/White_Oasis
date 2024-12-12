@@ -6,6 +6,7 @@ const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 const adminRoutes = require("./routes/adminRoutes");
 const fileRoutes = require("./routes/fileRoutes");
+const oldAgeHomeRoutes = require("./routes/oldAgeHomeRoutes");
 const cors = require("cors");
 const passwordResetRoutes = require("./routes/passwordResetRoutes");
 const { initGridFS } = require("./config/gridfsConfig");
@@ -23,6 +24,7 @@ app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/password-reset", passwordResetRoutes);
+app.use("/api/old-age-homes", oldAgeHomeRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 // Starts the Server
 const PORT = process.env.PORT || 7002;
