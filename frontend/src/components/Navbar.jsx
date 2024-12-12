@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom";
 import { navigateToDashboard, navigateToLogin } from "../utils/navigationUtils";
 
 const navigation = [
-  { name: "Home", href: "/home", current: true },
+  { name: "Home", href: "/", current: true },
   { name: "About us", href: "#", current: false },
   { name: "Near Me", href: "#", current: false },
 ];

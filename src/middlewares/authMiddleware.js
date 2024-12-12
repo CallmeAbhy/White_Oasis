@@ -1,5 +1,12 @@
 const jwt = require("jsonwebtoken");
 
+// Then, when any authenticated request is made, the verifyToken middleware (from authMiddleware.js) verifies the token and attaches the decoded user information to the request object. The decoded information includes the id and role that were originally signed into the token.
+
+// This means that in any route that uses the verifyToken middleware (like your rating endpoint), you will have access to:
+
+// req.user.id (the user's ID)
+// req.user.role (the user's role)
+
 const verifyToken = (req, res, next) => {
   let token;
   let authHeader = req.headers.Authorization || req.headers.authorization;

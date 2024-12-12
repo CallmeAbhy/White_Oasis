@@ -1,22 +1,22 @@
 import { useState, useEffect } from "react";
 
-import { useParams, useNavigate } from "react-router-dom";
-
+import { useNavigate } from "react-router-dom";
+//useParams
 import axios from "axios";
 import Navbar from "./Navbar";
 
 const Home = () => {
   const [profile, setProfile] = useState(null);
   const [loading, setLoading] = useState(true);
-  const { id } = useParams();
+  // const { id } = useParams();
   const navigate = useNavigate();
   const token = localStorage.getItem("token");
   useEffect(() => {
     const fetchProfile = async () => {
-      if (id && token) {
+      if (token) {
         try {
           const response = await axios.get(
-            `http://localhost:7001/api/users/profile/${id}`,
+            `http://localhost:7001/api/users/profile`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -36,7 +36,7 @@ const Home = () => {
       }
     };
     fetchProfile();
-  }, [id, navigate, token]);
+  }, [navigate, token]);
 
   if (loading) {
     return <div>Loading...</div>;
