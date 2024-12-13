@@ -1,15 +1,16 @@
 import { useEffect, useState } from "react";
 import Navbar from "./Navbar";
-import { useLocation } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 import { navigateToUserDetail } from "../utils/navigationUtils";
+import { useToken } from "../context/TokenContext";
+import { useProfile } from "../context/ProfileContext";
+
 const Dashboard = () => {
   const [message, setMessage] = useState("");
   const [applicants, setApplicants] = useState([]);
-  const token = localStorage.getItem("token");
-  const location = useLocation();
+  const { token } = useToken();
   const navigate = useNavigate();
-  const profile = location.state?.profile;
+  const profile = useProfile();
 
   useEffect(() => {
     if (!profile || profile.role !== "admin" || !token) {
@@ -42,7 +43,7 @@ const Dashboard = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Navbar profile={profile} />
+      <Navbar />
       <div className="container mx-auto px-4 py-6">
         <h2 className="text-2xl font-semibold text-gray-800 mb-4">Dashboard</h2>
         {message && <p className="text-red-500">{message}</p>}
@@ -81,9 +82,7 @@ const Dashboard = () => {
                     }) */}
                 {/* View Button */}
                 <button
-                  onClick={() =>
-                    navigateToUserDetail(navigate, applicant, profile)
-                  }
+                  onClick={() => navigateToUserDetail(navigate, applicant)}
                   className="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-1 px-3 rounded text-sm"
                 >
                   View

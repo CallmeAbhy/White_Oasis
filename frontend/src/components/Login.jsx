@@ -5,8 +5,10 @@ import { useNavigate } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons"; // Import the eye and eye-slash icons
 // import { navigateToHome } from "../utils/navigationUtils";
+import { useToken } from "../context/TokenContext";
 
 const Login = () => {
+  const { updateToken } = useToken();
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
@@ -24,8 +26,9 @@ const Login = () => {
       const { token } = response.data;
       // const { _id } = profile;
       // console.log(`The ID of ${profile.role} is ${_id}`);
-      localStorage.setItem("token", token);
+      // localStorage.setItem("token", token);
       // navigate("/", { state: { profile } });
+      updateToken(token);
       navigate(`/`);
       // navigateToHome(navigate, _id);
     } catch (error) {

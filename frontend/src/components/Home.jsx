@@ -1,16 +1,16 @@
-import { useState, useEffect } from "react";
-
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-//useParams
 import axios from "axios";
 import Navbar from "./Navbar";
+import { useProfile } from "../context/ProfileContext";
+import { useToken } from "../context/TokenContext";
 
 const Home = () => {
-  const [profile, setProfile] = useState(null);
+  const { setProfile } = useProfile();
   const [loading, setLoading] = useState(true);
-  // const { id } = useParams();
   const navigate = useNavigate();
-  const token = localStorage.getItem("token");
+  const { token } = useToken();
+
   useEffect(() => {
     const fetchProfile = async () => {
       if (token) {
@@ -24,19 +24,19 @@ const Home = () => {
             }
           );
           setProfile(response.data);
-        } catch (e) {
-          console.error(`Error Fetching Profile`, e);
+        } catch (error) {
+          console.error("Error fetching profile:", error);
           navigate("/login");
         } finally {
           setLoading(false);
         }
       } else {
-        // If no ID or token, just set loading to false
         setLoading(false);
       }
     };
+
     fetchProfile();
-  }, [navigate, token]);
+  }, [navigate, setProfile, token]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -44,7 +44,8 @@ const Home = () => {
 
   return (
     <>
-      <Navbar profile={profile} />
+      <Navbar />
+      {/* Add your home page content here */}
     </>
   );
 };

@@ -9,6 +9,8 @@ import { useState, useEffect } from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { navigateToDashboard, navigateToLogin } from "../utils/navigationUtils";
+import { useProfile } from "../context/ProfileContext";
+import { useToken } from "../context/TokenContext";
 
 const navigation = [
   { name: "Home", href: "/", current: true },
@@ -20,21 +22,21 @@ function classNames(...classes) {
   return classes.filter(Boolean).join(" ");
 }
 
-const Navbar = ({ profile }) => {
+const Navbar = () => {
+  const { profile, setProfile } = useProfile();
+  const { token, updateToken } = useToken();
   const [pendingCount, setPendingCount] = useState(0);
   const [showProfileCard, setShowProfileCard] = useState(false); // Toggle profile card
-  const token = localStorage.getItem("token");
   const navigate = useNavigate();
   const handleRoute = () => {
     // navigate("/dashboard", { state: { profile } });
-    navigateToDashboard(navigate, profile);
+    navigateToDashboard(navigate);
   };
   const handleLogout = () => {
-    localStorage.removeItem("token"); // Clear token
-    // navigate("/login"); // Redirect to login
-    navigateToLogin(navigate);
+    updateToken(null);
+    setProfile(null);
+    navigateToLogin();
   };
-
   useEffect(() => {
     const fetchPendingCount = async () => {
       if (profile && profile.role === "admin") {

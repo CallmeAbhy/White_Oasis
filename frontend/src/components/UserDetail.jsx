@@ -1,13 +1,13 @@
 import { useState } from "react";
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Navbar from "./Navbar";
 import { navigateToDashboard } from "../utils/navigationUtils";
+import { useToken } from "../context/TokenContext";
 
 const UserDetail = () => {
-  const location = useLocation();
   const navigate = useNavigate();
-  const user = location.state?.user; // Passed from the "View" button click
-  const profile = location.state?.profile; // Passed for Navbar
+  const user = location.state?.user;
+  const { token } = useToken(); // Passed from the "View" button click
   const [feedback, setFeedback] = useState("");
   const [showFeedbackInput, setShowFeedbackInput] = useState(false); // Toggle for feedback
   const [error, setError] = useState("");
@@ -19,7 +19,7 @@ const UserDetail = () => {
         {
           method: "POST",
           headers: {
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ feedback: "You are now a member" }),
         }
@@ -28,7 +28,7 @@ const UserDetail = () => {
       if (response.ok) {
         alert("User Approved Successfully!");
         // navigate("/dashboard", { state: { profile } });
-        navigateToDashboard(navigate, profile);
+        navigateToDashboard(navigate);
       } else {
         throw new Error("Approval failed!");
       }
@@ -51,7 +51,7 @@ const UserDetail = () => {
           method: "POST",
           headers: {
             "Content-Type": "application/json", // Ensure Content-Type is JSON
-            Authorization: `Bearer ${localStorage.getItem("token")}`,
+            Authorization: `Bearer ${token}`,
           },
           body: JSON.stringify({ feedback }), // Stringify the feedback object
         }
@@ -59,7 +59,7 @@ const UserDetail = () => {
       if (response.ok) {
         alert("User Rejected Successfully!");
         // navigate("/dashboard", { state: { profile } });
-        navigateToDashboard(navigate, profile);
+        navigateToDashboard(navigate);
       } else {
         const errorData = await response.json();
         console.error("Rejection failed:", errorData);
@@ -81,7 +81,7 @@ const UserDetail = () => {
 
   return (
     <div className="min-h-screen bg-gray-100">
-      <Navbar profile={profile} />
+      <Navbar />
       <div className="container mx-auto px-4 py-6">
         <h2 className="text-2xl font-semibold text-gray-800 mb-4">
           User Details
