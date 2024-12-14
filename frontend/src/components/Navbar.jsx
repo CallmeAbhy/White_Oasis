@@ -30,7 +30,8 @@ const Navbar = () => {
   const navigate = useNavigate();
   const handleRoute = () => {
     // navigate("/dashboard", { state: { profile } });
-    navigateToDashboard(navigate);
+    // navigateToDashboard(navigate);
+    navigate("/dashboard");
   };
   const handleLogout = () => {
     updateToken(null);

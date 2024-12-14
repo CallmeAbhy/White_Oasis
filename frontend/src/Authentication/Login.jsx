@@ -2,26 +2,42 @@
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons"; // Import the eye and eye-slash icons
 // import { navigateToHome } from "../utils/navigationUtils";
 import { useToken } from "../context/TokenContext";
+import CommonFields from "./Common/CommonFields";
 
 const Login = () => {
   const { updateToken } = useToken();
-  const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
+  const [formData, setFormData] = useState({
+    username: "",
+    password: "",
+  });
+
   const navigate = useNavigate();
   const handleRegister = () => {
     navigate("/signup");
   };
+  const handleChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      [name]: value,
+    }));
+  };
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
+      const formDataToSend = new FormData();
+      formDataToSend.append("username", formData.username);
+      formDataToSend.append("password", formData.password);
       const response = await axios.post(
         "http://localhost:7001/api/auth/login",
-        { username, password }
+        formDataToSend,
+        {
+          headers: {
+            "Content-Type": "application/json ",
+          },
+        }
       );
       const { token } = response.data;
       // const { _id } = profile;
@@ -55,21 +71,29 @@ const Login = () => {
             className="flex flex-col gap-4"
             onSubmit={handleLogin}
           >
-            <input
+            <CommonFields
+              formData={formData}
+              handleChange={handleChange}
+              usernameClass="mt-8"
+              passwordClass="w-full"
+            />
+            {/* <input
               type="text"
               placeholder="Username"
+              name="username"
               className="p-2 mt-8 rounded-xl border"
-              value={username}
-              onChange={(e) => setUsername(e.target.value)}
+              value={formData.username}
+              onChange={handleChange}
               required
             />
             <div className="relative">
               <input
                 type={showPassword ? "text" : "password"}
                 placeholder="Password"
+                name="password"
                 className="p-2 rounded-xl border w-full"
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
+                value={formData.password}
+                onChange={handleChange}
                 required
               />
               <button
@@ -82,7 +106,7 @@ const Login = () => {
                   className="text-gray-500"
                 />
               </button>
-            </div>
+            </div> */}
             <button
               type="submit"
               className="bg-[#002D74] rounded-xl text-white py-2 hover:scale-105 duration-300"

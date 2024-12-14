@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
-import Navbar from "./Navbar";
+import Navbar from "../../components/Navbar";
 import { useNavigate } from "react-router-dom";
-import { navigateToUserDetail } from "../utils/navigationUtils";
-import { useToken } from "../context/TokenContext";
-import { useProfile } from "../context/ProfileContext";
+import { navigateToUserDetail } from "../../utils/navigationUtils";
+import { useToken } from "../../context/TokenContext";
+import { useProfile } from "../../context/ProfileContext";
 
 const Dashboard = () => {
   const [message, setMessage] = useState("");

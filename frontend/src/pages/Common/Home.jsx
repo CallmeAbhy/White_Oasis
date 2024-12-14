@@ -1,9 +1,9 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import Navbar from "./Navbar";
-import { useProfile } from "../context/ProfileContext";
-import { useToken } from "../context/TokenContext";
+import Navbar from "../../components/Navbar";
+import { useProfile } from "../../context/ProfileContext";
+import { useToken } from "../../context/TokenContext";
 
 const Home = () => {
   const { setProfile } = useProfile();

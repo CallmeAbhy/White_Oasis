@@ -1,8 +1,8 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import Navbar from "./Navbar";
-import { navigateToDashboard } from "../utils/navigationUtils";
-import { useToken } from "../context/TokenContext";
+import Navbar from "../../components/Navbar";
+import { navigateToDashboard } from "../../utils/navigationUtils";
+import { useToken } from "../../context/TokenContext";
 
 const UserDetail = () => {
   const navigate = useNavigate();

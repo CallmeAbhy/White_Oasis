@@ -1,12 +1,12 @@
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./context/AuthContext";
 import { ProfileProvider } from "./context/ProfileContext";
-import Home from "./components/Home";
-import Login from "./components/Login";
-import Signup from "./components/Signup";
-import Dashboard from "./components/Dashboard";
-import ResetPassword from "./components/ResetPassword";
-import UserDetail from "./components/UserDetail";
+import Home from "./pages/Common/Home";
+import Login from "./Authentication/Login";
+import Signup from "./Authentication/Signup";
+import Dashboard from "./pages/Admin/Dashboard";
+import ResetPassword from "./Authentication/ResetPassword";
+import UserDetail from "./pages/Admin/UserDetail";
 import { TokenProvider } from "./context/TokenContext";
 
 const App = () => {
