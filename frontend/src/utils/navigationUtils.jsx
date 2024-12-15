@@ -18,5 +18,6 @@ export const navigateToDashboard = (navigate) => {
 };
 
 export const navigateToUserDetail = (navigate, user) => {
+  console.log("Navigating to user detail with user:", user);
   navigateWithState(navigate, "/user-detail", { user });
 };

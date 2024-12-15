@@ -2,7 +2,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
-import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons"; // Import the eye and eye-slash icons
+import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 const ResetPassword = () => {
@@ -10,7 +10,7 @@ const ResetPassword = () => {
   const [otp, setOtp] = useState("");
   const [newPassword, setNewPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
-  const [step, setStep] = useState(1); // 1: Request OTP, 2: Verify OTP, 3: Reset Password
+  const [step, setStep] = useState(1);
   const navigate = useNavigate();
 
   const requestOtp = async (e) => {
@@ -21,7 +21,7 @@ const ResetPassword = () => {
         { email }
       );
       alert("OTP sent to your email.");
-      setStep(2); // Move to OTP verification step
+      setStep(2);
     } catch (error) {
       alert("Error: " + error.response.data.message);
     }
@@ -35,7 +35,7 @@ const ResetPassword = () => {
         { email, otp }
       );
       alert(response.data.message);
-      setStep(3); // Move to password reset step
+      setStep(3);
     } catch (error) {
       alert("Error: " + error.response.data.message);
     }
@@ -49,172 +49,126 @@ const ResetPassword = () => {
         { email, newPassword }
       );
       alert("Password reset successfully!");
-      // Optionally redirect to login page
       setTimeout(() => {
-        navigate("/login"); // Navigate to the login route
-      }, 2000); // Redirect after 2 seconds
+        navigate("/login");
+      }, 2000);
     } catch (error) {
       alert("Error: " + error.response.data.message);
     }
   };
-  // https://www.blackbox.ai/chat/NMjGoc3
-  // https://www.blackbox.ai/chat/KUZSYec
-  // https://www.blackbox.ai/chat/csemjwq
+
   return (
-    <div className="max-w-4xl mx-auto p-4">
-      <ol className="flex items-center w-full text-sm text-gray-500 font-medium sm:text-base mb-8">
-        <li
-          className={`flex md:w-full items-center ${
-            step >= 1 ? "text-indigo-600" : "text-gray-600"
-          } 
-
-  sm:after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:border-1 
-
-  after:hidden sm:after:inline-block after:mx-4 xl:after:mx-8`}
-        >
-          <div className="flex items-center whitespace-nowrap after:content-['/'] sm:after:hidden after:mx-2">
-            <span
-              className={`w-6 h-6 ${
-                step >= 1 ? "bg-indigo-600 text-white" : "bg-gray-100"
-              } 
-
-      border border-gray-200 rounded-full flex justify-center items-center mr-3 
-
-      text-sm lg:w-10 lg:h-10`}
-            >
-              1
-            </span>
-            Request OTP
-          </div>
-        </li>
-
-        <li
-          className={`flex md:w-full items-center ${
-            step >= 2 ? "text-indigo-600" : "text-gray-600"
-          } 
-
-  sm:after:content-[''] after:w-full after:h-1 after:border-b after:border-gray-200 after:border-1 
-
-  after:hidden sm:after:inline-block after:mx-4 xl:after:mx-8`}
-        >
-          <div className="flex items-center whitespace-nowrap after:content-['/'] sm:after:hidden after:mx-2">
-            <span
-              className={`w-6 h-6 ${
-                step >= 2 ? "bg-indigo-600 text-white" : "bg-gray-100"
-              } 
-
-      border border-gray-200 rounded-full flex justify-center items-center mr-3 
-
-      lg:w-10 lg:h-10`}
-            >
-              2
-            </span>
-            Verify OTP
-          </div>
-        </li>
-
-        <li
-          className={`flex md:w-full items-center ${
-            step >= 3 ? "text-indigo-600" : "text-gray-600"
-          }`}
-        >
-          <div className="flex items-center">
-            <span
-              className={`w-6 h-6 ${
-                step >= 3 ? "bg-indigo-600 text-white" : "bg-gray-100"
-              } 
-
-      border border-gray-200 rounded-full flex justify-center items-center mr-3 
-
-      lg:w-10 lg:h-10`}
-            >
-              3
-            </span>
-            Reset Password
-          </div>
-        </li>
-      </ol>
-      <div className="max-w-md mx-auto">
-        {step === 1 && (
-          <form onSubmit={requestOtp} className="space-y-4">
-            <h2 className="text-2xl font-bold text-center mb-6">
-              Request Password Reset
-            </h2>
-
-            <input
-              type="email"
-              placeholder="Enter your email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-
-            <button
-              type="submit"
-              className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors"
-            >
-              Send OTP
-            </button>
-          </form>
-        )}
-
-        {step === 2 && (
-          <form onSubmit={verifyOtp} className="space-y-4">
-            <h2 className="text-2xl font-bold text-center mb-6">Verify OTP</h2>
-
-            <input
-              type="text"
-              placeholder="Enter OTP"
-              value={otp}
-              onChange={(e) => setOtp(e.target.value)}
-              required
-              className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
-            />
-
-            <button
-              type="submit"
-              className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors"
-            >
-              Verify OTP
-            </button>
-          </form>
-        )}
-
-        {step === 3 && (
-          <form onSubmit={resetPassword} className="space-y-4">
-            <h2 className="text-2xl font-bold text-center mb-6">
-              Reset Password
-            </h2>
-            <div className="relative">
+    <div
+      className="flex items-center justify-center min-h-screen bg-cover bg-center"
+      style={{
+        backgroundImage:
+          "url('https://storage.googleapis.com/a1aa/image/6b1a82a1-b6b6-4003-ae6f-815a0e875b31.jpeg')",
+      }}
+    >
+      <div className="max-w-lg mx-4 p-6 bg-white shadow-lg rounded-lg">
+        <ol className="flex items-center w-full text-sm text-gray-500 font-medium mb-8">
+          {["Request OTP", "Verify OTP", "Reset Password"].map(
+            (label, index) => (
+              <li
+                key={index}
+                className={`flex items-center ${
+                  step > index ? "text-indigo-600" : "text-gray-600"
+                }`}
+              >
+                <span
+                  className={`w-8 h-8 flex items-center justify-center rounded-full border ${
+                    step > index ? "bg-indigo-600 text-white" : "bg-gray-100"
+                  }`}
+                >
+                  {index + 1}
+                </span>
+                <span className="mx-4">{label}</span>
+                {index < 2 && (
+                  <div
+                    className={`flex-grow border-b ${
+                      step > index ? "border-indigo-600" : "border-gray-200"
+                    }`}
+                  ></div>
+                )}
+              </li>
+            )
+          )}
+        </ol>
+        <div className="space-y-6">
+          {step === 1 && (
+            <form onSubmit={requestOtp} className="space-y-4">
+              <h2 className="text-2xl font-bold text-center">
+                Request Password Reset
+              </h2>
               <input
-                type={showPassword ? "text" : "password"}
-                placeholder="Enter new password"
-                value={newPassword}
-                onChange={(e) => setNewPassword(e.target.value)}
+                type="email"
+                placeholder="Enter your email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
                 required
                 className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
               />
               <button
-                type="button"
-                onClick={() => setShowPassword(!showPassword)}
-                className="absolute top-1/2 right-3 -translate-y-1/2"
+                type="submit"
+                className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 transition-colors"
               >
-                <FontAwesomeIcon
-                  icon={showPassword ? faEyeSlash : faEye}
-                  className="text-gray-500"
-                />
+                Send OTP
               </button>
-            </div>
+            </form>
+          )}
 
-            <button
-              type="submit"
-              className="w-full bg-indigo-600 text-white py-2 px-4 rounded-md hover:bg-indigo-700 transition-colors"
-            >
-              Reset Password
-            </button>
-          </form>
-        )}
+          {step === 2 && (
+            <form onSubmit={verifyOtp} className="space-y-4">
+              <h2 className="text-2xl font-bold text-center">Verify OTP</h2>
+              <input
+                type="text"
+                placeholder="Enter OTP"
+                value={otp}
+                onChange={(e) => setOtp(e.target.value)}
+                required
+                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus :ring-2 focus:ring-indigo-500"
+              />
+              <button
+                type="submit"
+                className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 transition-colors"
+              >
+                Verify OTP
+              </button>
+            </form>
+          )}
+
+          {step === 3 && (
+            <form onSubmit={resetPassword} className="space-y-4">
+              <h2 className="text-2xl font-bold text-center">Reset Password</h2>
+              <div className="relative">
+                <input
+                  type={showPassword ? "text" : "password"}
+                  placeholder="Enter new password"
+                  value={newPassword}
+                  onChange={(e) => setNewPassword(e.target.value)}
+                  required
+                  className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute top-1/2 right-3 transform -translate-y-1/2"
+                >
+                  <FontAwesomeIcon
+                    icon={showPassword ? faEyeSlash : faEye}
+                    className="text-gray-500"
+                  />
+                </button>
+              </div>
+              <button
+                type="submit"
+                className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 transition-colors"
+              >
+                Reset Password
+              </button>
+            </form>
+          )}
+        </div>
       </div>
     </div>
   );

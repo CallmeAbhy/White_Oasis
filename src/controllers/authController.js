@@ -88,8 +88,8 @@ const register = async (req, res) => {
           governmentIdCard: req.files.governmentIdCard[0].filename,
           userPhoto: req.files.userPhoto[0].filename,
         });
-
         await newUser.save();
+        await sendConfirmation(email, "", username);
         return res
           .status(201)
           .json({ message: `User Registered with username ${username}` });

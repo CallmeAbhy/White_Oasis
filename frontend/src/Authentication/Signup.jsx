@@ -2,10 +2,10 @@ import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 // import { useAuth } from "../context/AuthContext";
-
 import CommonFields from "./Common/CommonFields";
 import { validateEmail, validatePhone } from "../utils/Vallidator";
-import LocationInput from "./TypeWiseUpload/LocationInput";
+import ManagerForm from "./RoleWiseFields/ManagerForm";
+import UserForm from "./RoleWiseFields/UserForm";
 
 const Signup = () => {
   const [formData, setFormData] = useState({
@@ -164,300 +164,112 @@ const Signup = () => {
     <section
       className="bg-gray-50 min-h-screen flex items-center justify-center"
       style={{
-        backgroundImage: `url('https://storage.googleapis.com/a1aa/image/6b1a82a1-b6b6-4003-ae6f-815a0e875b31.jpeg')`,
+        backgroundImage:
+          "url('https://storage.googleapis.com/a1aa/image/6b1a82a1-b6b6-4003-ae6f-815a0e875b31.jpeg')",
         backgroundSize: "cover",
+        backgroundPosition: "center",
       }}
     >
-      <div className="bg-white rounded-2xl shadow-lg max-w-lg w-full p-6 md:p-10 mx-4 sm:mx-6 lg:mx-8">
+      <div className="bg-white rounded-2xl shadow-lg w-full max-w-lg p-6 sm:p-8 md:p-10 mx-4 sm:mx-6 lg:mx-8">
+        {/* Heading Section */}
         <h2 className="font-bold text-2xl text-[#002D74] text-center">
           Register
         </h2>
-        <p className="text-xs mt-2 text-[#002D74] text-center">
+        <p className="text-sm mt-2 text-[#002D74] text-center">
           If you are not a member, join us
         </p>
-        {errorMessage && <div className="text-red-500">{errorMessage}</div>}
-        <form className="flex flex-col gap-4" onSubmit={handleSubmit}>
+
+        {/* Error Message */}
+        {errorMessage && (
+          <div className="text-red-500 text-center mt-2">{errorMessage}</div>
+        )}
+
+        {/* Form Section */}
+        <form className="flex flex-col gap-4 mt-4" onSubmit={handleSubmit}>
+          {/* Common Fields */}
           <CommonFields
             formData={formData}
             handleChange={handleChange}
-            usernameClass="mt-4 border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#002D74]"
-            passwordClass="border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-[#002D74]"
+            usernameClass="border border-gray-300 p-2 rounded-xl focus:outline-none focus:ring-2 focus:ring-[#002D74]"
+            passwordClass="border border-gray-300 p-2 rounded-xl w-full focus:outline-none focus:ring-2 focus:ring-[#002D74]"
           />
+
+          {/* Email Input */}
           <input
             type="email"
             name="email"
             placeholder="Email"
             value={formData.email}
             onChange={handleChange}
-            className="p-2 mt-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#002D74]"
+            className="p-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#002D74]"
+            required
           />
+
+          {/* Phone Input */}
           <input
             type="tel"
-            placeholder="Phone"
             name="phone"
+            placeholder="Phone"
             value={formData.phone}
             onChange={handleChange}
+            className="p-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#002D74]"
             required
-            className="p-2 mt-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#002D74]"
           />
+
+          {/* Role Selection */}
           <select
             name="role"
             value={formData.role}
             onChange={handleChange}
+            className="p-2 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#002D74]"
             required
-            className="p-2 mt-4 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#002D74]"
+            aria-label="Select Role"
           >
             <option value="">Select Role</option>
             <option value="user">User</option>
             <option value="manager">Trust</option>
             <option value="admin">Admin</option>
           </select>
+
+          {/* Conditional Form Rendering */}
           {formData.role === "user" && (
-            <>
-              <LocationInput
-                type="country"
-                name="country"
-                value={formData.country}
-                onChange={(e) => handleLocationChange(e, "user")}
-                codes={locationCodes.user}
-                placeholder="Country"
-                required
-              />
-
-              <LocationInput
-                type="state"
-                name="state"
-                value={formData.state}
-                onChange={(e) => handleLocationChange(e, "user")}
-                codes={locationCodes.user}
-                placeholder="State"
-                required
-              />
-              <LocationInput
-                type="city"
-                name="city"
-                value={formData.city}
-                onChange={(e) => handleLocationChange(e, "user")}
-                codes={locationCodes.user}
-                placeholder="City"
-                required
-              />
-
-              <LocationInput
-                type="address"
-                name="address"
-                value={formData.address}
-                onChange={(e) => handleLocationChange(e, "user")}
-                placeholder="Address"
-                required
-              />
-              <div className="flex flex-col mt-4">
-                <label
-                  className="mb-1 relative group"
-                  htmlFor="governmentIdCard"
-                >
-                  Government ID Card
-                  <span className="absolute left-1/2 transform -translate-x-1/2 -translate-y-full bg-black text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    Upload Any of Following:
-                    <br />
-                    1) Aadhar Card
-                    <br />
-                    2) Pan Card
-                    <br />
-                    3) Election Card
-                  </span>
-                </label>
-                <input
-                  type="file"
-                  id="governmentIdCard"
-                  name="governmentIdCard"
-                  onChange={handleFileChange}
-                  required
-                  className="p-2 rounded-xl border border-gray-300 focus:outline-none"
-                />
-              </div>
-              <div className="flex flex-col mt-4">
-                <label className="mb-1 relative group" htmlFor="userPhoto">
-                  User Photo
-                  <span className="absolute left-1/2 transform -translate-x-1/2 -translate-y-full bg-black text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    Must be in one of the following formats [Limit 5MB]:
-                    <br />
-                    1) JPEG
-                    <br />
-                    2) JPG
-                    <br />
-                    3) PNG
-                  </span>
-                </label>
-                <input
-                  type="file"
-                  id="userPhoto"
-                  name="userPhoto"
-                  onChange={handleFileChange}
-                  required
-                  className="p-2 rounded-xl border border-gray-300 focus:outline-none"
-                />
-              </div>
-            </>
+            <UserForm
+              formData={formData}
+              handleLocationChange={handleLocationChange}
+              handleFileChange={handleFileChange}
+              locationCodes={locationCodes}
+            />
           )}
 
           {formData.role === "manager" && (
-            <>
-              <input
-                type="text"
-                name="name_of_trust"
-                placeholder="Trust Name"
-                value={formData.name_of_trust}
-                onChange={handleChange}
-                required
-                className="p-2 mt-1 rounded-xl border border-gray-300 focus:outline-none focus:ring-2 focus:ring-[#002D74]"
-              />
-              <LocationInput
-                type="country"
-                name="head_office_country"
-                value={formData.head_office_country}
-                onChange={(e) => handleLocationChange(e, "manager")}
-                codes={locationCodes.manager}
-                placeholder="Head Office Country"
-                required
-              />
-
-              <LocationInput
-                type="state"
-                name="head_office_state"
-                value={formData.head_office_state}
-                onChange={(e) => handleLocationChange(e, "manager")}
-                codes={locationCodes.manager}
-                placeholder="Head Office State"
-                required
-              />
-
-              <LocationInput
-                type="city"
-                name="head_office_city"
-                value={formData.head_office_city}
-                onChange={(e) => handleLocationChange(e, "manager")}
-                codes={locationCodes.manager}
-                placeholder="Head Office City"
-                required
-              />
-
-              <LocationInput
-                type="address"
-                name="head_office_address"
-                value={formData.head_office_address}
-                onChange={(e) => handleLocationChange(e, "manager")}
-                placeholder="Head Office Address"
-                required
-              />
-
-              <div className="flex flex-col mt-4">
-                <label className="mb-1 relative group" htmlFor="trust_document">
-                  Trust Document
-                  <span className="absolute left-1/2 transform -translate-x-1/2 -translate-y-full bg-black text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    Must be in one of the following formats [Limit 5MB]:
-                    <br />
-                    1) Trust Deed
-                    <br />
-                    2) Certification of Trust
-                    <br />
-                    3) PAN Card of Trust
-                  </span>
-                </label>
-                <input
-                  type="file"
-                  id="trust_document"
-                  name="trust_document"
-                  onChange={handleFileChange}
-                  required
-                  className="p-2 rounded-xl border border-gray-300 focus:outline-none"
-                />
-              </div>
-              <div className="flex flex-col mt-4">
-                <label
-                  className="mb-1 relative group"
-                  htmlFor="financial_statements"
-                >
-                  Financial Statements
-                  <span className="absolute left-1/2 transform -translate-x-1/2 -translate-y-full bg-black text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    Must be in one of the following formats [Limit 5MB]:
-                    <br />
-                    1) ITR Return
-                    <br />
-                    2) Annual Report
-                    <br />
-                  </span>
-                </label>
-                <input
-                  type="file"
-                  id="financial_statements"
-                  name="financial_statements"
-                  onChange={handleFileChange}
-                  required
-                  className="p-2 rounded-xl border border-gray-300 focus:outline-none"
-                />
-              </div>
-              <div className="flex flex-col mt-4">
-                <label className="mb-1 relative group" htmlFor="trust_domicile">
-                  Trust Domicile
-                  <span className="absolute left-1/2 transform -translate-x-1/2 -translate-y-full bg-black text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    Must be in one of the following formats [Limit 5MB]:
-                    <br />
-                    1) State Registration Document
-                    <br />
-                    2) Property Deeds
-                    <br />
-                  </span>
-                </label>
-                <input
-                  type="file"
-                  id="trust_domicile"
-                  name="trust_domicile"
-                  onChange={handleFileChange}
-                  required
-                  className="p-2 rounded-xl border border-gray-300 focus:outline-none"
-                />
-              </div>
-              <div className="flex flex-col mt-4">
-                <label className="mb-1 relative group" htmlFor="trust_logo">
-                  Trust Logo
-                  <span className="absolute left-1/2 transform -translate-x-1/2 -translate-y-full bg-black text-white text-xs rounded py-1 px-2 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-                    Must be in one of the following formats [Limit 5MB]:
-                    <br />
-                    1) JPEG
-                    <br />
-                    2) JPG
-                    <br />
-                    3) PNG
-                  </span>
-                </label>
-                <input
-                  type="file"
-                  id="trust_logo"
-                  name="trust_logo"
-                  onChange={handleFileChange}
-                  required
-                  className="p-2 rounded-xl border border-gray-300 focus:outline-none"
-                />
-              </div>
-            </>
+            <ManagerForm
+              formData={formData}
+              handleChange={handleChange}
+              handleLocationChange={handleLocationChange}
+              locationCodes={locationCodes}
+              handleFileChange={handleFileChange}
+            />
           )}
 
+          {/* Submit Button */}
           <button
             type="submit"
-            disabled={isSubmitting} // Disable button while submitting
-            className={`bg-[#002D74] rounded-xl text-white py-2 mt-4 hover:scale-105 duration-300 ${
+            disabled={isSubmitting}
+            className={`bg-[#002D74] text-white py-2 rounded-xl hover:scale-105 duration-300 ${
               isSubmitting ? "opacity-50 cursor-not-allowed" : ""
             }`}
+            aria-disabled={isSubmitting}
           >
             {isSubmitting ? "Registering..." : "Register"}
           </button>
         </form>
-        <div className="mt-3 text-xs flex justify-between items-center text-[#002D74]">
+
+        {/* Footer Login Section */}
+        <div className="mt-4 text-sm flex justify-between items-center text-[#002D74]">
           <p>Already have an account?</p>
           <button
-            className="py-2 px-5 bg-white border rounded-xl hover:scale-110 duration-300"
             onClick={handleLogin}
+            className="py-2 px-5 bg-white border rounded-xl hover:scale-105 duration-300"
           >
             Login
           </button>

@@ -1,15 +1,16 @@
 import { useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import { navigateToDashboard } from "../../utils/navigationUtils";
 import { useToken } from "../../context/TokenContext";
 
 const UserDetail = () => {
   const navigate = useNavigate();
+  const location = useLocation();
   const user = location.state?.user;
-  const { token } = useToken(); // Passed from the "View" button click
+  const { token } = useToken();
   const [feedback, setFeedback] = useState("");
-  const [showFeedbackInput, setShowFeedbackInput] = useState(false); // Toggle for feedback
+  const [showFeedbackInput, setShowFeedbackInput] = useState(false);
   const [error, setError] = useState("");
 
   const handleApprove = async () => {
@@ -24,10 +25,8 @@ const UserDetail = () => {
           body: JSON.stringify({ feedback: "You are now a member" }),
         }
       );
-      console.log("The id is ", user._id);
       if (response.ok) {
-        alert("User Approved Successfully!");
-        // navigate("/dashboard", { state: { profile } });
+        alert("User  Approved Successfully!");
         navigateToDashboard(navigate);
       } else {
         throw new Error("Approval failed!");
@@ -44,25 +43,22 @@ const UserDetail = () => {
       return;
     }
     try {
-      const userId = user._id; // Use correct user ID format
       const response = await fetch(
-        `http://localhost:7001/api/admin/reject-manager/${userId}`,
+        `http://localhost:7001/api/admin/reject-manager/${user._id}`,
         {
           method: "POST",
           headers: {
-            "Content-Type": "application/json", // Ensure Content-Type is JSON
+            "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
           },
-          body: JSON.stringify({ feedback }), // Stringify the feedback object
+          body: JSON.stringify({ feedback }),
         }
       );
       if (response.ok) {
-        alert("User Rejected Successfully!");
-        // navigate("/dashboard", { state: { profile } });
+        alert("User  Rejected Successfully!");
         navigateToDashboard(navigate);
       } else {
         const errorData = await response.json();
-        console.error("Rejection failed:", errorData);
         setError(errorData.message || "Rejection failed!");
       }
     } catch (e) {
@@ -83,103 +79,73 @@ const UserDetail = () => {
     <div className="min-h-screen bg-gray-100">
       <Navbar />
       <div className="container mx-auto px-4 py-6">
-        <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+        <h2 className="text-3xl font-semibold text-gray-800 mb-4">
           User Details
         </h2>
 
         <div className="bg-white shadow-md rounded-lg p-6">
-          {/* Form-Like Layout */}
+          <h3 className="text-xl font-semibold text-gray-800 mb-4">
+            Review User Application
+          </h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Trust Name:
-              </label>
-              <p className="text-gray-800">{user.name_of_trust}</p>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Email:
-              </label>
-              <p className="text-gray-800">{user.email}</p>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Phone:
-              </label>
-              <p className="text-gray-800">{user.phone}</p>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Address:
-              </label>
-              <p className="text-gray-800">{user.head_office_address}</p>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                City:
-              </label>
-              <p className="text-gray-800">{user.head_office_city}</p>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                State:
-              </label>
-              <p className="text-gray-800">{user.head_office_state}</p>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Country:
-              </label>
-              <p className="text-gray-800">{user.head_office_country}</p>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Trust Document:
-              </label>
-              <a
-                href={`http://localhost:7001/api/files/file/${user.trust_document}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 hover:underline"
-              >
-                View Document
-              </a>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Financial Statements:
-              </label>
-              <a
-                href={`http://localhost:7001/api/files/file/${user.financial_statements}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 hover:underline"
-              >
-                View Financials
-              </a>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Trust Domicile:
-              </label>
-              <a
-                href={`http://localhost:7001/api/files/file/${user.trust_domicile}`}
-                target="_blank"
-                rel="noopener noreferrer"
-                className="text-blue-500 hover:underline"
-              >
-                View Domicile
-              </a>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-700">
-                Status:
-              </label>
-              <p className="text-gray-800 capitalize">{user.status}</p>
-            </div>
+            {[
+              { label: "Trust Name", value: user.name_of_trust },
+              { label: "Email", value: user.email },
+              { label: "Phone", value: user.phone },
+              { label: "Address", value: user.head_office_address },
+              { label: "City", value: user.head_office_city },
+              { label: "State", value: user.head_office_state },
+              { label: "Country", value: user.head_office_country },
+              {
+                label: "Trust Document",
+                value: (
+                  <a
+                    href={`http://localhost:7001/api/files/file/${user.trust_document}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 hover:underline"
+                  >
+                    View Document
+                  </a>
+                ),
+              },
+              {
+                label: "Financial Statements",
+                value: (
+                  <a
+                    href={`http://localhost:7001/api/files/file/${user.financial_statements}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 hover:underline"
+                  >
+                    View Financials
+                  </a>
+                ),
+              },
+              {
+                label: "Trust Domicile",
+                value: (
+                  <a
+                    href={`http://localhost:7001/api/files/file/${user.trust_domicile}`}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-blue-500 hover:underline"
+                  >
+                    View Domicile
+                  </a>
+                ),
+              },
+              { label: "Status", value: user.status },
+            ].map((item, index) => (
+              <div key={index}>
+                <label className="block text-sm font-medium text-gray-700">
+                  {item.label}:
+                </label>
+                <p className="text-gray-800">{item.value}</p>
+              </div>
+            ))}
           </div>
 
-          {/* Approve and Reject Buttons */}
           <div className="mt-6 flex items-center space-x-4">
             <button
               onClick={handleApprove}
@@ -189,9 +155,9 @@ const UserDetail = () => {
             </button>
             <button
               onClick={() => {
-                setError(""); // Clear error
-                setFeedback(""); // Reset feedback
-                setShowFeedbackInput(true); // Show feedback input
+                setError("");
+                setFeedback("");
+                setShowFeedbackInput(true);
               }}
               className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
             >
@@ -199,7 +165,6 @@ const UserDetail = () => {
             </button>
           </div>
 
-          {/* Feedback Input (Only shown when Reject is clicked) */}
           {showFeedbackInput && (
             <div className="mt-4">
               <label
@@ -224,7 +189,6 @@ const UserDetail = () => {
             </div>
           )}
 
-          {/* Error Message */}
           {error && <p className="mt-4 text-red-500">{error}</p>}
         </div>
       </div>

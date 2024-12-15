@@ -1,11 +1,10 @@
 import PropTypes from "prop-types";
 
-const FileUploadField = ({ label, name, onChange, tooltip }) => {
+const FileUploadField = ({ label, name, onChange, tooltip, accept }) => {
   return (
     <>
       <div className="flex flex-col mt-4">
         <label className="mb-1 relative group" htmlFor={name}>
-          {label}
           {label}
 
           {tooltip && (
@@ -19,6 +18,7 @@ const FileUploadField = ({ label, name, onChange, tooltip }) => {
           id={name}
           name={name}
           onChange={onChange}
+          accept={accept}
           required
           className="p-2 rounded-xl border border-gray-300 focus:outline-none"
         />
@@ -33,6 +33,7 @@ FileUploadField.propTypes = {
   onChange: PropTypes.func.isRequired,
   required: PropTypes.bool,
   tooltip: PropTypes.string,
+  accept: PropTypes.string,
 };
 
 export default FileUploadField;
