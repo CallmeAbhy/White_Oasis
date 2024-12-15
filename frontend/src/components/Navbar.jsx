@@ -6,7 +6,7 @@ import {
 } from "@headlessui/react";
 import { Bars3Icon, BellIcon } from "@heroicons/react/24/outline";
 import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
+import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useProfile } from "../context/ProfileContext";
 import { useToken } from "../context/TokenContext";
 import PropTypes from "prop-types";
@@ -15,17 +15,21 @@ import { navigateToLogin } from "../utils/navigationUtils";
 const navigation = [
   { name: "Home", href: "/", current: true },
   { name: "About us", href: "#", current: false },
-  { name: "Near Me", href: "#", current: false },
+  { name: "Near Me", href: "/near-me", current: false },
 ];
 
 const classNames = (...classes) => classes.filter(Boolean).join(" ");
 
 const Navbar = () => {
   const { profile, setProfile } = useProfile();
+  const location = useLocation();
   const { token, updateToken } = useToken();
   const [pendingCount, setPendingCount] = useState(0);
   const [showProfileCard, setShowProfileCard] = useState(false);
   const navigate = useNavigate();
+  const isCurrentPath = (path) => {
+    return location.pathname === path;
+  };
 
   useEffect(() => {
     const fetchPendingCount = async () => {
@@ -76,18 +80,19 @@ const Navbar = () => {
           {/* Desktop Navigation */}
           <div className="hidden sm:flex space-x-8">
             {navigation.map((item) => (
-              <a
+              <Link
                 key={item.name}
-                href={item.href}
+                to={item.href}
                 className={classNames(
-                  item.current
+                  isCurrentPath(item.href)
                     ? "text-indigo-600 border-b-2 border-indigo-600"
                     : "text-gray-500 hover:text-gray-700 hover:border-b-2 hover:border-gray-300",
+
                   "px-3 py-2 text-sm font-medium transition duration-200"
                 )}
               >
                 {item.name}
-              </a>
+              </Link>
             ))}
           </div>
 
@@ -196,13 +201,19 @@ const Navbar = () => {
       <DisclosurePanel className="sm:hidden">
         <div className="space-y-1 px-2 pb-3 pt-2">
           {navigation.map((item) => (
-            <a
+            <Link
               key={item.name}
-              href={item.href}
-              className="block px-3 py-2 text-base font-medium text-gray-600 hover:bg-gray-100 hover:text-gray-900"
+              to={item.href}
+              className={classNames(
+                isCurrentPath(item.href)
+                  ? "bg-gray-100 text-gray-900"
+                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
+
+                "block px-3 py-2 text-base font-medium"
+              )}
             >
               {item.name}
-            </a>
+            </Link>
           ))}
         </div>
       </DisclosurePanel>
