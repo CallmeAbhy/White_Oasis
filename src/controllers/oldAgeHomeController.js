@@ -1,3 +1,4 @@
+const oldAgeHomeModel = require("../models/oldAgeHomeModel");
 const OldAgeHome = require("../models/oldAgeHomeModel");
 const { User, Manager, Admin } = require("../models/userModel");
 
@@ -176,10 +177,51 @@ const updateAppointmentSettings = async (req, res) => {
     });
   } catch (error) {}
 };
+const deleteOldAgeHome = async (req, res) => {
+  try {
+    const { id } = req.params;
+    const manager_id = req.user.id; // Get manager ID from the authenticated token
+
+    // Find the old age home
+    const oldAgeHome = await OldAgeHome.findById(id);
+
+    // Check if old age home exists
+    if (!oldAgeHome) {
+      return res.status(404).json({
+        success: false,
+        message: "Old age home not found",
+      });
+    }
+
+    // Check if the requesting manager is the owner of the old age home
+    if (oldAgeHome.manager_id.toString() !== manager_id) {
+      return res.status(403).json({
+        success: false,
+        message:
+          "You are not authorized to delete this old age home. Only the manager who created it can delete it.",
+      });
+    }
+
+    // If all checks pass, delete the old age home
+    await OldAgeHome.findByIdAndDelete(id);
+
+    return res.status(200).json({
+      success: true,
+      message: "Old age home deleted successfully",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: "Error deleting old age home",
+      error: error.message,
+    });
+  }
+};
 module.exports = {
   createOldAgeHome,
   getHomeReview,
   getAllOldAgeHomes,
   getManagerOldAgeHomes,
   updateRating,
+  deleteOldAgeHome,
 };
