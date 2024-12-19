@@ -1,4 +1,3 @@
-// frontend/src/pages/Common/NearMe.jsx
 import { useState, useEffect } from "react";
 import Navbar from "../../components/Navbar";
 import { useProfile } from "../../context/ProfileContext";
@@ -12,12 +11,9 @@ const NearMe = () => {
     city: "",
   });
   const { profile } = useProfile();
-  console.log(profile);
   const { token } = useToken();
-  console.log(token);
   const [loading, setLoading] = useState(true);
 
-  // Fetch all old age homes
   useEffect(() => {
     const fetchOldAgeHomes = async () => {
       try {
@@ -35,7 +31,6 @@ const NearMe = () => {
     fetchOldAgeHomes();
   }, []);
 
-  // Handle filter changes
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
     setFilters((prev) => ({
@@ -44,7 +39,6 @@ const NearMe = () => {
     }));
   };
 
-  // Filter old age homes based on selected filters
   const filteredHomes = oldAgeHomes.filter((home) => {
     return (
       (!filters.country ||
@@ -62,7 +56,6 @@ const NearMe = () => {
     );
   });
 
-  // Handle delete old age home
   const handleDelete = async (homeId) => {
     try {
       const response = await fetch(
@@ -83,25 +76,23 @@ const NearMe = () => {
     }
   };
 
-  if (loading) {
-    return <div>Loading...</div>;
-  }
-
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-50">
       <Navbar />
       <div className="container mx-auto px-4 py-8">
-        <h1 className="text-3xl font-bold mb-6">Old Age Homes Near Me</h1>
+        <h1 className="text-4xl font-bold text-center text-[#002D74] mb-8">
+          Old Age Homes Near Me
+        </h1>
 
         {/* Filters */}
-        <div className="bg-white p-4 rounded-lg shadow mb-6 grid grid-cols-1 md:grid-cols-3 gap-4">
+        <div className="bg-white p-6 rounded-lg shadow-md mb-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           <input
             type="text"
             name="country"
             placeholder="Filter by Country"
             value={filters.country}
             onChange={handleFilterChange}
-            className="p-2 border rounded"
+            className="p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
           />
           <input
             type="text"
@@ -109,7 +100,7 @@ const NearMe = () => {
             placeholder="Filter by State"
             value={filters.state}
             onChange={handleFilterChange}
-            className="p-2 border rounded"
+            className="p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
           />
           <input
             type="text"
@@ -117,40 +108,63 @@ const NearMe = () => {
             placeholder="Filter by City"
             value={filters.city}
             onChange={handleFilterChange}
-            className="p-2 border rounded"
+            className="p-3 border rounded-lg focus:ring-2 focus:ring-blue-500 outline-none"
           />
         </div>
 
-        {/* Old Age Homes Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {filteredHomes.map((home) => (
-            <div key={home._id} className="bg-white rounded-lg shadow-md p-6">
-              <h2 className="text-xl font-semibold mb-2">
-                {home.old_age_home_name}
-              </h2>
-              <div className="space-y-2 text-gray-600">
-                <p>City: {home.old_age_home_city}</p>
-                <p>State: {home.old_age_home_state}</p>
-                <p>Country: {home.old_age_home_country}</p>
-                <p>Address: {home.old_age_home_address}</p>
-
-                <div className="flex items-center space-x-2">
-                  <span>Rating: {home.avg_rating.toFixed(1)}</span>
-                  <span>({home.num_rating} reviews)</span>
+        {/* Loader */}
+        {loading ? (
+          <div className="flex justify-center items-center">
+            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
+          </div>
+        ) : (
+          // Old Age Homes Grid
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredHomes.map((home) => (
+              <div
+                key={home._id}
+                className="bg-white rounded-lg shadow-lg p-6 hover:shadow-2xl transition-shadow duration-300"
+              >
+                <h2 className="text-2xl font-semibold text-gray-800 mb-4">
+                  {home.old_age_home_name}
+                </h2>
+                <div className="space-y-2 text-gray-600 text-sm">
+                  <p>
+                    <span className="font-medium text-gray-800">City:</span>{" "}
+                    {home.old_age_home_city}
+                  </p>
+                  <p>
+                    <span className="font-medium text-gray-800">State:</span>{" "}
+                    {home.old_age_home_state}
+                  </p>
+                  <p>
+                    <span className="font-medium text-gray-800">Country:</span>{" "}
+                    {home.old_age_home_country}
+                  </p>
+                  <p>
+                    <span className="font-medium text-gray-800">Address:</span>{" "}
+                    {home.old_age_home_address}
+                  </p>
+                  <div className="flex items-center space-x-2 text-sm">
+                    <span className="font-medium text-gray-800">Rating:</span>
+                    <span>{home.avg_rating.toFixed(1)} ⭐</span>
+                    <span>({home.num_rating} reviews)</span>
+                  </div>
                 </div>
+
+                {profile?.role === "manager" &&
+                  profile._id === home.manager_id && (
+                    <button
+                      onClick={() => handleDelete(home._id)}
+                      className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-300"
+                    >
+                      Delete
+                    </button>
+                  )}
               </div>
-              {profile?.role === "manager" &&
-                profile._id === home.manager_id && (
-                  <button
-                    onClick={() => handleDelete(home._id)}
-                    className="mt-4 bg-red-500 text-white px-4 py-2 rounded hover:bg-red-600"
-                  >
-                    Delete
-                  </button>
-                )}
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        )}
       </div>
     </div>
   );
