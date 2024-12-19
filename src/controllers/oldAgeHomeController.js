@@ -15,7 +15,18 @@ const createOldAgeHome = async (req, res) => {
       closes_on,
       working_days,
       is_appointment_enabled,
+      contact_numbers,
+      email,
     } = req.body;
+    if (
+      !contact_numbers ||
+      !Array.isArray(contact_numbers) ||
+      contact_numbers.length > 3
+    ) {
+      return res.status(400).json({
+        message: "Please provide between 1 and 3 contact numbers",
+      });
+    }
     const manager_id = req.user.id;
     const manager = await Manager.findById(manager_id);
     if (!manager) {
@@ -51,6 +62,8 @@ const createOldAgeHome = async (req, res) => {
       closes_on,
       working_days,
       is_appointment_enabled,
+      contact_numbers,
+      email,
     });
     await newOldAgeHome.save();
     res.status(201).json({

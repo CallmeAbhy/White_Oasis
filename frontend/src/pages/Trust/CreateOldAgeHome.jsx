@@ -19,6 +19,8 @@ const CreateOldAgeHome = () => {
     opens_on: "",
     closes_on: "",
     working_days: [],
+    contact_numbers: ["", "", ""],
+    email: "",
   });
 
   const [error, setError] = useState("");
@@ -67,6 +69,27 @@ const CreateOldAgeHome = () => {
       working_days: prev.working_days.includes(day)
         ? prev.working_days.filter((d) => d !== day)
         : [...prev.working_days, day],
+    }));
+  };
+  const handlePhoneNumberChange = (index, value) => {
+    const updatedNumbers = [...formData.contact_numbers];
+    updatedNumbers[index] = value;
+    setFormData((prev) => ({
+      ...prev,
+      contact_numbers: updatedNumbers,
+    }));
+  };
+  const addPhoneNumberField = () => {
+    setFormData((prev) => ({
+      ...prev,
+      contact_numbers: [...prev.contact_numbers, ""],
+    }));
+  };
+
+  const removePhoneNumberField = (index) => {
+    setFormData((prev) => ({
+      ...prev,
+      contact_numbers: prev.contact_numbers.filter((_, i) => i !== index),
     }));
   };
 
@@ -218,7 +241,51 @@ const CreateOldAgeHome = () => {
             </div>
           </div>
         );
-
+      case 4:
+        return (
+          <div className="mb-4">
+            <h3>Add Contact Numbers (Up to 3)</h3>
+            {formData.contact_numbers.map((number, index) => (
+              <div key={index} className="flex items-center space-x-2">
+                <InputField
+                  type="tel"
+                  placeholder={`Contact Number ${index + 1}`}
+                  value={number}
+                  onChange={(e) =>
+                    handlePhoneNumberChange(index, e.target.value)
+                  }
+                  required={index === 0} // First number is required
+                />
+                {index > 0 && (
+                  <button
+                    type="button"
+                    onClick={() => removePhoneNumberField(index)}
+                    className="text-red-500"
+                  >
+                    Remove
+                  </button>
+                )}
+              </div>
+            ))}
+            {formData.contact_numbers.length < 3 && (
+              <button
+                type="button"
+                onClick={addPhoneNumberField}
+                className="text-blue-500"
+              >
+                Add Another Contact Number
+              </button>
+            )}
+            <InputField
+              type="email"
+              name="email"
+              placeholder="Email Address"
+              value={formData.email}
+              onChange={handleInputChange}
+              required
+            />
+          </div>
+        );
       default:
         return null;
     }
@@ -248,7 +315,7 @@ const CreateOldAgeHome = () => {
                   Previous
                 </button>
               )}
-              {step < 3 ? (
+              {step < 4 ? (
                 <button
                   type="button"
                   onClick={() => setStep(step + 1)}
