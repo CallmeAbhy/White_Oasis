@@ -8,6 +8,7 @@ import Dashboard from "./pages/Admin/Dashboard";
 import ResetPassword from "./Authentication/ResetPassword";
 import UserDetail from "./pages/Admin/UserDetail";
 import { TokenProvider } from "./context/TokenContext";
+import NearMe from "./pages/Common/NearMe";
 
 const App = () => {
   return (
@@ -22,6 +23,7 @@ const App = () => {
               <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/reset" element={<ResetPassword />} />
               <Route path="/user-detail" element={<UserDetail />} />
+              <Route path="/near-me" element={<NearMe />} />
             </Routes>
           </Router>
         </ProfileProvider>
