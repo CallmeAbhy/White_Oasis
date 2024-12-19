@@ -97,7 +97,27 @@ const oldAgeHomeSchema = new mongoose.Schema(
 
       default: false,
     },
-
+    contact_numbers: [
+      {
+        type: String,
+        validate: {
+          validator: function (v) {
+            return /^\+?[\d\s-]{10,}$/.test(v); // Basic phone number validation
+          },
+          message: (props) => `${props.value} is not a valid phone number!`,
+        },
+      },
+    ],
+    email: {
+      type: String,
+      required: true,
+      validate: {
+        validator: function (v) {
+          return /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/.test(v);
+        },
+        message: (props) => `${props.value} is not a valid email address!`,
+      },
+    },
     avg_rating: {
       type: Number,
       default: 0,
