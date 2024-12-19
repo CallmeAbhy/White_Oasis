@@ -9,6 +9,7 @@ import ResetPassword from "./Authentication/ResetPassword";
 import UserDetail from "./pages/Admin/UserDetail";
 import { TokenProvider } from "./context/TokenContext";
 import NearMe from "./pages/Common/NearMe";
+import CreateOldAgeHome from "./pages/Trust/CreateOldAgeHome";
 
 const App = () => {
   return (
@@ -24,6 +25,10 @@ const App = () => {
               <Route path="/reset" element={<ResetPassword />} />
               <Route path="/user-detail" element={<UserDetail />} />
               <Route path="/near-me" element={<NearMe />} />
+              <Route
+                path="/create-old-age-home"
+                element={<CreateOldAgeHome />}
+              />
             </Routes>
           </Router>
         </ProfileProvider>
