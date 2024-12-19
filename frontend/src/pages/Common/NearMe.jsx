@@ -1,8 +1,8 @@
 import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import { useProfile } from "../../context/ProfileContext";
 import { useToken } from "../../context/TokenContext";
-
 const NearMe = () => {
   const [oldAgeHomes, setOldAgeHomes] = useState([]);
   const [filters, setFilters] = useState({
@@ -10,10 +10,13 @@ const NearMe = () => {
     state: "",
     city: "",
   });
-  const { profile } = useProfile();
-  const { token } = useToken();
-  const [loading, setLoading] = useState(true);
 
+  const { profile } = useProfile();
+  console.log(profile);
+  const { token } = useToken();
+  console.log(token);
+  const [loading, setLoading] = useState(true);
+  const navigate = useNavigate();
   useEffect(() => {
     const fetchOldAgeHomes = async () => {
       try {
@@ -85,6 +88,16 @@ const NearMe = () => {
         </h1>
 
         {/* Filters */}
+        {profile?.role === "manager" && (
+          <div className="text-center mb-6">
+            <button
+              onClick={() => navigate("/create-old-age-home")} // Redirect to /create
+              className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition duration-300"
+            >
+              Post
+            </button>
+          </div>
+        )}
         <div className="bg-white p-6 rounded-lg shadow-md mb-8 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
           <input
             type="text"
@@ -145,6 +158,7 @@ const NearMe = () => {
                     <span className="font-medium text-gray-800">Address:</span>{" "}
                     {home.old_age_home_address}
                   </p>
+
                   <div className="flex items-center space-x-2 text-sm">
                     <span className="font-medium text-gray-800">Rating:</span>
                     <span>{home.avg_rating.toFixed(1)} ⭐</span>
