@@ -25,6 +25,12 @@ const ManagerForm = ({
         onChange={(e) => handleLocationChange(e, "manager")}
         codes={locationCodes.manager}
         placeholder="Head Office Country"
+        divclassname="relative w-full"
+        inputclassname="p-2 mt-1 rounded-xl border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+        loadingclassname="absolute right-10 top-1/2 transform -translate-y-1/2"
+        loaderclassname="loader w-4 h-4 border-2 border-t-transparent border-blue-500 rounded-full animate-spin"
+        buttonclassname="absolute right-2 top-2 flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 focus:outline-none"
+        ulclassname="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto shadow-md"
         required
       />
       <LocationInput
@@ -34,6 +40,12 @@ const ManagerForm = ({
         onChange={(e) => handleLocationChange(e, "manager")}
         codes={locationCodes.manager}
         placeholder="Head Office State"
+        divclassname="relative w-full"
+        inputclassname="p-2 mt-1 rounded-xl border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+        loadingclassname="absolute right-10 top-1/2 transform -translate-y-1/2"
+        loaderclassname="loader w-4 h-4 border-2 border-t-transparent border-blue-500 rounded-full animate-spin"
+        buttonclassname="absolute right-2 top-2 flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 focus:outline-none"
+        ulclassname="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto shadow-md"
         required
       />
       <LocationInput
@@ -43,6 +55,12 @@ const ManagerForm = ({
         onChange={(e) => handleLocationChange(e, "manager")}
         codes={locationCodes.manager}
         placeholder="Head Office City"
+        divclassname="relative w-full"
+        inputclassname="p-2 mt-1 rounded-xl border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+        loadingclassname="absolute right-10 top-1/2 transform -translate-y-1/2"
+        loaderclassname="loader w-4 h-4 border-2 border-t-transparent border-blue-500 rounded-full animate-spin"
+        buttonclassname="absolute right-2 top-2 flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 focus:outline-none"
+        ulclassname="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto shadow-md"
         required
       />
       <LocationInput
@@ -51,6 +69,12 @@ const ManagerForm = ({
         value={formData.head_office_address}
         onChange={(e) => handleLocationChange(e, "manager")}
         placeholder="Head Office Address"
+        divclassname="relative w-full"
+        inputclassname="p-2 mt-1 rounded-xl border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+        loadingclassname="absolute right-10 top-1/2 transform -translate-y-1/2"
+        loaderclassname="loader w-4 h-4 border-2 border-t-transparent border-blue-500 rounded-full animate-spin"
+        buttonclassname="absolute right-2 top-2 flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 focus:outline-none"
+        ulclassname="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto shadow-md"
         required
       />
       <FileUploadField

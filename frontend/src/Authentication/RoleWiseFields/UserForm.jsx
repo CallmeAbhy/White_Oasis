@@ -17,6 +17,12 @@ const UserForm = ({
         onChange={(e) => handleLocationChange(e, "user")}
         codes={locationCodes.user}
         placeholder="Country"
+        divclassname="relative w-full"
+        inputclassname="p-2 mt-1 rounded-xl border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+        loadingclassname="absolute right-10 top-1/2 transform -translate-y-1/2"
+        loaderclassname="loader w-4 h-4 border-2 border-t-transparent border-blue-500 rounded-full animate-spin"
+        buttonclassname="absolute right-2 top-2 flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 focus:outline-none"
+        ulclassname="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto shadow-md"
       />
       <LocationInput
         type="state"
@@ -25,6 +31,12 @@ const UserForm = ({
         onChange={(e) => handleLocationChange(e, "user")}
         codes={locationCodes.user}
         placeholder="State"
+        divclassname="relative w-full"
+        inputclassname="p-2 mt-1 rounded-xl border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+        loadingclassname="absolute right-10 top-1/2 transform -translate-y-1/2"
+        loaderclassname="loader w-4 h-4 border-2 border-t-transparent border-blue-500 rounded-full animate-spin"
+        buttonclassname="absolute right-2 top-2 flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 focus:outline-none"
+        ulclassname="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto shadow-md"
       />
       <LocationInput
         type="city"
@@ -33,6 +45,12 @@ const UserForm = ({
         onChange={(e) => handleLocationChange(e, "user")}
         codes={locationCodes.user}
         placeholder="City"
+        divclassname="relative w-full"
+        inputclassname="p-2 mt-1 rounded-xl border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+        loadingclassname="absolute right-10 top-1/2 transform -translate-y-1/2"
+        loaderclassname="loader w-4 h-4 border-2 border-t-transparent border-blue-500 rounded-full animate-spin"
+        buttonclassname="absolute right-2 top-2 flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 focus:outline-none"
+        ulclassname="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto shadow-md"
       />
       <LocationInput
         type="address"
@@ -40,6 +58,12 @@ const UserForm = ({
         value={formData.address}
         onChange={(e) => handleLocationChange(e, "user")}
         placeholder="Address"
+        divclassname="relative w-full"
+        inputclassname="p-2 mt-1 rounded-xl border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+        loadingclassname="absolute right-10 top-1/2 transform -translate-y-1/2"
+        loaderclassname="loader w-4 h-4 border-2 border-t-transparent border-blue-500 rounded-full animate-spin"
+        buttonclassname="absolute right-2 top-2 flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 focus:outline-none"
+        ulclassname="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto shadow-md"
       />
       <FileUploadField
         label="Government ID Card"

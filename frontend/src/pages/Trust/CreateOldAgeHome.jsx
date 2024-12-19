@@ -2,8 +2,8 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToken } from "../../context/TokenContext";
 import LocationInput from "../../Authentication/TypeWiseUpload/LocationInput";
-import InputField from "../../Authentication/TypeWiseUpload/InputField";
 import Navbar from "../../components/Navbar";
+
 const CreateOldAgeHome = () => {
   const navigate = useNavigate();
   const { token } = useToken();
@@ -19,7 +19,7 @@ const CreateOldAgeHome = () => {
     opens_on: "",
     closes_on: "",
     working_days: [],
-    contact_numbers: ["", "", ""],
+    contact_numbers: [""],
     email: "",
   });
 
@@ -45,6 +45,7 @@ const CreateOldAgeHome = () => {
       [name]: type === "checkbox" ? checked : value,
     }));
   };
+
   const handleLocationChange = (e) => {
     const { name, value } = e.target;
 
@@ -71,6 +72,7 @@ const CreateOldAgeHome = () => {
         : [...prev.working_days, day],
     }));
   };
+
   const handlePhoneNumberChange = (index, value) => {
     const updatedNumbers = [...formData.contact_numbers];
     updatedNumbers[index] = value;
@@ -79,6 +81,7 @@ const CreateOldAgeHome = () => {
       contact_numbers: updatedNumbers,
     }));
   };
+
   const addPhoneNumberField = () => {
     setFormData((prev) => ({
       ...prev,
@@ -125,27 +128,59 @@ const CreateOldAgeHome = () => {
       case 1:
         return (
           <div className="space-y-4">
-            <InputField
-              name="old_age_home_name"
-              placeholder="Old Age Home Name"
-              value={formData.old_age_home_name}
-              onChange={handleInputChange}
-            />
-            <InputField
-              name="old_age_home_upi_id"
-              placeholder="UPI ID"
-              value={formData.old_age_home_upi_id}
-              onChange={handleInputChange}
-            />
+            {/* Name Input */}
+            <div>
+              <label
+                htmlFor="old_age_home_name"
+                className="block text-sm font-medium text-gray-600"
+              >
+                Old Age Home Name
+              </label>
+              <input
+                type="text"
+                id="old_age_home_name"
+                name="old_age_home_name"
+                value={formData.old_age_home_name}
+                onChange={handleInputChange}
+                placeholder="Enter old age home name"
+                className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                required
+              />
+            </div>
+
+            {/* UPI ID Input */}
+            <div>
+              <label
+                htmlFor="old_age_home_upi_id"
+                className="block text-sm font-medium text-gray-600"
+              >
+                UPI ID
+              </label>
+              <input
+                type="text"
+                id="old_age_home_upi_id"
+                name="old_age_home_upi_id"
+                value={formData.old_age_home_upi_id}
+                onChange={handleInputChange}
+                placeholder="Enter UPI ID"
+                className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                required
+              />
+            </div>
+
+            {/* Appointment Checkbox */}
             <div className="flex items-center space-x-2">
               <input
                 type="checkbox"
+                id="is_appointment_enabled"
                 name="is_appointment_enabled"
                 checked={formData.is_appointment_enabled}
                 onChange={handleInputChange}
-                className="rounded"
+                className="w-5 h-5 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
               />
-              <label>Enable Appointments</label>
+              <label htmlFor="is_appointment_enabled" className="text-gray-600">
+                Enable Appointments
+              </label>
             </div>
           </div>
         );
@@ -159,6 +194,12 @@ const CreateOldAgeHome = () => {
               value={formData.old_age_home_country}
               onChange={handleLocationChange}
               placeholder="Select Country"
+              divclassname="relative w-full"
+              inputclassname="p-2 mt-1 rounded-xl border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              loadingclassname="absolute right-10 top-1/2 transform -translate-y-1/2"
+              loaderclassname="loader w-4 h-4 border-2 border-t-transparent border-blue-500 rounded-full animate-spin"
+              buttonclassname="absolute right-2 top-2 flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 focus:outline-none"
+              ulclassname="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto shadow-md"
               required
             />
 
@@ -169,6 +210,12 @@ const CreateOldAgeHome = () => {
               onChange={handleLocationChange}
               codes={{ countryCode: locationCodes.countryCode }}
               placeholder="Select State"
+              divclassname="relative w-full"
+              inputclassname="p-2 mt-1 rounded-xl border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              loadingclassname="absolute right-10 top-1/2 transform -translate-y-1/2"
+              loaderclassname="loader w-4 h-4 border-2 border-t-transparent border-blue-500 rounded-full animate-spin"
+              buttonclassname="absolute right-2 top-2 flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 focus:outline-none"
+              ulclassname="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto shadow-md"
               required
             />
 
@@ -182,6 +229,12 @@ const CreateOldAgeHome = () => {
                 stateCode: locationCodes.stateCode,
               }}
               placeholder="Select City"
+              divclassname="relative w-full"
+              inputclassname="p-2 mt-1 rounded-xl border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              loadingclassname="absolute right-10 top-1/2 transform -translate-y-1/2"
+              loaderclassname="loader w-4 h-4 border-2 border-t-transparent border-blue-500 rounded-full animate-spin"
+              buttonclassname="absolute right-2 top-2 flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 focus:outline-none"
+              ulclassname="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto shadow-md"
               required
             />
 
@@ -191,6 +244,12 @@ const CreateOldAgeHome = () => {
               value={formData.old_age_home_address}
               onChange={handleLocationChange}
               placeholder="Enter Address"
+              divclassname="relative w-full"
+              inputclassname="p-2 mt-1 rounded-xl border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+              loadingclassname="absolute right-10 top-1/2 transform -translate-y-1/2"
+              loaderclassname="loader w-4 h-4 border-2 border-t-transparent border-blue-500 rounded-full animate-spin"
+              buttonclassname="absolute right-2 top-2 flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 focus:outline-none"
+              ulclassname="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto shadow-md"
               required
             />
           </div>
@@ -232,9 +291,9 @@ const CreateOldAgeHome = () => {
                       type="checkbox"
                       checked={formData.working_days.includes(day)}
                       onChange={() => handleWorkingDaysChange(day)}
-                      className="rounded"
+                      className="w-5 h-5 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
                     />
-                    <label className="capitalize">{day}</label>
+                    <label className="capitalize text-gray-600">{day}</label>
                   </div>
                 ))}
               </div>
@@ -243,24 +302,29 @@ const CreateOldAgeHome = () => {
         );
       case 4:
         return (
-          <div className="mb-4">
-            <h3>Add Contact Numbers (Up to 3)</h3>
+          <div className="space-y-4">
+            <h3 className="text-lg font-semibold text-gray-600">
+              Add Contact Numbers (Up to 3)
+            </h3>
             {formData.contact_numbers.map((number, index) => (
               <div key={index} className="flex items-center space-x-2">
-                <InputField
+                <input
                   type="tel"
-                  placeholder={`Contact Number ${index + 1}`}
+                  id={`contact_number_${index}`}
+                  name={`contact_number_${index}`}
                   value={number}
                   onChange={(e) =>
                     handlePhoneNumberChange(index, e.target.value)
                   }
-                  required={index === 0} // First number is required
+                  placeholder={`Contact Number ${index + 1}`}
+                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  required={index === 0}
                 />
                 {index > 0 && (
                   <button
                     type="button"
                     onClick={() => removePhoneNumberField(index)}
-                    className="text-red-500"
+                    className="text-red-500 hover:underline"
                   >
                     Remove
                   </button>
@@ -271,19 +335,29 @@ const CreateOldAgeHome = () => {
               <button
                 type="button"
                 onClick={addPhoneNumberField}
-                className="text-blue-500"
+                className="text-blue-500 hover:underline"
               >
                 Add Another Contact Number
               </button>
             )}
-            <InputField
-              type="email"
-              name="email"
-              placeholder="Email Address"
-              value={formData.email}
-              onChange={handleInputChange}
-              required
-            />
+            <div>
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-600"
+              >
+                Email Address
+              </label>
+              <input
+                type="email"
+                id="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                placeholder="Enter email address"
+                className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                required
+              />
+            </div>
           </div>
         );
       default:
@@ -292,9 +366,9 @@ const CreateOldAgeHome = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-50 flex flex-col">
       <Navbar />
-      <div className="flex flex-col items-center justify-center p-4">
+      <div className="flex flex-col items-center justify-center min-h-screen p-4">
         <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
           <h1 className="text-2xl font-bold text-center text-[#002D74] mb-6">
             Create Old Age Home - Step {step}
@@ -303,14 +377,12 @@ const CreateOldAgeHome = () => {
           <form onSubmit={handleSubmit} className="space-y-6">
             {renderStep()}
 
-            {error && <p className="text-red-500 text-sm">{error}</p>}
-
             <div className="flex justify-between">
               {step > 1 && (
                 <button
                   type="button"
                   onClick={() => setStep(step - 1)}
-                  className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg"
+                  className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg transition"
                 >
                   Previous
                 </button>
@@ -319,19 +391,21 @@ const CreateOldAgeHome = () => {
                 <button
                   type="button"
                   onClick={() => setStep(step + 1)}
-                  className="bg-[#002D74] text-white px-4 py-2 rounded-lg"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
                 >
                   Next
                 </button>
               ) : (
                 <button
                   type="submit"
-                  className="bg-[#002D74] text-white px-4 py-2 rounded-lg"
+                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition"
                 >
                   Submit
                 </button>
               )}
             </div>
+
+            {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
           </form>
         </div>
       </div>

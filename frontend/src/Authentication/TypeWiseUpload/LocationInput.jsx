@@ -13,6 +13,12 @@ const LocationInput = ({
   codes,
   placeholder,
   required,
+  divclassname,
+  inputclassname,
+  loadingclassname,
+  loaderclassname,
+  buttonclassname,
+  ulclassname,
 }) => {
   const [inputValue, setInputValue] = useState(value); // Local state for input value
   const [suggestions, setSuggestions] = useState([]);
@@ -154,7 +160,7 @@ const LocationInput = ({
   };
 
   return (
-    <div className="relative w-full" ref={inputRef}>
+    <div className={divclassname} ref={inputRef}>
       <input
         type="text"
         name={name}
@@ -164,7 +170,7 @@ const LocationInput = ({
         onFocus={handleFocus}
         placeholder={placeholder}
         required={required}
-        className="p-2 mt-1 rounded-xl border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+        className={inputclassname}
         aria-autocomplete="list"
         aria-controls="suggestions-list"
         aria-activedescendant={
@@ -173,20 +179,13 @@ const LocationInput = ({
       />
 
       {loading && (
-        <div
-          className="absolute right-10 top-1/2 transform -translate-y-1/2"
-          aria-label="Loading suggestions"
-        >
-          <div className="loader w-4 h-4 border-2 border-t-transparent border-blue-500 rounded-full animate-spin"></div>
+        <div className={loadingclassname} aria-label="Loading suggestions">
+          <div className={loaderclassname}></div>
         </div>
       )}
 
       {isFocused && suggestions.length > 0 && (
-        <ul
-          id="suggestions-list"
-          className="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto shadow-md"
-          role="listbox"
-        >
+        <ul id="suggestions-list" className={ulclassname} role="listbox">
           {suggestions.map((suggestion, index) => (
             <li
               key={
@@ -209,7 +208,7 @@ const LocationInput = ({
       <button
         type="button"
         onClick={handleClearInput}
-        className="absolute right-2 top-2 flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 focus:outline-none"
+        className={buttonclassname}
         aria-label="Clear input"
         title="Clear"
       >
@@ -227,6 +226,12 @@ LocationInput.propTypes = {
   codes: PropTypes.arrayOf(PropTypes.string),
   placeholder: PropTypes.string,
   required: PropTypes.bool,
+  divclassname: PropTypes.string,
+  inputclassname: PropTypes.string,
+  loadingclassname: PropTypes.string,
+  loaderclassname: PropTypes.string,
+  buttonclassname: PropTypes.string,
+  ulclassname: PropTypes.string,
 };
 
 export default LocationInput;

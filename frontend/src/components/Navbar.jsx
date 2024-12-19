@@ -61,7 +61,7 @@ const Navbar = () => {
   const handleLogout = () => {
     updateToken(null);
     setProfile(null);
-    navigateToLogin();
+    navigateToLogin(navigate);
   };
 
   return (
