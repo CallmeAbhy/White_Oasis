@@ -3,6 +3,8 @@ import { useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import { useProfile } from "../../context/ProfileContext";
 import { useToken } from "../../context/TokenContext";
+import { QRCodeSVG } from "qrcode.react";
+import PropTypes from "prop-types";
 const NearMe = () => {
   const [oldAgeHomes, setOldAgeHomes] = useState([]);
   const [filters, setFilters] = useState({
@@ -10,7 +12,8 @@ const NearMe = () => {
     state: "",
     city: "",
   });
-
+  const [showQRModal, setShowQRModal] = useState(false);
+  const [selectedUpiId, setSelectedUpiId] = useState(null);
   const { profile } = useProfile();
   console.log(profile);
   const { token } = useToken();
@@ -78,7 +81,34 @@ const NearMe = () => {
       console.error("Error deleting old age home:", error);
     }
   };
+  const QRCodeModal = ({ upiId, onClose }) => {
+    const upiLink = `upi://pay?pa=${upiId}`;
 
+    return (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white p-6 rounded-lg shadow-xl">
+          <div className="flex flex-col items-center">
+            <h3 className="text-lg font-semibold mb-4">Scan to Pay</h3>
+
+            <QRCodeSVG value={upiLink} size={256} level="H" />
+
+            <p className="mt-4 text-sm text-gray-600">UPI ID: {upiId}</p>
+
+            <button
+              onClick={onClose}
+              className="mt-4 bg-[#002D74] text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+            >
+              Close
+            </button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+  QRCodeModal.propTypes = {
+    upiId: PropTypes.string.isRequired,
+    onClose: PropTypes.func.isRequired,
+  };
   return (
     <div className="min-h-screen bg-gray-50">
       <Navbar />
@@ -158,6 +188,17 @@ const NearMe = () => {
                     <span className="font-medium text-gray-800">Address:</span>{" "}
                     {home.old_age_home_address}
                   </p>
+                  {home.old_age_home_upi_id && (
+                    <button
+                      onClick={() => {
+                        setSelectedUpiId(home.old_age_home_upi_id);
+                        setShowQRModal(true);
+                      }}
+                      className="mt-4 bg-green-500 text-white px-4 py-2 rounded-lg hover:bg-green-600 transition duration-300 mr-2"
+                    >
+                      Donate
+                    </button>
+                  )}
 
                   <div className="flex items-center space-x-2 text-sm">
                     <span className="font-medium text-gray-800">Rating:</span>
@@ -180,6 +221,15 @@ const NearMe = () => {
           </div>
         )}
       </div>
+      {showQRModal && selectedUpiId && (
+        <QRCodeModal
+          upiId={selectedUpiId}
+          onClose={() => {
+            setShowQRModal(false);
+            setSelectedUpiId(null);
+          }}
+        />
+      )}
     </div>
   );
 };
