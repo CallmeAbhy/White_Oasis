@@ -4,6 +4,7 @@ import Navbar from "../../components/Navbar";
 import { useProfile } from "../../context/ProfileContext";
 import { useToken } from "../../context/TokenContext";
 import QRCodeModal from "../Trust/Modal/QRCodeModal";
+import FeedbackModal from "../Trust/Modal/FeedbackModal";
 
 const NearMe = () => {
   const [oldAgeHomes, setOldAgeHomes] = useState([]);
@@ -14,28 +15,30 @@ const NearMe = () => {
   });
   const [showQRModal, setShowQRModal] = useState(false);
   const [selectedUpiId, setSelectedUpiId] = useState(null);
+  const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [selectedHomeId, setSelectedHomeId] = useState(null);
   const { profile } = useProfile();
   console.log(profile);
   const { token } = useToken();
   console.log(token);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+  const fetchOldAgeHomes = async () => {
+    try {
+      const response = await fetch(
+        "http://localhost:7001/api/old-age-homes/all"
+      );
+      const data = await response.json();
+      setOldAgeHomes(data);
+    } catch (error) {
+      console.error("Error fetching old age homes:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
   useEffect(() => {
-    const fetchOldAgeHomes = async () => {
-      try {
-        const response = await fetch(
-          "http://localhost:7001/api/old-age-homes/all"
-        );
-        const data = await response.json();
-        setOldAgeHomes(data);
-      } catch (error) {
-        console.error("Error fetching old age homes:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
     fetchOldAgeHomes();
-  }, []);
+  }, [token]);
 
   const handleFilterChange = (e) => {
     const { name, value } = e.target;
@@ -53,6 +56,12 @@ const NearMe = () => {
         address: home.old_age_home_address,
       },
     });
+  };
+  // Add this function to handle feedback modal refresh
+  const handleFeedbackSuccess = () => {
+    // Refresh the old age homes data
+
+    fetchOldAgeHomes();
   };
 
   const filteredHomes = oldAgeHomes.filter((home) => {
@@ -205,6 +214,19 @@ const NearMe = () => {
                       Delete
                     </button>
                   )}
+
+                {(profile?.role === "user" || profile?.role === "admin") && (
+                  <button
+                    onClick={() => {
+                      setSelectedHomeId(home._id);
+
+                      setShowFeedbackModal(true);
+                    }}
+                    className="mt-4 bg-purple-500 text-white px-4 py-2 rounded-lg hover:bg-purple-600 transition duration-300 mr-2"
+                  >
+                    Give Feedback
+                  </button>
+                )}
               </div>
             ))}
           </div>
@@ -217,6 +239,17 @@ const NearMe = () => {
             setShowQRModal(false);
             setSelectedUpiId(null);
           }}
+        />
+      )}
+      {showFeedbackModal && selectedHomeId && (
+        <FeedbackModal
+          oldAgeHomeId={selectedHomeId}
+          onClose={() => {
+            setShowFeedbackModal(false);
+
+            setSelectedHomeId(null);
+          }}
+          onSubmitSuccess={handleFeedbackSuccess}
         />
       )}
     </div>
