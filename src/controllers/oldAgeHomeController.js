@@ -125,6 +125,7 @@ const updateRating = async (req, res) => {
     if (review && review.trim()) {
       const newReview = {
         username: user.username,
+        rating,
         review: review.trim(),
         timestamp: new Date(),
       };
@@ -230,6 +231,54 @@ const deleteOldAgeHome = async (req, res) => {
     });
   }
 };
+const deleteReview = async (req, res) => {
+  try {
+    const { homeId, reviewId } = req.params;
+    const userId = req.user.id;
+    const oldAgeHome = await OldAgeHome.findById(homeId);
+    if (!oldAgeHome) {
+      return res.status(404).json({ message: "Old-age home not found" });
+    }
+    const review = oldAgeHome.num_review.id(reviewId);
+    if (!review) {
+      return res.status(404).json({ message: "Review not found" });
+    }
+    console.log(review._doc);
+    let currentUser = await User.findById(userId);
+    if (!currentUser) {
+      currentUser = await Admin.findById(userId);
+    }
+    if (!currentUser) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    console.log(currentUser);
+    let currentRating = review._doc.rating;
+    if (
+      req.user.role !== "admin" &&
+      review._doc.username !== currentUser.username
+    ) {
+      return res
+        .status(403)
+        .json({ message: "You are not authorized to delete this review" });
+    }
+    oldAgeHome.num_review.pull(reviewId);
+    const oldNumRating = oldAgeHome.num_rating;
+    oldAgeHome.num_rating -= 1;
+    if (oldAgeHome.num_rating === 0) {
+      oldAgeHome.avg_rating = 0;
+    } else {
+      const totalRatingBefore = oldAgeHome.avg_rating * oldNumRating;
+      const totalRatingAfter = totalRatingBefore - currentRating;
+      oldAgeHome.avg_rating = totalRatingAfter / oldAgeHome.num_rating;
+    }
+
+    await oldAgeHome.save();
+
+    res.status(200).json({ message: "Review deleted successfully" });
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
 module.exports = {
   createOldAgeHome,
   getHomeReview,
@@ -237,4 +286,5 @@ module.exports = {
   getManagerOldAgeHomes,
   updateRating,
   deleteOldAgeHome,
+  deleteReview,
 };

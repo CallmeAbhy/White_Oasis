@@ -8,6 +8,7 @@ const {
   getManagerOldAgeHomes,
   updateRating,
   deleteOldAgeHome,
+  deleteReview,
 } = require("../controllers/oldAgeHomeController");
 const router = express.Router();
 router.post(
@@ -41,5 +42,11 @@ router.delete(
   verifyToken,
   authorizedRoles("manager", "admin"),
   deleteOldAgeHome
+);
+router.delete(
+  "/:homeId/reviews/:reviewId",
+  verifyToken,
+  authorizedRoles("user", "admin"),
+  deleteReview
 );
 module.exports = router;
