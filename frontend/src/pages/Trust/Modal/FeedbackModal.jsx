@@ -175,13 +175,6 @@ const FeedbackModal = ({ oldAgeHomeId, onClose, onSubmitSuccess }) => {
               >
                 Cancel
               </button>
-              <button
-                type="submit"
-                disabled={!rating}
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-gray-400"
-              >
-                Submit
-              </button>
             </div>
           </div>
         ) : (

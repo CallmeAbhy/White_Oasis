@@ -206,15 +206,16 @@ const NearMe = () => {
                   </div>
                 </div>
 
-                {profile?.role === "manager" &&
-                  profile._id === home.manager_id && (
+                {(profile?.role === "manager" &&
+                  profile._id === home.manager_id) ||
+                  (profile?.role === "admin" && (
                     <button
                       onClick={() => handleDelete(home._id)}
                       className="mt-4 bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition duration-300"
                     >
                       Delete
                     </button>
-                  )}
+                  ))}
 
                 {(profile?.role === "user" || profile?.role === "admin") && (
                   <button
