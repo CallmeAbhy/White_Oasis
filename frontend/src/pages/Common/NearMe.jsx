@@ -201,7 +201,8 @@ const NearMe = () => {
                   <div className="flex items-center space-x-2 text-sm">
                     <span className="font-medium text-gray-800">Rating:</span>
                     <span>{home.avg_rating.toFixed(1)} ⭐</span>
-                    <span>({home.num_rating} reviews)</span>
+                    <span>({home.num_rating})</span>
+                    <span>({home.num_review.length} reviews)</span>
                   </div>
                 </div>
 

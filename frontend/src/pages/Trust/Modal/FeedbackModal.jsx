@@ -79,7 +79,7 @@ const FeedbackModal = ({ oldAgeHomeId, onClose, onSubmitSuccess }) => {
   const handleDeleteReview = async (reviewId) => {
     try {
       const response = await fetch(
-        `http://localhost:7001/api/old-age-homes/reviews/${oldAgeHomeId}/${reviewId}`,
+        `http://localhost:7001/api/old-age-homes/${oldAgeHomeId}/reviews/${reviewId}`,
         {
           method: "DELETE",
           headers: {
@@ -103,6 +103,19 @@ const FeedbackModal = ({ oldAgeHomeId, onClose, onSubmitSuccess }) => {
 
   const canDeleteReview = (reviewUsername) => {
     return profile?.role === "admin" || profile?.username === reviewUsername;
+  };
+
+  const renderStars = (rating) => {
+    return [...Array(5)].map((_, index) => (
+      <span
+        key={index}
+        className={`text-2xl ${
+          index < rating ? "text-yellow-400" : "text-gray-300"
+        }`}
+      >
+        ★
+      </span>
+    ));
   };
 
   return (
@@ -135,6 +148,7 @@ const FeedbackModal = ({ oldAgeHomeId, onClose, onSubmitSuccess }) => {
                     <div>
                       <div className="flex items-center space-x-2">
                         <span className="font-medium">{review.username}</span>
+                        <div className="flex">{renderStars(review.rating)}</div>
                       </div>
                       <p className="text-gray-600 mt-1">{review.review}</p>
                       <p className="text-sm text-gray-400 mt-1">
@@ -153,6 +167,22 @@ const FeedbackModal = ({ oldAgeHomeId, onClose, onSubmitSuccess }) => {
                 </div>
               ))
             )}
+            <div className="flex justify-end space-x-2">
+              <button
+                type="button"
+                onClick={onClose}
+                className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300"
+              >
+                Cancel
+              </button>
+              <button
+                type="submit"
+                disabled={!rating}
+                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-gray-400"
+              >
+                Submit
+              </button>
+            </div>
           </div>
         ) : (
           // Review Form
