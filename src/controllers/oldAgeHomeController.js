@@ -208,7 +208,10 @@ const deleteOldAgeHome = async (req, res) => {
     }
 
     // Check if the requesting manager is the owner of the old age home
-    if (oldAgeHome.manager_id.toString() !== manager_id) {
+    if (
+      req.user.role !== "admin" &&
+      oldAgeHome.manager_id.toString() !== manager_id
+    ) {
       return res.status(403).json({
         success: false,
         message:

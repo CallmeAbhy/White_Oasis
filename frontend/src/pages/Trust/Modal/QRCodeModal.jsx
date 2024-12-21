@@ -6,17 +6,27 @@ const QRCodeModal = ({ upiId, onClose }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-xl">
+      <div className="bg-white w-full max-w-sm p-6 rounded-lg shadow-2xl transform transition-all">
         <div className="flex flex-col items-center">
-          <h3 className="text-lg font-semibold mb-4">Scan to Pay</h3>
+          {/* Modal Title */}
+          <h3 className="text-xl font-semibold text-gray-800 mb-6">
+            Scan to Pay
+          </h3>
 
-          <QRCodeSVG value={upiLink} size={256} level="H" />
+          {/* QR Code */}
+          <div className="p-4 border border-gray-200 rounded-lg">
+            <QRCodeSVG value={upiLink} size={256} level="H" />
+          </div>
 
-          <p className="mt-4 text-sm text-gray-600">UPI ID: {upiId}</p>
+          {/* UPI ID */}
+          <p className="mt-4 text-sm text-gray-600">
+            <span className="font-medium text-gray-800">UPI ID:</span> {upiId}
+          </p>
 
+          {/* Close Button */}
           <button
             onClick={onClose}
-            className="mt-4 bg-[#002D74] text-white px-4 py-2 rounded-lg hover:bg-blue-700"
+            className="mt-6 bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors flex items-center"
           >
             Close
           </button>

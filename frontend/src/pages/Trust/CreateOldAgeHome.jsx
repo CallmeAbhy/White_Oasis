@@ -369,20 +369,21 @@ const CreateOldAgeHome = () => {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Navbar />
       <div className="flex flex-col items-center justify-center min-h-screen p-4">
-        <div className="bg-white p-8 rounded-xl shadow-lg w-full max-w-md">
-          <h1 className="text-2xl font-bold text-center text-[#002D74] mb-6">
+        <div className="bg-white p-8 rounded-xl shadow-lg w-full sm:max-w-md lg:max-w-lg transition-all">
+          <h1 className="text-2xl font-semibold text-center text-[#002D74] tracking-wide mb-6">
             Create Old Age Home - Step {step}
           </h1>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             {renderStep()}
 
+            {/* Step Navigation */}
             <div className="flex justify-between">
               {step > 1 && (
                 <button
                   type="button"
                   onClick={() => setStep(step - 1)}
-                  className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg transition"
+                  className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg transition-colors"
                 >
                   Previous
                 </button>
@@ -391,14 +392,14 @@ const CreateOldAgeHome = () => {
                 <button
                   type="button"
                   onClick={() => setStep(step + 1)}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition"
+                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
                 >
                   Next
                 </button>
               ) : (
                 <button
                   type="submit"
-                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition"
+                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
                 >
                   Submit
                 </button>
