@@ -120,9 +120,9 @@ const FeedbackModal = ({ oldAgeHomeId, onClose, onSubmitSuccess }) => {
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white p-6 rounded-lg shadow-xl w-[600px] max-h-[80vh] overflow-y-auto">
+      <div className="bg-white w-full max-w-md p-6 rounded-lg shadow-lg transform transition-all">
         <div className="flex justify-between items-center mb-4">
-          <h3 className="text-xl font-semibold">
+          <h3 className="text-xl font-semibold text-gray-800">
             {showReviews ? "Reviews" : "Submit Your Feedback"}
           </h3>
           <button
@@ -134,7 +134,6 @@ const FeedbackModal = ({ oldAgeHomeId, onClose, onSubmitSuccess }) => {
         </div>
 
         {showReviews ? (
-          // Reviews List
           <div className="space-y-4">
             {reviews.length === 0 ? (
               <p className="text-gray-500 text-center">No reviews yet</p>
@@ -142,15 +141,17 @@ const FeedbackModal = ({ oldAgeHomeId, onClose, onSubmitSuccess }) => {
               reviews.map((review, index) => (
                 <div
                   key={index}
-                  className="border-b border-gray-200 pb-4 last:border-0"
+                  className="bg-gray-50 p-4 rounded-lg shadow-sm border border-gray-200"
                 >
                   <div className="flex justify-between items-start">
                     <div>
                       <div className="flex items-center space-x-2">
-                        <span className="font-medium">{review.username}</span>
+                        <span className="font-medium text-gray-800">
+                          {review.username}
+                        </span>
                         <div className="flex">{renderStars(review.rating)}</div>
                       </div>
-                      <p className="text-gray-600 mt-1">{review.review}</p>
+                      <p className="text-gray-600 mt-2">{review.review}</p>
                       <p className="text-sm text-gray-400 mt-1">
                         {new Date(review.timestamp).toLocaleDateString()}
                       </p>
@@ -167,20 +168,16 @@ const FeedbackModal = ({ oldAgeHomeId, onClose, onSubmitSuccess }) => {
                 </div>
               ))
             )}
-            <div className="flex justify-end space-x-2">
-              <button
-                type="button"
-                onClick={onClose}
-                className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300"
-              >
-                Cancel
-              </button>
-            </div>
+            <button
+              type="button"
+              onClick={onClose}
+              className="mt-4 w-full px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300"
+            >
+              Close
+            </button>
           </div>
         ) : (
-          // Review Form
           <form onSubmit={handleSubmit} className="space-y-4">
-            {/* Star Rating */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Rating
@@ -193,7 +190,7 @@ const FeedbackModal = ({ oldAgeHomeId, onClose, onSubmitSuccess }) => {
                     onClick={() => setRating(star)}
                     className={`text-2xl ${
                       star <= rating ? "text-yellow-400" : "text-gray-300"
-                    }`}
+                    } hover:scale-110 transform transition`}
                   >
                     ★
                   </button>
@@ -201,7 +198,6 @@ const FeedbackModal = ({ oldAgeHomeId, onClose, onSubmitSuccess }) => {
               </div>
             </div>
 
-            {/* Review Text */}
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-2">
                 Review
@@ -209,7 +205,7 @@ const FeedbackModal = ({ oldAgeHomeId, onClose, onSubmitSuccess }) => {
               <textarea
                 value={review}
                 onChange={(e) => setReview(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                 rows="4"
                 placeholder="Share your experience..."
               />
@@ -221,14 +217,14 @@ const FeedbackModal = ({ oldAgeHomeId, onClose, onSubmitSuccess }) => {
               <button
                 type="button"
                 onClick={onClose}
-                className="px-4 py-2 bg-gray-200 rounded-md hover:bg-gray-300"
+                className="px-4 py-2 bg-gray-200 rounded-lg hover:bg-gray-300"
               >
                 Cancel
               </button>
               <button
                 type="submit"
                 disabled={!rating}
-                className="px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600 disabled:bg-gray-400"
+                className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:bg-gray-400"
               >
                 Submit
               </button>
