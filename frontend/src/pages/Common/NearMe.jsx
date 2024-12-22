@@ -178,9 +178,22 @@ const NearMe = () => {
               >
                 {/* Left Section: Details */}
                 <div className="flex-1 p-4">
+                  <div className="mt-4">
+                    <img
+                      src={`http://localhost:7001/api/files/file/${home.manager_id.trust_logo}`}
+                      alt="Trust Logo"
+                      className="w-16 h-16"
+                    />
+                    <p>Trust Name: {home.manager_id.name_of_trust}</p>
+                    <p>
+                      Establishment Year:{" "}
+                      {home.manager_id?.establishment_year || "2014"}
+                    </p>
+                  </div>
                   <h2 className="text-xl font-semibold text-gray-800 mb-2">
                     {home.old_age_home_name}
                   </h2>
+
                   <div className="space-y-1 text-gray-600 text-sm">
                     <p>
                       <span className="font-medium text-gray-800">City:</span>{" "}
@@ -278,7 +291,7 @@ const NearMe = () => {
 
                   {/* Delete */}
                   {(profile?.role === "manager" &&
-                    profile._id === home.manager_id) ||
+                    profile._id === home.manager_id._id) ||
                   profile?.role === "admin" ? (
                     <div className="relative group">
                       <button
