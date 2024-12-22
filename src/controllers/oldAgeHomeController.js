@@ -78,7 +78,10 @@ const createOldAgeHome = async (req, res) => {
 
 const getAllOldAgeHomes = async (req, res) => {
   try {
-    const oldAgeHomes = await OldAgeHome.find();
+    const oldAgeHomes = await OldAgeHome.find().populate({
+      path: "manager_id",
+      select: "name_of_trust trust_logo yearOfEstablishment",
+    });
     res.status(200).json(oldAgeHomes);
   } catch (error) {
     res.status(500).json({ message: `Something went wrong: ${error.message}` });
