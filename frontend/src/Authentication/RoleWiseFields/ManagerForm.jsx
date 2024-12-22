@@ -113,6 +113,21 @@ const ManagerForm = ({
         onChange={handleFileChange}
         accept=".png, .jpg, .jpeg"
       />
+      <div className="flex flex-col mt-4">
+        <label className="mb-1 relative group" htmlFor="yearOfEstablishment">
+          Year of Establishment
+        </label>
+        <input
+          type="number"
+          name="yearOfEstablishment"
+          placeholder="Year of Establishment"
+          value={formData.yearOfEstablishment}
+          onChange={handleChange}
+          min="1800"
+          max={new Date().getFullYear()}
+          className="p-2 mt-1 rounded-xl border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
     </>
   );
 };
@@ -125,6 +140,7 @@ ManagerForm.propTypes = {
     head_office_state: PropTypes.string.isRequired,
     head_office_city: PropTypes.string.isRequired,
     head_office_address: PropTypes.string.isRequired,
+    yearOfEstablishment: PropTypes.string.isRequired,
   }).isRequired,
   handleChange: PropTypes.func.isRequired,
   handleLocationChange: PropTypes.func.isRequired,

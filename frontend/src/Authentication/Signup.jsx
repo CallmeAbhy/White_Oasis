@@ -29,6 +29,8 @@ const Signup = () => {
     head_office_country: "",
     head_office_address: "",
     head_office_state: "",
+    dateOfBirth: "",
+    yearOfEstablishment: "",
   });
 
   const [locationCodes, setLocationCodes] = useState({
@@ -116,6 +118,7 @@ const Signup = () => {
         formDataToSend.append("governmentIdCard", formData.governmentIdCard);
         formDataToSend.append("userPhoto", formData.userPhoto);
         formDataToSend.append("state", formData.state);
+        formDataToSend.append("dateOfBirth", formData.dateOfBirth);
       } else if (formData.role === "manager") {
         formDataToSend.append("name_of_trust", formData.name_of_trust);
         formDataToSend.append(
@@ -135,6 +138,10 @@ const Signup = () => {
         );
         formDataToSend.append("trust_domicile", formData.trust_domicile);
         formDataToSend.append("trust_logo", formData.trust_logo);
+        formDataToSend.append(
+          "yearOfEstablishment",
+          formData.yearOfEstablishment
+        );
       }
 
       const response = await axios.post(
@@ -238,6 +245,7 @@ const Signup = () => {
               handleLocationChange={handleLocationChange}
               handleFileChange={handleFileChange}
               locationCodes={locationCodes}
+              handleChange={handleChange}
             />
           )}
 
