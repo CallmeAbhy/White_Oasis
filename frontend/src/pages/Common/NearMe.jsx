@@ -187,7 +187,7 @@ const NearMe = () => {
                     <p>Trust Name: {home.manager_id.name_of_trust}</p>
                     <p>
                       Establishment Year:{" "}
-                      {home.manager_id?.establishment_year || "2014"}
+                      {home.manager_id?.yearOfEstablishment || "2011"}
                     </p>
                   </div>
                   <h2 className="text-xl font-semibold text-gray-800 mb-2">

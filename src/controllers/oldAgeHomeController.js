@@ -17,6 +17,14 @@ const createOldAgeHome = async (req, res) => {
       is_appointment_enabled,
       contact_numbers,
       email,
+      social_links,
+      capacity,
+      occupied_seats,
+      facilities,
+      services,
+      staff_info,
+      diet_type,
+      fee_structure,
     } = req.body;
     if (
       !contact_numbers ||
@@ -64,6 +72,14 @@ const createOldAgeHome = async (req, res) => {
       is_appointment_enabled,
       contact_numbers,
       email,
+      social_links,
+      capacity,
+      occupied_seats,
+      facilities,
+      services,
+      staff_info,
+      diet_type,
+      fee_structure,
     });
     await newOldAgeHome.save();
     res.status(201).json({
