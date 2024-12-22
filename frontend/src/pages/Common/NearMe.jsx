@@ -212,60 +212,85 @@ const NearMe = () => {
 
                 {/* Right Section: Actions */}
                 <div className="flex flex-wrap sm:flex-col items-center justify-around sm:justify-start p-4 space-x-4 sm:space-x-0 sm:space-y-4 border-t sm:border-t-0 sm:border-l border-gray-200">
-                  <button
-                    onClick={() => handleContactClick(home)}
-                    className="flex items-center justify-center w-10 h-10 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 transition"
-                    title="Contact Us"
-                  >
-                    <FontAwesomeIcon icon={faPhone} />
-                  </button>
+                  {/* Contact Us */}
+                  <div className="relative group">
+                    <button
+                      onClick={() => handleContactClick(home)}
+                      className="flex items-center justify-center w-10 h-10 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 transition"
+                    >
+                      <FontAwesomeIcon icon={faPhone} />
+                    </button>
+                    <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
+                      Contact
+                    </div>
+                  </div>
 
+                  {/* Donate */}
                   {home.old_age_home_upi_id && (
-                    <button
-                      onClick={() => {
-                        setSelectedUpiId(home.old_age_home_upi_id);
-                        setShowQRModal(true);
-                      }}
-                      className="flex items-center justify-center w-10 h-10 bg-green-100 text-green-600 rounded-full hover:bg-green-200 transition"
-                      title="Donate"
-                    >
-                      <FontAwesomeIcon icon={faCircleDollarToSlot} />
-                    </button>
+                    <div className="relative group">
+                      <button
+                        onClick={() => {
+                          setSelectedUpiId(home.old_age_home_upi_id);
+                          setShowQRModal(true);
+                        }}
+                        className="flex items-center justify-center w-10 h-10 bg-green-100 text-green-600 rounded-full hover:bg-green-200 transition"
+                      >
+                        <FontAwesomeIcon icon={faCircleDollarToSlot} />
+                      </button>
+                      <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
+                        Donate
+                      </div>
+                    </div>
                   )}
 
+                  {/* Leave Feedback */}
                   {(profile?.role === "user" || profile?.role === "admin") && (
-                    <button
-                      onClick={() => {
-                        setSelectedHomeId(home._id);
-                        setShowFeedbackModal(true);
-                      }}
-                      className="flex items-center justify-center w-10 h-10 bg-purple-100 text-purple-600 rounded-full hover:bg-purple-200 transition"
-                      title="Leave Feedback"
-                    >
-                      <FontAwesomeIcon icon={faComment} />
-                    </button>
+                    <div className="relative group">
+                      <button
+                        onClick={() => {
+                          setSelectedHomeId(home._id);
+                          setShowFeedbackModal(true);
+                        }}
+                        className="flex items-center justify-center w-10 h-10 bg-purple-100 text-purple-600 rounded-full hover:bg-purple-200 transition"
+                      >
+                        <FontAwesomeIcon icon={faComment} />
+                      </button>
+                      <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
+                        Leave Feedback
+                      </div>
+                    </div>
                   )}
 
+                  {/* Take Appointment */}
                   {profile?.role === "user" && (
-                    <button
-                      // onClick={() => handleTakeAppointment(home._id)}
-                      className="flex items-center justify-center w-10 h-10 bg-yellow-100 text-yellow-600 rounded-full hover:bg-yellow-200 transition"
-                      title="Take Appointment"
-                    >
-                      <FontAwesomeIcon icon={faCalendarCheck} />
-                    </button>
+                    <div className="relative group">
+                      <button
+                        // onClick={() => handleTakeAppointment(home._id)}
+                        className="flex items-center justify-center w-10 h-10 bg-yellow-100 text-yellow-600 rounded-full hover:bg-yellow-200 transition"
+                      >
+                        <FontAwesomeIcon icon={faCalendarCheck} />
+                      </button>
+                      <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
+                        Take Appointment
+                      </div>
+                    </div>
                   )}
 
+                  {/* Delete */}
                   {(profile?.role === "manager" &&
                     profile._id === home.manager_id) ||
                   profile?.role === "admin" ? (
-                    <button
-                      onClick={() => handleDelete(home._id)}
-                      className="flex items-center justify-center w-10 h-10 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition"
-                      title="Delete"
-                    >
-                      <FontAwesomeIcon icon={faTrash} />
-                    </button>
+                    <div className="relative group">
+                      <button
+                        onClick={() => handleDelete(home._id)}
+                        className="flex items-center justify-center w-10 h-10 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition"
+                      >
+                        <FontAwesomeIcon icon={faTrash} />
+                      </button>
+                      <div className="absolute bottom-12 left-1/2 transform -translate-x-1/2 bg-gray-800 text-white text-xs px-2 py-1 rounded opacity-0 group-hover:opacity-100 transition">
+                        Delete
+                      </div>
+                    </div>
                   ) : null}
                 </div>
               </div>
