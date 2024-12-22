@@ -26,7 +26,7 @@ const UserDetail = () => {
         }
       );
       if (response.ok) {
-        alert("User  Approved Successfully!");
+        alert("User Approved Successfully!");
         navigateToDashboard(navigate);
       } else {
         throw new Error("Approval failed!");
@@ -55,7 +55,7 @@ const UserDetail = () => {
         }
       );
       if (response.ok) {
-        alert("User  Rejected Successfully!");
+        alert("User Rejected Successfully!");
         navigateToDashboard(navigate);
       } else {
         const errorData = await response.json();
@@ -69,8 +69,8 @@ const UserDetail = () => {
 
   if (!user) {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <p className="text-red-500">No user data available.</p>
+      <div className="min-h-screen flex items-center justify-center bg-gray-100 px-4">
+        <p className="text-red-500 text-center">No user data available.</p>
       </div>
     );
   }
@@ -79,15 +79,15 @@ const UserDetail = () => {
     <div className="min-h-screen bg-gray-100">
       <Navbar />
       <div className="container mx-auto px-4 py-6">
-        <h2 className="text-3xl font-semibold text-gray-800 mb-4">
+        <h2 className="text-3xl font-semibold text-gray-800 mb-4 text-center md:text-left">
           User Details
         </h2>
 
         <div className="bg-white shadow-md rounded-lg p-6">
-          <h3 className="text-xl font-semibold text-gray-800 mb-4">
+          <h3 className="text-xl font-semibold text-gray-800 mb-4 text-center md:text-left">
             Review User Application
           </h3>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
             {[
               { label: "Trust Name", value: user.name_of_trust },
               { label: "Email", value: user.email },
@@ -96,6 +96,7 @@ const UserDetail = () => {
               { label: "City", value: user.head_office_city },
               { label: "State", value: user.head_office_state },
               { label: "Country", value: user.head_office_country },
+              { label: "Estd", value: user.yearOfEstablishment },
               {
                 label: "Trust Document",
                 value: (
@@ -137,19 +138,19 @@ const UserDetail = () => {
               },
               { label: "Status", value: user.status },
             ].map((item, index) => (
-              <div key={index}>
+              <div key={index} className="border p-4 rounded-lg">
                 <label className="block text-sm font-medium text-gray-700">
                   {item.label}:
                 </label>
-                <p className="text-gray-800">{item.value}</p>
+                <p className="text-gray-800 break-words">{item.value}</p>
               </div>
             ))}
           </div>
 
-          <div className="mt-6 flex items-center space-x-4">
+          <div className="mt-6 flex flex-col md:flex-row items-center space-y-4 md:space-y-0 md:space-x-4">
             <button
               onClick={handleApprove}
-              className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded"
+              className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded w-full md:w-auto"
             >
               Approve
             </button>
@@ -159,7 +160,7 @@ const UserDetail = () => {
                 setFeedback("");
                 setShowFeedbackInput(true);
               }}
-              className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded"
+              className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded w-full md:w-auto"
             >
               Reject
             </button>
@@ -182,7 +183,7 @@ const UserDetail = () => {
               />
               <button
                 onClick={handleReject}
-                className="mt-2 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded"
+                className="mt-2 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded w-full md:w-auto"
               >
                 Submit Feedback
               </button>

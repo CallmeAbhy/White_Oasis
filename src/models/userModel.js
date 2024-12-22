@@ -23,6 +23,7 @@ const userSchema = new mongoose.Schema(
     country: { type: String, required: true },
     state: { type: String, required: true },
     governmentIdCard: { type: String, required: true },
+    dateOfBirth: { type: Date, required: true },
     userPhoto: { type: String, required: true }, // Assuming this is a URL or path to the photo
   },
   { timestamps: true }
@@ -39,6 +40,7 @@ const managerSchema = new mongoose.Schema(
     financial_statements: { type: String, required: true }, // Assuming this is a URL or path to the document
     trust_domicile: { type: String, required: true }, // Assuming this is a URL or path to the document
     trust_logo: { type: String, required: true }, // Assuming this is a URL or path to the photo
+    yearOfEstablishment: { type: Number, required: true },
   },
   { timestamps: true }
 );

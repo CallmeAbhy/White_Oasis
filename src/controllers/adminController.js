@@ -34,6 +34,7 @@ const approveManager = async (req, res) => {
       trust_domicile: pendingManager.trust_domicile,
       trust_logo: pendingManager.trust_logo,
       name_of_trust: pendingManager.name_of_trust,
+      yearOfEstablishment: pendingManager.yearOfEstablishment,
     });
     await newManager.save();
     await approval(

@@ -56,6 +56,10 @@ const pendingManagerSchema = new mongoose.Schema(
       type: String,
       required: true,
     },
+    yearOfEstablishment: {
+      type: Number,
+      required: true,
+    },
     status: {
       type: String,
       enum: ["pending", "approved", "rejected"],

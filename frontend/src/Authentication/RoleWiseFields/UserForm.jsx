@@ -7,6 +7,7 @@ const UserForm = ({
   handleLocationChange,
   locationCodes,
   handleFileChange,
+  handleChange,
 }) => {
   return (
     <>
@@ -83,6 +84,20 @@ const UserForm = ({
         accept=".png, .jpg, .jpeg"
         onChange={handleFileChange}
       />
+      <div className="flex flex-col mt-4">
+        <label className="mb-1 relative group" htmlFor="dateOfBirth">
+          Date of Birth
+        </label>
+        <input
+          type="date"
+          id="date"
+          name="dateOfBirth"
+          value={formData.dateOfBirth}
+          onChange={handleChange}
+          required
+          className="p-2 mt-1 rounded-xl border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
+        />
+      </div>
     </>
   );
 };
@@ -92,9 +107,11 @@ UserForm.propTypes = {
     state: PropTypes.string.isRequired,
     city: PropTypes.string.isRequired,
     address: PropTypes.string.isRequired,
+    dateOfBirth: PropTypes.string.isRequired,
   }).isRequired,
   handleLocationChange: PropTypes.func.isRequired,
   handleFileChange: PropTypes.func.isRequired,
+  handleChange: PropTypes.func.isRequired,
   locationCodes: PropTypes.shape({
     user: PropTypes.arrayOf(PropTypes.string).isRequired,
   }),

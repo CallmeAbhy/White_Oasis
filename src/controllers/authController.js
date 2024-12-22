@@ -74,6 +74,7 @@ const register = async (req, res) => {
           state: userState,
           governmentIdCard,
           userPhoto,
+          dateOfBirth,
         } = req.body;
         const newUser = new User({
           username,
@@ -87,6 +88,7 @@ const register = async (req, res) => {
           state: userState,
           governmentIdCard: req.files.governmentIdCard[0].filename,
           userPhoto: req.files.userPhoto[0].filename,
+          dateOfBirth,
         });
         await newUser.save();
         await sendConfirmation(email, "", username);
@@ -106,6 +108,7 @@ const register = async (req, res) => {
           trust_domicile,
           trust_logo,
           name_of_trust,
+          yearOfEstablishment,
         } = req.body;
         const newPendingManager = new PendingManager({
           username,
@@ -121,6 +124,7 @@ const register = async (req, res) => {
           trust_domicile: req.files.trust_domicile[0].filename,
           trust_logo: req.files.trust_logo[0].filename,
           name_of_trust,
+          yearOfEstablishment,
         });
         await newPendingManager.save();
         // email, name_of_trust, username, feedback
