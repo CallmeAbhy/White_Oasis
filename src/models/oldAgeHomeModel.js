@@ -124,6 +124,75 @@ const oldAgeHomeSchema = new mongoose.Schema(
         message: (props) => `${props.value} is not a valid email address!`,
       },
     },
+    social_links: {
+      facebook: {
+        type: String,
+        default: "",
+      },
+      instagram: {
+        type: String,
+        default: "",
+      },
+      twitter: {
+        type: String,
+        default: "",
+      },
+      website: {
+        type: String,
+        default: "",
+      },
+      whatsapp_group: {
+        type: String,
+        default: "",
+      },
+      youtube: {
+        type: String,
+        default: "",
+      },
+    },
+    capacity: {
+      type: Number,
+      required: true,
+    },
+    occupied_seats: {
+      type: Number,
+      default: 0,
+    },
+    facilities: [
+      {
+        type: String,
+      },
+    ],
+    services: [
+      {
+        type: String,
+      },
+    ],
+    staff_info: {
+      medical_staff: {
+        type: Number,
+        required: true,
+      },
+      care_workers: {
+        type: Number,
+        required: true,
+      },
+    },
+    diet_type: {
+      type: String,
+      enum: ["Veg", "Non-Veg", "Both"],
+      required: true,
+    },
+    fee_structure: {
+      monthly: {
+        type: Number,
+        required: true,
+      },
+      yearly: {
+        type: Number,
+        required: true,
+      },
+    },
     avg_rating: {
       type: Number,
       default: 0,

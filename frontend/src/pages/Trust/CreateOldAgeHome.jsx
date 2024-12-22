@@ -21,6 +21,27 @@ const CreateOldAgeHome = () => {
     working_days: [],
     contact_numbers: [""],
     email: "",
+    social_links: {
+      facebook: "",
+      instagram: "",
+      twitter: "",
+      website: "",
+      whatsapp_group: "",
+      youtube: "",
+    },
+    capacity: "",
+    occupied_seats: 0,
+    facilities: [],
+    services: [],
+    staff_info: {
+      medical_staff: 0,
+      care_workers: 0,
+    },
+    diet_type: "",
+    fee_structure: {
+      monthly: "",
+      yearly: "",
+    },
   });
 
   const [error, setError] = useState("");
@@ -43,6 +64,16 @@ const CreateOldAgeHome = () => {
     setFormData((prev) => ({
       ...prev,
       [name]: type === "checkbox" ? checked : value,
+    }));
+  };
+  const handleSocialLinksChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({
+      ...prev,
+      social_links: {
+        ...prev.social_links,
+        [name]: value,
+      },
     }));
   };
 
@@ -360,6 +391,178 @@ const CreateOldAgeHome = () => {
             </div>
           </div>
         );
+      case 5:
+        return (
+          <div className="space-y-6">
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold">Social Media Links</h3>
+              {Object.keys(formData.social_links).map((platform) => (
+                <div key={platform}>
+                  <label className="block text-sm font-medium text-gray-600 capitalize">
+                    {platform.replace("_", " ")}
+                  </label>
+
+                  <input
+                    type="url"
+                    name={platform}
+                    value={formData.social_links[platform]}
+                    onChange={handleSocialLinksChange}
+                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                    placeholder={`Enter ${platform} URL`}
+                  />
+                </div>
+              ))}
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-600">
+                  Total Capacity
+                </label>
+
+                <input
+                  type="number"
+                  value={formData.capacity}
+                  onChange={(e) =>
+                    setFormData({ ...formData, capacity: e.target.value })
+                  }
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-600">
+                  Occupied Seats
+                </label>
+
+                <input
+                  type="number"
+                  value={formData.occupied_seats}
+                  onChange={(e) =>
+                    setFormData({ ...formData, occupied_seats: e.target.value })
+                  }
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                />
+              </div>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-600">
+                  Medical Staff Count
+                </label>
+
+                <input
+                  type="number"
+                  value={formData.staff_info.medical_staff}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+
+                      staff_info: {
+                        ...formData.staff_info,
+                        medical_staff: e.target.value,
+                      },
+                    })
+                  }
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-600">
+                  Care Workers Count
+                </label>
+
+                <input
+                  type="number"
+                  value={formData.staff_info.care_workers}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+
+                      staff_info: {
+                        ...formData.staff_info,
+                        care_workers: e.target.value,
+                      },
+                    })
+                  }
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                  required
+                />
+              </div>
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-600">
+                Diet Type
+              </label>
+
+              <select
+                value={formData.diet_type}
+                onChange={(e) =>
+                  setFormData({ ...formData, diet_type: e.target.value })
+                }
+                className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                required
+              >
+                <option value="">Select Diet Type</option>
+
+                <option value="Veg">Vegetarian</option>
+
+                <option value="Non-Veg">Non-Vegetarian</option>
+
+                <option value="Both">Both</option>
+              </select>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <label className="block text-sm font-medium text-gray-600">
+                  Monthly Fee (₹)
+                </label>
+
+                <input
+                  type="number"
+                  value={formData.fee_structure.monthly}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+
+                      fee_structure: {
+                        ...formData.fee_structure,
+                        monthly: e.target.value,
+                      },
+                    })
+                  }
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                  required
+                />
+              </div>
+
+              <div>
+                <label className="block text-sm font-medium text-gray-600">
+                  Yearly Fee (₹)
+                </label>
+
+                <input
+                  type="number"
+                  value={formData.fee_structure.yearly}
+                  onChange={(e) =>
+                    setFormData({
+                      ...formData,
+
+                      fee_structure: {
+                        ...formData.fee_structure,
+                        yearly: e.target.value,
+                      },
+                    })
+                  }
+                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+                  required
+                />
+              </div>
+            </div>
+          </div>
+        );
       default:
         return null;
     }
@@ -388,7 +591,7 @@ const CreateOldAgeHome = () => {
                   Previous
                 </button>
               )}
-              {step < 4 ? (
+              {step < 5 ? (
                 <button
                   type="button"
                   onClick={() => setStep(step + 1)}
