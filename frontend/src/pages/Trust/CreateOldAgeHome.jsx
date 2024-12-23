@@ -3,7 +3,42 @@ import { useNavigate } from "react-router-dom";
 import { useToken } from "../../context/TokenContext";
 import LocationInput from "../../Authentication/TypeWiseUpload/LocationInput";
 import Navbar from "../../components/Navbar";
+// Add these arrays at the top of your component, after the weekDays array
+const facilityOptions = [
+  "24/7 Medical Care",
+  "Wheelchair Accessibility",
+  "Emergency Response System",
+  "Recreation Room",
+  "Garden/Outdoor Space",
+  "Library",
+  "Physical Therapy Room",
+  "Dining Hall",
+  "Prayer Room",
+  "Elevator",
+  "CCTV Surveillance",
+  "Power Backup",
+  "Air Conditioning",
+  "TV Room",
+  "Laundry Service",
+];
 
+const serviceOptions = [
+  "Medical Check-ups",
+  "Physiotherapy",
+  "Medication Management",
+  "Personal Care Assistance",
+  "Meal Service",
+  "Housekeeping",
+  "Transportation",
+  "Social Activities",
+  "Religious Services",
+  "Counseling Services",
+  "Rehabilitation Services",
+  "Emergency Care",
+  "Dental Care",
+  "Memory Care",
+  "Palliative Care",
+];
 const CreateOldAgeHome = () => {
   const navigate = useNavigate();
   const { token } = useToken();
@@ -117,6 +152,22 @@ const CreateOldAgeHome = () => {
     setFormData((prev) => ({
       ...prev,
       contact_numbers: [...prev.contact_numbers, ""],
+    }));
+  };
+  const handleFacilityChange = (facility) => {
+    setFormData((prev) => ({
+      ...prev,
+      facilities: prev.facilities.includes(facility)
+        ? prev.facilities.filter((f) => f !== facility)
+        : [...prev.facilities, facility],
+    }));
+  };
+  const handleServiceChange = (service) => {
+    setFormData((prev) => ({
+      ...prev,
+      services: prev.services.includes(service)
+        ? prev.services.filter((s) => s !== service)
+        : [...prev.services, service],
     }));
   };
 
@@ -563,6 +614,98 @@ const CreateOldAgeHome = () => {
             </div>
           </div>
         );
+      case 6:
+        return (
+          <div className="space-y-6">
+            {/* Facilities Section */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-700">
+                Available Facilities
+              </h3>
+              <p className="text-sm text-gray-500">
+                Select all the facilities available at your old age home
+              </p>
+              <div className="grid grid-cols-2 gap-3">
+                {facilityOptions.map((facility) => (
+                  <div key={facility} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id={`facility-${facility}`}
+                      checked={formData.facilities.includes(facility)}
+                      onChange={() => handleFacilityChange(facility)}
+                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <label
+                      htmlFor={`facility-${facility}`}
+                      className="text-sm text-gray-700"
+                    >
+                      {facility}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Services Section */}
+            <div className="space-y-4">
+              <h3 className="text-lg font-semibold text-gray-700 mt-6">
+                Available Services
+              </h3>
+              <p className="text-sm text-gray-500">
+                Select all the services provided at your old age home
+              </p>
+              <div className="grid grid-cols-2 gap-3">
+                {serviceOptions.map((service) => (
+                  <div key={service} className="flex items-center space-x-2">
+                    <input
+                      type="checkbox"
+                      id={`service-${service}`}
+                      checked={formData.services.includes(service)}
+                      onChange={() => handleServiceChange(service)}
+                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                    />
+                    <label
+                      htmlFor={`service-${service}`}
+                      className="text-sm text-gray-700"
+                    >
+                      {service}
+                    </label>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Custom Additions */}
+            <div className="space-y-4 mt-6">
+              <h3 className="text-lg font-semibold text-gray-700">
+                Additional Facilities/Services
+              </h3>
+              <p className="text-sm text-gray-500">
+                Add any other facilities or services not listed above
+              </p>
+              <div className="flex space-x-2">
+                <input
+                  type="text"
+                  placeholder="Enter custom facility/service"
+                  className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
+                  onKeyPress={(e) => {
+                    if (e.key === "Enter") {
+                      e.preventDefault();
+                      const value = e.target.value.trim();
+                      if (value) {
+                        setFormData((prev) => ({
+                          ...prev,
+                          facilities: [...prev.facilities, value],
+                        }));
+                        e.target.value = "";
+                      }
+                    }
+                  }}
+                />
+              </div>
+            </div>
+          </div>
+        );
       default:
         return null;
     }
@@ -591,7 +734,7 @@ const CreateOldAgeHome = () => {
                   Previous
                 </button>
               )}
-              {step < 5 ? (
+              {step < 6 ? (
                 <button
                   type="button"
                   onClick={() => setStep(step + 1)}
