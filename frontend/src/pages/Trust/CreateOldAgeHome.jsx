@@ -177,9 +177,67 @@ const CreateOldAgeHome = () => {
       contact_numbers: prev.contact_numbers.filter((_, i) => i !== index),
     }));
   };
+  const validateStep = (currentStep) => {
+    switch (currentStep) {
+      case 1:
+        return formData.old_age_home_name && formData.old_age_home_upi_id;
+      case 2:
+        return (
+          formData.old_age_home_country &&
+          formData.old_age_home_state &&
+          formData.old_age_home_city &&
+          formData.old_age_home_address
+        );
+      case 3:
+        return (
+          formData.opens_on &&
+          formData.closes_on &&
+          formData.working_days.length > 0
+        );
+      case 4:
+        return formData.contact_numbers[0] && formData.email;
+      case 5:
+        return (
+          formData.capacity &&
+          formData.staff_info.medical_staff &&
+          formData.staff_info.care_workers &&
+          formData.diet_type &&
+          formData.fee_structure.monthly &&
+          formData.fee_structure.yearly
+        );
+      case 6:
+        return formData.facilities.length > 0 && formData.services.length > 0;
+
+      default:
+        return true;
+    }
+  };
+  const handleKeyPress = (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+    }
+  };
+  // Modify the Next button click handler
+  const handleNextStep = () => {
+    if (validateStep(step)) {
+      setStep(step + 1);
+    } else {
+      setError("Please fill in all required fields before proceeding");
+    }
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (step !== 6) {
+      return;
+    }
+    for (let i = 1; i <= 6; i++) {
+      if (!validateStep(i)) {
+        setError(`Please complete all required fields in step ${i}`);
+        setStep(i); // Optionally return to the incomplete step
+        return;
+      }
+    }
     try {
       const response = await fetch(
         "http://localhost:7001/api/old-age-homes/create",
@@ -720,10 +778,15 @@ const CreateOldAgeHome = () => {
             Create Old Age Home - Step {step}
           </h1>
 
-          <form onSubmit={handleSubmit} className="space-y-6">
+          <form
+            onSubmit={handleSubmit}
+            onKeyPress={handleKeyPress}
+            className="space-y-6"
+          >
             {renderStep()}
 
             {/* Step Navigation */}
+
             <div className="flex justify-between">
               {step > 1 && (
                 <button
@@ -737,7 +800,7 @@ const CreateOldAgeHome = () => {
               {step < 6 ? (
                 <button
                   type="button"
-                  onClick={() => setStep(step + 1)}
+                  onClick={handleNextStep}
                   className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
                 >
                   Next
@@ -745,6 +808,10 @@ const CreateOldAgeHome = () => {
               ) : (
                 <button
                   type="submit"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    handleSubmit(e);
+                  }}
                   className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
                 >
                   Submit
