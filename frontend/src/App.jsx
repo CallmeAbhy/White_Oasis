@@ -10,7 +10,8 @@ import UserDetail from "./pages/Admin/UserDetail";
 import { TokenProvider } from "./context/TokenContext";
 import NearMe from "./pages/Common/NearMe";
 import CreateOldAgeHome from "./pages/Trust/CreateOldAgeHome";
-import Contact from "./pages/Trust/Contact";
+import About from "./pages/Trust/About";
+
 const App = () => {
   return (
     <TokenProvider>
@@ -29,7 +30,7 @@ const App = () => {
                 path="/create-old-age-home"
                 element={<CreateOldAgeHome />}
               />
-              <Route path="/contact/:id" element={<Contact />} />
+              <Route path="/about/:id" element={<About />} />
             </Routes>
           </Router>
         </ProfileProvider>
