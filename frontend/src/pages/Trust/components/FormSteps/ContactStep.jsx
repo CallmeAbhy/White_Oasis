@@ -1,4 +1,46 @@
 import PropTypes from "prop-types";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faSquareFacebook,
+  faWhatsapp,
+  faXTwitter,
+  faInstagram,
+  faYoutube,
+} from "@fortawesome/free-brands-svg-icons";
+import { faLink } from "@fortawesome/free-solid-svg-icons";
+
+const SOCIAL_PLATFORMS = {
+  facebook: {
+    icon: faSquareFacebook,
+    name: "Facebook",
+    placeholder: "Enter Facebook URL",
+  },
+  whatsapp_group: {
+    icon: faWhatsapp,
+    name: "WhatsApp",
+    placeholder: "Enter WhatsApp URL",
+  },
+  twitter: {
+    icon: faXTwitter,
+    name: "Twitter",
+    placeholder: "Enter Twitter URL",
+  },
+  instagram: {
+    icon: faInstagram,
+    name: "Instagram",
+    placeholder: "Enter Instagram URL",
+  },
+  website: {
+    icon: faLink,
+    name: "Website",
+    placeholder: "Enter Website URL",
+  },
+  youtube: {
+    icon: faYoutube,
+    name: "YouTube",
+    placeholder: "Enter YouTube URL",
+  },
+};
 
 export const ContactStep = ({
   formData,
@@ -71,6 +113,9 @@ export const ContactStep = ({
         <h3 className="text-lg font-semibold">Social Media Links</h3>
         {Object.entries(formData.social_links).map(([platform, url], index) => (
           <div key={index} className="flex items-center space-x-2">
+            <FontAwesomeIcon
+              icon={SOCIAL_PLATFORMS[platform]?.icon || faLink}
+            />
             <input
               type="text"
               name={`social_platform_${index}`}
@@ -89,7 +134,9 @@ export const ContactStep = ({
               onChange={(e) =>
                 handleSocialLinksChange(index, "url", e.target.value)
               }
-              placeholder="URL"
+              placeholder={
+                SOCIAL_PLATFORMS[platform]?.placeholder || "Enter URL"
+              }
               className="w-2/3 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
               required
             />
