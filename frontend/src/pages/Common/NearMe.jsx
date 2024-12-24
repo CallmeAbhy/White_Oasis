@@ -55,13 +55,8 @@ const NearMe = () => {
     }));
   };
   const handleContactClick = (home) => {
-    navigate(`/contact/${home._id}`, {
-      state: {
-        name: home.old_age_home_name,
-        contact_numbers: home.contact_numbers,
-        email: home.email,
-        address: home.old_age_home_address,
-      },
+    navigate(`/about/${home._id}`, {
+      state: home, // Pass the entire home object
     });
   };
   // Add this function to handle feedback modal refresh
