@@ -217,13 +217,15 @@ const LocationInput = ({
     </div>
   );
 };
-
 LocationInput.propTypes = {
   type: PropTypes.oneOf(["country", "state", "city", "address"]).isRequired,
   name: PropTypes.string.isRequired,
   value: PropTypes.string.isRequired,
   onChange: PropTypes.func.isRequired,
-  codes: PropTypes.arrayOf(PropTypes.string),
+  codes: PropTypes.oneOfType([
+    PropTypes.arrayOf(PropTypes.string),
+    PropTypes.object,
+  ]),
   placeholder: PropTypes.string,
   required: PropTypes.bool,
   divclassname: PropTypes.string,
@@ -233,5 +235,4 @@ LocationInput.propTypes = {
   buttonclassname: PropTypes.string,
   ulclassname: PropTypes.string,
 };
-
 export default LocationInput;

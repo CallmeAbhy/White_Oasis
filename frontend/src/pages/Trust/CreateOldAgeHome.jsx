@@ -1,225 +1,47 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useToken } from "../../context/TokenContext";
-import LocationInput from "../../Authentication/TypeWiseUpload/LocationInput";
 import Navbar from "../../components/Navbar";
-// Add these arrays at the top of your component, after the weekDays array
-const facilityOptions = [
-  "24/7 Medical Care",
-  "Wheelchair Accessibility",
-  "Emergency Response System",
-  "Recreation Room",
-  "Garden/Outdoor Space",
-  "Library",
-  "Physical Therapy Room",
-  "Dining Hall",
-  "Prayer Room",
-  "Elevator",
-  "CCTV Surveillance",
-  "Power Backup",
-  "Air Conditioning",
-  "TV Room",
-  "Laundry Service",
-];
+import { Information } from "./components/FormSteps/Information";
+import { useOldAgeHomeForm } from "./hooks/useOldAgeHomeForm";
+import { LocationStep } from "./components/FormSteps/LocationStep";
+import { BasicInfoStep } from "./components/FormSteps/BasicInfoStep";
+import { TimingsStep } from "./components/FormSteps/TimingsStep";
+import { ContactStep } from "./components/FormSteps/ContactStep";
+import { FacilitiesStep } from "./components/FormSteps/FacilitiesStep";
+import { FormNavigation } from "./components/FormNavigation";
+import { initialFormState } from "./constants/formInitialState";
+import { validateStep } from "./utils/formValidation";
 
-const serviceOptions = [
-  "Medical Check-ups",
-  "Physiotherapy",
-  "Medication Management",
-  "Personal Care Assistance",
-  "Meal Service",
-  "Housekeeping",
-  "Transportation",
-  "Social Activities",
-  "Religious Services",
-  "Counseling Services",
-  "Rehabilitation Services",
-  "Emergency Care",
-  "Dental Care",
-  "Memory Care",
-  "Palliative Care",
-];
 const CreateOldAgeHome = () => {
   const navigate = useNavigate();
   const { token } = useToken();
   const [step, setStep] = useState(1);
-  const [formData, setFormData] = useState({
-    old_age_home_name: "",
-    old_age_home_upi_id: "",
-    is_appointment_enabled: false,
-    old_age_home_country: "",
-    old_age_home_state: "",
-    old_age_home_city: "",
-    old_age_home_address: "",
-    opens_on: "",
-    closes_on: "",
-    working_days: [],
-    contact_numbers: [""],
-    email: "",
-    social_links: {
-      facebook: "",
-      instagram: "",
-      twitter: "",
-      website: "",
-      whatsapp_group: "",
-      youtube: "",
-    },
-    capacity: "",
-    occupied_seats: 0,
-    facilities: [],
-    services: [],
-    staff_info: {
-      medical_staff: 0,
-      care_workers: 0,
-    },
-    diet_type: "",
-    fee_structure: {
-      monthly: "",
-      yearly: "",
-    },
-  });
-
-  const [error, setError] = useState("");
-  const [locationCodes, setLocationCodes] = useState({
-    countryCode: "",
-    stateCode: "",
-  });
-  const weekDays = [
-    "monday",
-    "tuesday",
-    "wednesday",
-    "thursday",
-    "friday",
-    "saturday",
-    "sunday",
-  ];
-
-  const handleInputChange = (e) => {
-    const { name, value, type, checked } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
-  };
-  const handleSocialLinksChange = (e) => {
-    const { name, value } = e.target;
-    setFormData((prev) => ({
-      ...prev,
-      social_links: {
-        ...prev.social_links,
-        [name]: value,
-      },
-    }));
-  };
-
-  const handleLocationChange = (e) => {
-    const { name, value } = e.target;
-
-    setFormData((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
-
-    // Update location codes if provided
-    if (e.countryCode || e.stateCode) {
-      setLocationCodes((prev) => ({
-        ...prev,
-        ...(e.countryCode && { countryCode: e.countryCode }),
-        ...(e.stateCode && { stateCode: e.stateCode }),
-      }));
-    }
-  };
-
-  const handleWorkingDaysChange = (day) => {
-    setFormData((prev) => ({
-      ...prev,
-      working_days: prev.working_days.includes(day)
-        ? prev.working_days.filter((d) => d !== day)
-        : [...prev.working_days, day],
-    }));
-  };
-
-  const handlePhoneNumberChange = (index, value) => {
-    const updatedNumbers = [...formData.contact_numbers];
-    updatedNumbers[index] = value;
-    setFormData((prev) => ({
-      ...prev,
-      contact_numbers: updatedNumbers,
-    }));
-  };
-
-  const addPhoneNumberField = () => {
-    setFormData((prev) => ({
-      ...prev,
-      contact_numbers: [...prev.contact_numbers, ""],
-    }));
-  };
-  const handleFacilityChange = (facility) => {
-    setFormData((prev) => ({
-      ...prev,
-      facilities: prev.facilities.includes(facility)
-        ? prev.facilities.filter((f) => f !== facility)
-        : [...prev.facilities, facility],
-    }));
-  };
-  const handleServiceChange = (service) => {
-    setFormData((prev) => ({
-      ...prev,
-      services: prev.services.includes(service)
-        ? prev.services.filter((s) => s !== service)
-        : [...prev.services, service],
-    }));
-  };
-
-  const removePhoneNumberField = (index) => {
-    setFormData((prev) => ({
-      ...prev,
-      contact_numbers: prev.contact_numbers.filter((_, i) => i !== index),
-    }));
-  };
-  const validateStep = (currentStep) => {
-    switch (currentStep) {
-      case 1:
-        return formData.old_age_home_name && formData.old_age_home_upi_id;
-      case 2:
-        return (
-          formData.old_age_home_country &&
-          formData.old_age_home_state &&
-          formData.old_age_home_city &&
-          formData.old_age_home_address
-        );
-      case 3:
-        return (
-          formData.opens_on &&
-          formData.closes_on &&
-          formData.working_days.length > 0
-        );
-      case 4:
-        return formData.contact_numbers[0] && formData.email;
-      case 5:
-        return (
-          formData.capacity &&
-          formData.staff_info.medical_staff &&
-          formData.staff_info.care_workers &&
-          formData.diet_type &&
-          formData.fee_structure.monthly &&
-          formData.fee_structure.yearly
-        );
-      case 6:
-        return formData.facilities.length > 0 && formData.services.length > 0;
-
-      default:
-        return true;
-    }
-  };
-  const handleKeyPress = (e) => {
-    if (e.key === "Enter") {
-      e.preventDefault();
-    }
-  };
-  // Modify the Next button click handler
+  const {
+    formData,
+    setFormData,
+    error,
+    setError,
+    handleInputChange,
+    handleSocialLinksChange,
+    addSocialLinkField,
+    removeSocialLinkField,
+    handlePhoneNumberChange,
+    addPhoneNumberField,
+    removePhoneNumberField,
+    handleKeyPress,
+    locationCodes,
+    handleLocationChange,
+    handleWorkingDaysChange,
+    handleFacilityChange,
+    addFacilityField,
+    removeFacilityField,
+    handleServiceChange,
+    addServiceField,
+    removeServiceField,
+  } = useOldAgeHomeForm(initialFormState);
   const handleNextStep = () => {
-    if (validateStep(step)) {
+    if (validateStep(step, formData)) {
       setStep(step + 1);
     } else {
       setError("Please fill in all required fields before proceeding");
@@ -232,9 +54,9 @@ const CreateOldAgeHome = () => {
       return;
     }
     for (let i = 1; i <= 6; i++) {
-      if (!validateStep(i)) {
+      if (!validateStep(i, formData)) {
         setError(`Please complete all required fields in step ${i}`);
-        setStep(i); // Optionally return to the incomplete step
+        setStep(i);
         return;
       }
     }
@@ -264,511 +86,59 @@ const CreateOldAgeHome = () => {
   };
 
   const renderStep = () => {
-    switch (step) {
-      case 1:
-        return (
-          <div className="space-y-4">
-            {/* Name Input */}
-            <div>
-              <label
-                htmlFor="old_age_home_name"
-                className="block text-sm font-medium text-gray-600"
-              >
-                Old Age Home Name
-              </label>
-              <input
-                type="text"
-                id="old_age_home_name"
-                name="old_age_home_name"
-                value={formData.old_age_home_name}
-                onChange={handleInputChange}
-                placeholder="Enter old age home name"
-                className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                required
-              />
-            </div>
+    const steps = {
+      1: (
+        <BasicInfoStep
+          formData={formData}
+          handleInputChange={handleInputChange}
+        />
+      ),
 
-            {/* UPI ID Input */}
-            <div>
-              <label
-                htmlFor="old_age_home_upi_id"
-                className="block text-sm font-medium text-gray-600"
-              >
-                UPI ID
-              </label>
-              <input
-                type="text"
-                id="old_age_home_upi_id"
-                name="old_age_home_upi_id"
-                value={formData.old_age_home_upi_id}
-                onChange={handleInputChange}
-                placeholder="Enter UPI ID"
-                className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                required
-              />
-            </div>
+      2: (
+        <LocationStep
+          formData={formData}
+          handleLocationChange={handleLocationChange}
+          locationCodes={locationCodes}
+        />
+      ),
 
-            {/* Appointment Checkbox */}
-            <div className="flex items-center space-x-2">
-              <input
-                type="checkbox"
-                id="is_appointment_enabled"
-                name="is_appointment_enabled"
-                checked={formData.is_appointment_enabled}
-                onChange={handleInputChange}
-                className="w-5 h-5 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
-              />
-              <label htmlFor="is_appointment_enabled" className="text-gray-600">
-                Enable Appointments
-              </label>
-            </div>
-          </div>
-        );
+      3: (
+        <TimingsStep
+          formData={formData}
+          handleInputChange={handleInputChange}
+          handleWorkingDaysChange={handleWorkingDaysChange}
+        />
+      ),
 
-      case 2:
-        return (
-          <div className="space-y-4">
-            <LocationInput
-              type="country"
-              name="old_age_home_country"
-              value={formData.old_age_home_country}
-              onChange={handleLocationChange}
-              placeholder="Select Country"
-              divclassname="relative w-full"
-              inputclassname="p-2 mt-1 rounded-xl border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-              loadingclassname="absolute right-10 top-1/2 transform -translate-y-1/2"
-              loaderclassname="loader w-4 h-4 border-2 border-t-transparent border-blue-500 rounded-full animate-spin"
-              buttonclassname="absolute right-2 top-2 flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 focus:outline-none"
-              ulclassname="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto shadow-md"
-              required
-            />
+      4: (
+        <ContactStep
+          formData={formData}
+          handlePhoneNumberChange={handlePhoneNumberChange}
+          removePhoneNumberField={removePhoneNumberField}
+          addPhoneNumberField={addPhoneNumberField}
+          handleInputChange={handleInputChange}
+          handleSocialLinksChange={handleSocialLinksChange}
+          addSocialLinkField={addSocialLinkField}
+          removeSocialLinkField={removeSocialLinkField}
+        />
+      ),
 
-            <LocationInput
-              type="state"
-              name="old_age_home_state"
-              value={formData.old_age_home_state}
-              onChange={handleLocationChange}
-              codes={{ countryCode: locationCodes.countryCode }}
-              placeholder="Select State"
-              divclassname="relative w-full"
-              inputclassname="p-2 mt-1 rounded-xl border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-              loadingclassname="absolute right-10 top-1/2 transform -translate-y-1/2"
-              loaderclassname="loader w-4 h-4 border-2 border-t-transparent border-blue-500 rounded-full animate-spin"
-              buttonclassname="absolute right-2 top-2 flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 focus:outline-none"
-              ulclassname="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto shadow-md"
-              required
-            />
+      5: <Information formData={formData} setFormData={setFormData} />,
 
-            <LocationInput
-              type="city"
-              name="old_age_home_city"
-              value={formData.old_age_home_city}
-              onChange={handleLocationChange}
-              codes={{
-                countryCode: locationCodes.countryCode,
-                stateCode: locationCodes.stateCode,
-              }}
-              placeholder="Select City"
-              divclassname="relative w-full"
-              inputclassname="p-2 mt-1 rounded-xl border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-              loadingclassname="absolute right-10 top-1/2 transform -translate-y-1/2"
-              loaderclassname="loader w-4 h-4 border-2 border-t-transparent border-blue-500 rounded-full animate-spin"
-              buttonclassname="absolute right-2 top-2 flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 focus:outline-none"
-              ulclassname="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto shadow-md"
-              required
-            />
-
-            <LocationInput
-              type="address"
-              name="old_age_home_address"
-              value={formData.old_age_home_address}
-              onChange={handleLocationChange}
-              placeholder="Enter Address"
-              divclassname="relative w-full"
-              inputclassname="p-2 mt-1 rounded-xl border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-blue-500"
-              loadingclassname="absolute right-10 top-1/2 transform -translate-y-1/2"
-              loaderclassname="loader w-4 h-4 border-2 border-t-transparent border-blue-500 rounded-full animate-spin"
-              buttonclassname="absolute right-2 top-2 flex items-center justify-center w-8 h-8 rounded-full bg-gray-200 hover:bg-gray-300 focus:outline-none"
-              ulclassname="absolute z-10 w-full bg-white border border-gray-300 rounded-md mt-1 max-h-60 overflow-auto shadow-md"
-              required
-            />
-          </div>
-        );
-
-      case 3:
-        return (
-          <div className="space-y-4">
-            <div>
-              <label className="block font-medium">Opening Time</label>
-              <input
-                type="time"
-                name="opens_on"
-                value={formData.opens_on}
-                onChange={handleInputChange}
-                required
-                className="p-2 mt-1 rounded-xl border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-[#002D74]"
-              />
-            </div>
-
-            <div>
-              <label className="block font-medium">Closing Time</label>
-              <input
-                type="time"
-                name="closes_on"
-                value={formData.closes_on}
-                onChange={handleInputChange}
-                required
-                className="p-2 mt-1 rounded-xl border border-gray-300 w-full focus:outline-none focus:ring-2 focus:ring-[#002D74]"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <label className="block font-medium">Working Days</label>
-              <div className="grid grid-cols-2 gap-2">
-                {weekDays.map((day) => (
-                  <div key={day} className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      checked={formData.working_days.includes(day)}
-                      onChange={() => handleWorkingDaysChange(day)}
-                      className="w-5 h-5 border border-gray-300 rounded focus:ring-2 focus:ring-blue-500"
-                    />
-                    <label className="capitalize text-gray-600">{day}</label>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
-        );
-      case 4:
-        return (
-          <div className="space-y-4">
-            <h3 className="text-lg font-semibold text-gray-600">
-              Add Contact Numbers (Up to 3)
-            </h3>
-            {formData.contact_numbers.map((number, index) => (
-              <div key={index} className="flex items-center space-x-2">
-                <input
-                  type="tel"
-                  id={`contact_number_${index}`}
-                  name={`contact_number_${index}`}
-                  value={number}
-                  onChange={(e) =>
-                    handlePhoneNumberChange(index, e.target.value)
-                  }
-                  placeholder={`Contact Number ${index + 1}`}
-                  className="w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  required={index === 0}
-                />
-                {index > 0 && (
-                  <button
-                    type="button"
-                    onClick={() => removePhoneNumberField(index)}
-                    className="text-red-500 hover:underline"
-                  >
-                    Remove
-                  </button>
-                )}
-              </div>
-            ))}
-            {formData.contact_numbers.length < 3 && (
-              <button
-                type="button"
-                onClick={addPhoneNumberField}
-                className="text-blue-500 hover:underline"
-              >
-                Add Another Contact Number
-              </button>
-            )}
-            <div>
-              <label
-                htmlFor="email"
-                className="block text-sm font-medium text-gray-600"
-              >
-                Email Address
-              </label>
-              <input
-                type="email"
-                id="email"
-                name="email"
-                value={formData.email}
-                onChange={handleInputChange}
-                placeholder="Enter email address"
-                className="mt-1 block w-full p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                required
-              />
-            </div>
-          </div>
-        );
-      case 5:
-        return (
-          <div className="space-y-6">
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold">Social Media Links</h3>
-              {Object.keys(formData.social_links).map((platform) => (
-                <div key={platform}>
-                  <label className="block text-sm font-medium text-gray-600 capitalize">
-                    {platform.replace("_", " ")}
-                  </label>
-
-                  <input
-                    type="url"
-                    name={platform}
-                    value={formData.social_links[platform]}
-                    onChange={handleSocialLinksChange}
-                    className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-                    placeholder={`Enter ${platform} URL`}
-                  />
-                </div>
-              ))}
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-600">
-                  Total Capacity
-                </label>
-
-                <input
-                  type="number"
-                  value={formData.capacity}
-                  onChange={(e) =>
-                    setFormData({ ...formData, capacity: e.target.value })
-                  }
-                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-600">
-                  Occupied Seats
-                </label>
-
-                <input
-                  type="number"
-                  value={formData.occupied_seats}
-                  onChange={(e) =>
-                    setFormData({ ...formData, occupied_seats: e.target.value })
-                  }
-                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-                />
-              </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-600">
-                  Medical Staff Count
-                </label>
-
-                <input
-                  type="number"
-                  value={formData.staff_info.medical_staff}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-
-                      staff_info: {
-                        ...formData.staff_info,
-                        medical_staff: e.target.value,
-                      },
-                    })
-                  }
-                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-600">
-                  Care Workers Count
-                </label>
-
-                <input
-                  type="number"
-                  value={formData.staff_info.care_workers}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-
-                      staff_info: {
-                        ...formData.staff_info,
-                        care_workers: e.target.value,
-                      },
-                    })
-                  }
-                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-                  required
-                />
-              </div>
-            </div>
-            <div>
-              <label className="block text-sm font-medium text-gray-600">
-                Diet Type
-              </label>
-
-              <select
-                value={formData.diet_type}
-                onChange={(e) =>
-                  setFormData({ ...formData, diet_type: e.target.value })
-                }
-                className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-                required
-              >
-                <option value="">Select Diet Type</option>
-
-                <option value="Veg">Vegetarian</option>
-
-                <option value="Non-Veg">Non-Vegetarian</option>
-
-                <option value="Both">Both</option>
-              </select>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div>
-                <label className="block text-sm font-medium text-gray-600">
-                  Monthly Fee (₹)
-                </label>
-
-                <input
-                  type="number"
-                  value={formData.fee_structure.monthly}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-
-                      fee_structure: {
-                        ...formData.fee_structure,
-                        monthly: e.target.value,
-                      },
-                    })
-                  }
-                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-                  required
-                />
-              </div>
-
-              <div>
-                <label className="block text-sm font-medium text-gray-600">
-                  Yearly Fee (₹)
-                </label>
-
-                <input
-                  type="number"
-                  value={formData.fee_structure.yearly}
-                  onChange={(e) =>
-                    setFormData({
-                      ...formData,
-
-                      fee_structure: {
-                        ...formData.fee_structure,
-                        yearly: e.target.value,
-                      },
-                    })
-                  }
-                  className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
-                  required
-                />
-              </div>
-            </div>
-          </div>
-        );
-      case 6:
-        return (
-          <div className="space-y-6">
-            {/* Facilities Section */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-700">
-                Available Facilities
-              </h3>
-              <p className="text-sm text-gray-500">
-                Select all the facilities available at your old age home
-              </p>
-              <div className="grid grid-cols-2 gap-3">
-                {facilityOptions.map((facility) => (
-                  <div key={facility} className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id={`facility-${facility}`}
-                      checked={formData.facilities.includes(facility)}
-                      onChange={() => handleFacilityChange(facility)}
-                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                    />
-                    <label
-                      htmlFor={`facility-${facility}`}
-                      className="text-sm text-gray-700"
-                    >
-                      {facility}
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Services Section */}
-            <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-700 mt-6">
-                Available Services
-              </h3>
-              <p className="text-sm text-gray-500">
-                Select all the services provided at your old age home
-              </p>
-              <div className="grid grid-cols-2 gap-3">
-                {serviceOptions.map((service) => (
-                  <div key={service} className="flex items-center space-x-2">
-                    <input
-                      type="checkbox"
-                      id={`service-${service}`}
-                      checked={formData.services.includes(service)}
-                      onChange={() => handleServiceChange(service)}
-                      className="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
-                    />
-                    <label
-                      htmlFor={`service-${service}`}
-                      className="text-sm text-gray-700"
-                    >
-                      {service}
-                    </label>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* Custom Additions */}
-            <div className="space-y-4 mt-6">
-              <h3 className="text-lg font-semibold text-gray-700">
-                Additional Facilities/Services
-              </h3>
-              <p className="text-sm text-gray-500">
-                Add any other facilities or services not listed above
-              </p>
-              <div className="flex space-x-2">
-                <input
-                  type="text"
-                  placeholder="Enter custom facility/service"
-                  className="flex-1 p-2 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                  onKeyPress={(e) => {
-                    if (e.key === "Enter") {
-                      e.preventDefault();
-                      const value = e.target.value.trim();
-                      if (value) {
-                        setFormData((prev) => ({
-                          ...prev,
-                          facilities: [...prev.facilities, value],
-                        }));
-                        e.target.value = "";
-                      }
-                    }
-                  }}
-                />
-              </div>
-            </div>
-          </div>
-        );
-      default:
-        return null;
-    }
+      6: (
+        <FacilitiesStep
+          formData={formData}
+          handleFacilityChange={handleFacilityChange}
+          addFacilityField={addFacilityField}
+          removeFacilityField={removeFacilityField}
+          handleServiceChange={handleServiceChange}
+          addServiceField={addServiceField}
+          removeServiceField={removeServiceField}
+        />
+      ),
+    };
+    return steps[step];
   };
-
   return (
     <div className="min-h-screen bg-gray-50 flex flex-col">
       <Navbar />
@@ -786,39 +156,13 @@ const CreateOldAgeHome = () => {
             {renderStep()}
 
             {/* Step Navigation */}
-
-            <div className="flex justify-between">
-              {step > 1 && (
-                <button
-                  type="button"
-                  onClick={() => setStep(step - 1)}
-                  className="bg-gray-200 hover:bg-gray-300 text-gray-700 px-4 py-2 rounded-lg transition-colors"
-                >
-                  Previous
-                </button>
-              )}
-              {step < 6 ? (
-                <button
-                  type="button"
-                  onClick={handleNextStep}
-                  className="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded-lg transition-colors"
-                >
-                  Next
-                </button>
-              ) : (
-                <button
-                  type="submit"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleSubmit(e);
-                  }}
-                  className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg transition-colors"
-                >
-                  Submit
-                </button>
-              )}
-            </div>
-
+            <FormNavigation
+              step={step}
+              totalSteps={6}
+              onPrevious={() => setStep(step - 1)}
+              onNext={handleNextStep}
+              onSubmit={handleSubmit}
+            />
             {error && <p className="text-red-500 text-sm mt-2">{error}</p>}
           </form>
         </div>
