@@ -41,12 +41,23 @@ export const useOldAgeHomeForm = (initialState) => {
     }
     setFormData({ ...formData, social_links: newSocialLinks });
   };
+  // const addSocialLinkField = () => {
+  //   setFormData({
+  //     ...formData,
+  //     social_links: { ...formData.social_links, new_platform: "" },
+  //   });
+  // };
 
-  const addSocialLinkField = () => {
-    setFormData({
-      ...formData,
-      social_links: { ...formData.social_links, new_platform: "" },
-    });
+  const addSocialLinkField = (platform) => {
+    if (!formData.social_links[platform]) {
+      setFormData((prev) => ({
+        ...prev,
+        social_links: {
+          ...prev.social_links,
+          [platform]: "",
+        },
+      }));
+    }
   };
 
   const removeSocialLinkField = (platform) => {
