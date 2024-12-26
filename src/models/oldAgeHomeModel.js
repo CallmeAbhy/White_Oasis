@@ -98,11 +98,6 @@ const oldAgeHomeSchema = new mongoose.Schema(
         message: "At least one working day must be specified",
       },
     },
-    is_appointment_enabled: {
-      type: Boolean,
-
-      default: false,
-    },
     contact_numbers: [
       {
         type: String,
@@ -193,6 +188,19 @@ const oldAgeHomeSchema = new mongoose.Schema(
         required: true,
       },
     },
+    appointment_settings: {
+      duration: {
+        type: Number,
+        required: true,
+        default: 30,
+      },
+      max_appointments_per_day: {
+        type: Number,
+        required: true,
+        default: 3,
+      },
+    },
+    yearOfEstablishment: { type: Number, required: true },
     avg_rating: {
       type: Number,
       default: 0,

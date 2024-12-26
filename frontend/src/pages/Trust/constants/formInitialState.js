@@ -3,7 +3,6 @@
 export const initialFormState = {
   old_age_home_name: "",
   old_age_home_upi_id: "",
-  is_appointment_enabled: false,
   old_age_home_country: "",
   old_age_home_state: "",
   old_age_home_city: "",
@@ -33,5 +32,10 @@ export const initialFormState = {
   fee_structure: {
     monthly: 0,
     yearly: 0,
+  },
+  yearOfEstablishment: 0,
+  appointment_settings: {
+    duration: 30,
+    max_appointments_per_day: 5,
   },
 };

@@ -25,6 +25,8 @@ const createOldAgeHome = async (req, res) => {
       staff_info,
       diet_type,
       fee_structure,
+      appointment_settings,
+      yearOfEstablishment,
     } = req.body;
     if (
       !contact_numbers ||
@@ -80,6 +82,8 @@ const createOldAgeHome = async (req, res) => {
       staff_info,
       diet_type,
       fee_structure,
+      appointment_settings,
+      yearOfEstablishment,
     });
     await newOldAgeHome.save();
     res.status(201).json({
