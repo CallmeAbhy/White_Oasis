@@ -91,6 +91,7 @@ const CreateOldAgeHome = () => {
         <BasicInfoStep
           formData={formData}
           handleInputChange={handleInputChange}
+          setFormData={setFormData}
         />
       ),
 
