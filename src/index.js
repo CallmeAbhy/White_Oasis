@@ -12,6 +12,10 @@ const passwordResetRoutes = require("./routes/passwordResetRoutes");
 const contactRoutes = require("./routes/contactRoutes");
 const appointmentRoutes = require("./routes/appointmentRoutes");
 const { initGridFS } = require("./config/gridfsConfig");
+const {
+  cleanupExpiredAppointments,
+} = require("./controllers/appointmentClean");
+
 dbConnect();
 const app = express();
 // Middleware
@@ -30,6 +34,8 @@ app.use("/api/old-age-homes", oldAgeHomeRoutes);
 app.use("/api/contact", contactRoutes);
 app.use("/api/appointments", appointmentRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
+
+cleanupExpiredAppointments();
 // Starts the Server
 const PORT = process.env.PORT || 7002;
 app.listen(PORT, () => {
