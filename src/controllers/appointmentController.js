@@ -111,7 +111,194 @@ const timeToMinutes = (time) => {
   const [hours, minutes] = time.split(":").map(Number);
   return hours * 60 + minutes;
 };
+// Helper Function to get Time Slots
+// const generateTimeSlots = (
+//   opensOn,
+//   closesOn,
+//   bookedAppointments,
+//   durationInMinutes
+// ) => {
+//   const slots = [];
+//   const [openHour, openMin] = opensOn.split(":");
+//   const [closeHour, closeMin] = closesOn.split(":");
 
+//   let currentTime = new Date();
+//   currentTime.setHours(openHour, openMin, 0);
+
+//   const endTime = new Date();
+//   endTime.setHours(closeHour, closeMin, 0);
+
+//   while (currentTime < endTime) {
+//     const timeSlot = currentTime.toLocaleTimeString("en-US", {
+//       hour12: false,
+//       hour: "2-digit",
+//       minute: "2-digit",
+//     });
+
+//     const isBooked = bookedAppointments.some((apt) => {
+//       const appointmentStart = new Date();
+//       const appointmentEnd = new Date();
+//       const [startHour, startMin] = apt.start_time.split(":");
+//       const [endHour, endMin] = apt.end_time.split(":");
+
+//       appointmentStart.setHours(startHour, startMin, 0);
+//       appointmentEnd.setHours(endHour, endMin, 0);
+
+//       const slotTime = new Date();
+//       const [slotHour, slotMin] = timeSlot.split(":");
+//       slotTime.setHours(slotHour, slotMin, 0);
+
+//       return slotTime >= appointmentStart && slotTime < appointmentEnd;
+//     });
+
+//     if (!isBooked) {
+//       slots.push(timeSlot);
+//     }
+
+//     currentTime.setMinutes(currentTime.getMinutes() + durationInMinutes);
+//   }
+
+//   return slots;
+// };
+const generateTimeSlots = (
+  opensOn,
+  closesOn,
+  bookedAppointments,
+  durationInMinutes
+) => {
+  const slots = [];
+
+  const [openHour, openMin] = opensOn.split(":");
+
+  const [closeHour, closeMin] = closesOn.split(":");
+
+  let currentTime = new Date();
+
+  currentTime.setHours(openHour, openMin, 0);
+
+  const endTime = new Date();
+
+  endTime.setHours(closeHour, closeMin, 0);
+
+  while (currentTime < endTime) {
+    const timeSlot = currentTime.toLocaleTimeString("en-US", {
+      hour12: false,
+
+      hour: "2-digit",
+
+      minute: "2-digit",
+    });
+
+    const isBooked = bookedAppointments.some((apt) => {
+      const appointmentStart = new Date();
+
+      const appointmentEnd = new Date();
+
+      const [startHour, startMin] = apt.start_time.split(":");
+
+      const [endHour, endMin] = apt.end_time.split(":");
+
+      appointmentStart.setHours(startHour, startMin, 0);
+
+      appointmentEnd.setHours(endHour, endMin, 0);
+
+      const slotStartTime = new Date(currentTime);
+
+      const slotEndTime = new Date(currentTime);
+
+      slotEndTime.setMinutes(slotEndTime.getMinutes() + durationInMinutes);
+
+      // Check if the slot overlaps with the booked appointment
+
+      return slotStartTime < appointmentEnd && slotEndTime > appointmentStart;
+    });
+
+    if (!isBooked) {
+      slots.push(timeSlot);
+    }
+
+    currentTime.setMinutes(currentTime.getMinutes() + durationInMinutes);
+  }
+
+  return slots;
+};
+
+// Update The Appointment Status Only For Managers
+const updatetheAppointment = async (req, res) => {
+  try {
+    const { appointmentId } = req.params;
+    const { status, feedback } = req.body;
+    const appointment = await Appointment.findById(appointmentId);
+    if (!appointment) {
+      return res.status(404).json({ message: "Appointment not Found" });
+    }
+    // verify manager belongs to requested old age home
+    const oldagehome = await OldAgeHome.findById(appointment.old_age_home_id);
+    console.log(oldagehome.manager_id._id);
+    if (oldagehome.manager_id._id.toString() !== req.user.id) {
+      return res.status(403).json({ message: "Not authorized" });
+    }
+    const dailyAppointments = await Appointment.countDocuments({
+      old_age_home_id: appointment.old_age_home_id,
+      appointment_date: appointment.appointment_date,
+      status: "Approved",
+    });
+    // Check Whether Daily Appointments are bypassed or not
+    if (
+      dailyAppointments >
+      oldagehome.appointment_settings.max_appointments_per_day
+    ) {
+      return res
+        .status(400)
+        .json({ message: "Maximum appointments for this day reached" });
+    }
+    appointment.status = status;
+    if (status === "Rejected" && !feedback) {
+      return res
+        .status(401)
+        .json({ message: "Feedback Required for Rejection" });
+    } else if (status === "Approved") {
+      appointment.feedback = "Looking forward to your appointment";
+    } else {
+      appointment.feedback = feedback;
+    }
+    await appointment.save();
+    res.status(200).json({
+      message: "Appointment status updated successfully",
+      appointment,
+    });
+  } catch (error) {
+    res.status(500).json({ message: `Something went wrong: ${error.message}` });
+  }
+};
+
+const getAvailableSlots = async (req, res) => {
+  try {
+    const { oldAgeHomeId, date } = req.params;
+    const oldagehome = await OldAgeHome.findById(oldAgeHomeId);
+    if (!oldagehome) {
+      return res.status(404).json({ message: "Old age home not found" });
+    }
+    const existingAppointments = await Appointment.find({
+      old_age_home_id: oldAgeHomeId,
+      appointment_date: date,
+      status: { $in: ["Approved", "Pending"] },
+    });
+    console.log(oldagehome.appointment_settings.duration);
+    const availableSlots = generateTimeSlots(
+      oldagehome.opens_on,
+      oldagehome.closes_on,
+      existingAppointments,
+      oldagehome.appointment_settings.duration
+    );
+
+    res.status(200).json({ availableSlots });
+  } catch (error) {
+    res.status(500).json({ message: `Something went wrong: ${error.message}` });
+  }
+};
 module.exports = {
   createAppointment,
+  updatetheAppointment,
+  getAvailableSlots,
 };
