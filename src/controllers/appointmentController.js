@@ -1,6 +1,7 @@
 const { User } = require("../models/userModel");
 const OldAgeHome = require("../models/oldAgeHomeModel");
 const Appointment = require("../models/appointmentModel");
+
 // Create appointment (for users)
 const createAppointment = async (req, res) => {
   try {
