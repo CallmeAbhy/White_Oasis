@@ -245,7 +245,7 @@ const updatetheAppointment = async (req, res) => {
     });
     // Check Whether Daily Appointments are bypassed or not
     if (
-      dailyAppointments >
+      dailyAppointments >=
       oldagehome.appointment_settings.max_appointments_per_day
     ) {
       return res
@@ -297,8 +297,60 @@ const getAvailableSlots = async (req, res) => {
     res.status(500).json({ message: `Something went wrong: ${error.message}` });
   }
 };
+
+//functionality for managers to access all pending appointments
+const getAppointments = async (req, res) => {
+  try {
+    const managerId = req.user.id;
+    const { status } = req.params;
+    const oldagehome = await OldAgeHome.findOne({
+      manager_id: managerId,
+    });
+    if (!oldagehome) {
+      return res
+        .status(404)
+        .json({ message: "Old age home not found for this manager" });
+    }
+    // Get all pending appointments for this old age home
+    const pendingAppointments = await Appointment.find({
+      old_age_home_id: oldagehome._id,
+      status: status,
+    }).sort({ appointment_date: 1, start_time: 1 }); // Sort by date and time
+    res.status(200).json({
+      success: true,
+      count: pendingAppointments.length,
+      appointments: pendingAppointments,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: `Something went wrong: ${error.message}`,
+    });
+  }
+};
+const getuserAppointments = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    const { status } = req.params;
+    const requestedAppointments = await Appointment.find({
+      user_id: userId,
+      status: status,
+    }).sort({ appointment_date: 1, start_time: 1 });
+
+    res.status(200).json({
+      success: true,
+      count: requestedAppointments.length,
+      appointments: requestedAppointments,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: `Something went wrong: ${error.message}`,
+    });
+  }
+};
 module.exports = {
   createAppointment,
   updatetheAppointment,
   getAvailableSlots,
+  getAppointments,
+  getuserAppointments,
 };
