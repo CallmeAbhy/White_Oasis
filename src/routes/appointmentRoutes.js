@@ -7,6 +7,8 @@ const {
   createAppointment,
   updatetheAppointment,
   getAvailableSlots,
+  getAppointments,
+  getuserAppointments,
 } = require("../controllers/appointmentController");
 
 // Create appointment (for users)
@@ -20,8 +22,20 @@ router.patch(
 router.get(
   "/available-slots/:oldAgeHomeId/:date",
   verifyToken,
-  getAvailableSlots,
-  authorizedRoles("user")
+  authorizedRoles("user"),
+  getAvailableSlots
+);
+router.get(
+  "/pending/:status",
+  verifyToken,
+  authorizedRoles("manager"),
+  getAppointments
+);
+router.get(
+  "/user/:status",
+  verifyToken,
+  authorizedRoles("user"),
+  getuserAppointments
 );
 
 module.exports = router;
