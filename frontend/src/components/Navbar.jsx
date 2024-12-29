@@ -144,7 +144,7 @@ const Navbar = () => {
                 </button>
               </>
             )}
-            {profile && (
+            {profile && profile.role !== "admin" && (
               <>
                 <button className="relative focus:outline-none">
                   <BellIcon className="h-6 w-6 text-gray-500 hover:text-gray-700" />
