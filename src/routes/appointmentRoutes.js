@@ -9,7 +9,7 @@ const {
   getAvailableSlots,
   getAppointments,
   getuserAppointments,
-  getusernotificationcount,
+  getUserNotificationCount,
 } = require("../controllers/appointmentController");
 
 // Create appointment (for users)
@@ -39,10 +39,10 @@ router.get(
   getuserAppointments
 );
 router.get(
-  "/user/all-status",
+  "/notifications/count",
   verifyToken,
   authorizedRoles("user"),
-  getusernotificationcount
+  getUserNotificationCount
 );
 
 module.exports = router;
