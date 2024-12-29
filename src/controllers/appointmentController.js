@@ -347,10 +347,30 @@ const getuserAppointments = async (req, res) => {
     });
   }
 };
+const getusernotificationcount = async (req, res) => {
+  try {
+    const userId = req.user.id;
+    console.log(userId);
+    const requestedAppointments = await Appointment.find({
+      user_id: userId,
+      status: { $in: ["Approved", "Rejected"] },
+    }).sort({ appointment_date: 1, start_time: 1 });
+    console.log(requestedAppointments);
+    res.status(200).json({
+      success: true,
+      count: requestedAppointments.length,
+    });
+  } catch (error) {
+    res.status(500).json({
+      message: `Something wen Wrong: ${error.message}`,
+    });
+  }
+};
 module.exports = {
   createAppointment,
   updatetheAppointment,
   getAvailableSlots,
   getAppointments,
   getuserAppointments,
+  getusernotificationcount,
 };

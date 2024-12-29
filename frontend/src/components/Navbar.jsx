@@ -33,17 +33,49 @@ const Navbar = () => {
 
   useEffect(() => {
     const fetchPendingCount = async () => {
-      if (profile && profile.role === "admin") {
-        try {
-          const response = await fetch(
-            "http://localhost:7001/api/admin/pending-managers",
-            { headers: { Authorization: `Bearer ${token}` } }
-          );
-          const data = await response.json();
-          setPendingCount(data.length);
-        } catch (e) {
-          console.error("Error Fetching the Pending Managers", e);
-        }
+      switch (profile.role) {
+        case "admin":
+          try {
+            const response = await fetch(
+              "http://localhost:7001/api/admin/pending-managers",
+              { headers: { Authorization: `Bearer ${token}` } }
+            );
+            const data = await response.json();
+            setPendingCount(data.length);
+          } catch (e) {
+            console.error("Error Fetching the Pending Managers", e);
+          }
+          break;
+        case "manager":
+          try {
+            const response = await fetch(
+              "http://localhost:7001/api/appointments/user/Pending",
+              { headers: { Authorization: `Bearer ${token}` } }
+            );
+            const data = await response.json();
+            console.log(data);
+            const { count } = data;
+            setPendingCount(count);
+          } catch (error) {
+            console.error("Error Fetching the Pending Appointments", error);
+          }
+          break;
+        case "user":
+          try {
+            const response = await fetch(
+              "http://localhost:7001/api/appointments/user/all-status",
+              { headers: { Authorization: `Bearer ${token}` } }
+            );
+            const data = await response.json();
+            console.log(data);
+            const { count } = data;
+            setPendingCount(count);
+          } catch (error) {
+            console.error("Error Fetching the Pending Approval", error);
+          }
+          break;
+        default:
+          break;
       }
     };
     fetchPendingCount();
@@ -97,18 +129,32 @@ const Navbar = () => {
 
           {/* Notification and Profile */}
           <div className="flex items-center space-x-4">
-            {profile?.role === "admin" && (
-              <button
-                className="relative focus:outline-none"
-                onClick={() => navigate("/dashboard")}
-              >
-                <BellIcon className="h-6 w-6 text-gray-500 hover:text-gray-700" />
-                {pendingCount > 0 && (
-                  <span className="absolute -top-1 -right-1 flex items-center justify-center h-5 w-5 rounded-full bg-red-600 text-xs font-bold text-white">
-                    {pendingCount}
-                  </span>
-                )}
-              </button>
+            {profile && profile.role === "admin" && (
+              <>
+                <button
+                  className="relative focus:outline-none"
+                  onClick={() => navigate("/dashboard")}
+                >
+                  <BellIcon className="h-6 w-6 text-gray-500 hover:text-gray-700" />
+                  {pendingCount > 0 && (
+                    <span className="absolute -top-1 -right-1 flex items-center justify-center h-5 w-5 rounded-full bg-red-600 text-xs font-bold text-white">
+                      {pendingCount}
+                    </span>
+                  )}
+                </button>
+              </>
+            )}
+            {profile && profile.role !== "admin" && (
+              <>
+                <button className="relative focus:outline-none">
+                  <BellIcon className="h-6 w-6 text-gray-500 hover:text-gray-700" />
+                  {pendingCount > 0 && (
+                    <span className="absolute -top-1 -right-1 flex items-center justify-center h-5 w-5 rounded-full bg-red-600 text-xs font-bold text-white">
+                      {pendingCount}
+                    </span>
+                  )}
+                </button>
+              </>
             )}
 
             {/* Profile Section */}
