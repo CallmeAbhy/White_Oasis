@@ -49,7 +49,7 @@ const Navbar = () => {
         case "manager":
           try {
             const response = await fetch(
-              "http://localhost:7001/api/appointments/user/Pending",
+              "http://localhost:7001/api/appointments/pending/Pending",
               { headers: { Authorization: `Bearer ${token}` } }
             );
             const data = await response.json();
@@ -63,13 +63,14 @@ const Navbar = () => {
         case "user":
           try {
             const response = await fetch(
-              "http://localhost:7001/api/appointments/user/all-status",
+              "http://localhost:7001/api/appointments/notifications/count",
               { headers: { Authorization: `Bearer ${token}` } }
             );
             const data = await response.json();
             console.log(data);
-            const { count } = data;
-            setPendingCount(count);
+            if (data.success) {
+              setPendingCount(data.counts.total);
+            }
           } catch (error) {
             console.error("Error Fetching the Pending Approval", error);
           }

@@ -347,22 +347,49 @@ const getuserAppointments = async (req, res) => {
     });
   }
 };
-const getusernotificationcount = async (req, res) => {
+const getUserNotificationCount = async (req, res) => {
   try {
-    const userId = req.user.id;
-    console.log(userId);
-    const requestedAppointments = await Appointment.find({
-      user_id: userId,
-      status: { $in: ["Approved", "Rejected"] },
-    }).sort({ appointment_date: 1, start_time: 1 });
-    console.log(requestedAppointments);
+    const userId = req.user.id; // Get user ID from authenticated request
+
+    // Get all appointments for this user with different status types
+    const appointments = await Appointment.find({ user_id: userId });
+
+    // Count notifications based on different criteria
+    const counts = {
+      pending: 0,
+      approved: 0,
+      rejected: 0,
+      total: 0,
+    };
+
+    appointments.forEach((appointment) => {
+      switch (appointment.status) {
+        case "Pending":
+          counts.pending++;
+          break;
+        case "Approved":
+          counts.approved++;
+          break;
+        case "Rejected":
+          counts.rejected++;
+          break;
+      }
+    });
+
+    counts.total = counts.pending + counts.approved + counts.rejected;
+
+    // Return detailed count information
     res.status(200).json({
       success: true,
-      count: requestedAppointments.length,
+      counts: counts,
+      message: "Notification counts retrieved successfully",
     });
   } catch (error) {
+    console.error("Error getting notification counts:", error);
     res.status(500).json({
-      message: `Something wen Wrong: ${error.message}`,
+      success: false,
+      message: "Error retrieving notification counts",
+      error: error.message,
     });
   }
 };
@@ -372,5 +399,5 @@ module.exports = {
   getAvailableSlots,
   getAppointments,
   getuserAppointments,
-  getusernotificationcount,
+  getUserNotificationCount,
 };
