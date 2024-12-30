@@ -147,7 +147,10 @@ const Navbar = () => {
             )}
             {profile && profile.role !== "admin" && (
               <>
-                <button className="relative focus:outline-none">
+                <button
+                  className="relative focus:outline-none"
+                  onClick={() => navigate("/managerdashboard")}
+                >
                   <BellIcon className="h-6 w-6 text-gray-500 hover:text-gray-700" />
                   {pendingCount > 0 && (
                     <span className="absolute -top-1 -right-1 flex items-center justify-center h-5 w-5 rounded-full bg-red-600 text-xs font-bold text-white">
