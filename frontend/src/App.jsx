@@ -12,6 +12,7 @@ import NearMe from "./pages/Common/NearMe";
 import CreateOldAgeHome from "./pages/Trust/CreateOldAgeHome";
 import About from "./pages/Trust/About";
 import ManagerDashboard from "./pages/Trust/pages/ManagerDashboard";
+import BookAppointment from "./pages/User/BookAppointment";
 
 const App = () => {
   return (
@@ -33,6 +34,10 @@ const App = () => {
               />
               <Route path="/about/:id" element={<About />} />
               <Route path="/managerdashboard" element={<ManagerDashboard />} />
+              <Route
+                path="/book-appointment/:homeId"
+                element={<BookAppointment />}
+              />
             </Routes>
           </Router>
         </ProfileProvider>
