@@ -22,7 +22,7 @@ const BookAppointment = () => {
     if (appointmentData.appointment_date) {
       fetchAvailableSlots();
     }
-  }, [appointmentData.appointment_date]);
+  }, [appointmentData.appointment_date, homeId, token]);
 
   const fetchAvailableSlots = async () => {
     try {
