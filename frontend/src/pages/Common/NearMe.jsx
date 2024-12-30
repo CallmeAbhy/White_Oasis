@@ -13,6 +13,8 @@ import {
   faPhone,
   faCalendarCheck,
 } from "@fortawesome/free-solid-svg-icons";
+import { navigatetoAppointment } from "../../utils/navigationUtils";
+
 const NearMe = () => {
   const [oldAgeHomes, setOldAgeHomes] = useState([]);
   const [filters, setFilters] = useState({
@@ -64,6 +66,9 @@ const NearMe = () => {
     // Refresh the old age homes data
 
     fetchOldAgeHomes();
+  };
+  const handleAppointmentClick = (homeId) => {
+    navigatetoAppointment(navigate, homeId);
   };
 
   const filteredHomes = oldAgeHomes.filter((home) => {
@@ -240,6 +245,7 @@ const NearMe = () => {
                     <button
                       className="flex items-center justify-center w-10 h-10 bg-yellow-100 text-yellow-600 rounded-full hover:bg-yellow-200 transition"
                       title="Take Appointment"
+                      onClick={() => handleAppointmentClick(home._id)}
                     >
                       <FontAwesomeIcon icon={faCalendarCheck} />
                     </button>
