@@ -107,6 +107,77 @@ const NearMe = () => {
       console.error("Error deleting old age home:", error);
     }
   };
+  const renderActionButtons = (home) => {
+    if (!token) {
+      return (
+        <div className="flex items-center justify-center">
+          <button
+            onClick={() => navigate("/login")}
+            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
+          >
+            Login to Access Features
+          </button>
+        </div>
+      );
+    }
+    return (
+      <>
+        <div className="flex flex-col items-center space-y-4">
+          <button
+            onClick={() => handleContactClick(home)}
+            className="flex items-center justify-center w-10 h-10 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 transition"
+            title="Contact"
+          >
+            <FontAwesomeIcon icon={faPhone} />
+          </button>
+          {home.old_age_home_upi_id && (
+            <button
+              onClick={() => {
+                setSelectedUpiId(home.old_age_home_upi_id);
+                setShowQRModal(true);
+              }}
+              className="flex items-center justify-center w-10 h-10 bg-green-100 text-green-600 rounded-full hover:bg-green-200 transition"
+              title="Donate"
+            >
+              <FontAwesomeIcon icon={faCircleDollarToSlot} />
+            </button>
+          )}
+          {(profile?.role === "user" || profile?.role === "admin") && (
+            <button
+              onClick={() => {
+                setSelectedHomeId(home._id);
+                setShowFeedbackModal(true);
+              }}
+              className="flex items-center justify-center w-10 h-10 bg-purple-100 text-purple-600 rounded-full hover:bg-purple-200 transition"
+              title="Leave Feedback"
+            >
+              <FontAwesomeIcon icon={faComment} />
+            </button>
+          )}
+          {profile?.role === "user" && (
+            <button
+              className="flex items-center justify-center w-10 h-10 bg-yellow-100 text-yellow-600 rounded-full hover:bg-yellow-200 transition"
+              title="Take Appointment"
+              onClick={() => handleAppointmentClick(home._id)}
+            >
+              <FontAwesomeIcon icon={faCalendarCheck} />
+            </button>
+          )}
+          {(profile?.role === "manager" &&
+            profile._id === home.manager_id._id) ||
+          profile?.role === "admin" ? (
+            <button
+              onClick={() => handleDelete(home._id)}
+              className="flex items-center justify-center w-10 h-10 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition"
+              title="Delete"
+            >
+              <FontAwesomeIcon icon={faTrash} />
+            </button>
+          ) : null}
+        </div>
+      </>
+    );
+  };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 relative">
@@ -209,59 +280,7 @@ const NearMe = () => {
                 </div>
 
                 {/* Right Section: Actions */}
-                <div className="flex flex-col items-center space-y-4">
-                  <button
-                    onClick={() => handleContactClick(home)}
-                    className="flex items-center justify-center w-10 h-10 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 transition"
-                    title="Contact"
-                  >
-                    <FontAwesomeIcon icon={faPhone} />
-                  </button>
-                  {home.old_age_home_upi_id && (
-                    <button
-                      onClick={() => {
-                        setSelectedUpiId(home.old_age_home_upi_id);
-                        setShowQRModal(true);
-                      }}
-                      className="flex items-center justify-center w-10 h-10 bg-green-100 text-green-600 rounded-full hover:bg-green-200 transition"
-                      title="Donate"
-                    >
-                      <FontAwesomeIcon icon={faCircleDollarToSlot} />
-                    </button>
-                  )}
-                  {(profile?.role === "user" || profile?.role === "admin") && (
-                    <button
-                      onClick={() => {
-                        setSelectedHomeId(home._id);
-                        setShowFeedbackModal(true);
-                      }}
-                      className="flex items-center justify-center w-10 h-10 bg-purple-100 text-purple-600 rounded-full hover:bg-purple-200 transition"
-                      title="Leave Feedback"
-                    >
-                      <FontAwesomeIcon icon={faComment} />
-                    </button>
-                  )}
-                  {profile?.role === "user" && (
-                    <button
-                      className="flex items-center justify-center w-10 h-10 bg-yellow-100 text-yellow-600 rounded-full hover:bg-yellow-200 transition"
-                      title="Take Appointment"
-                      onClick={() => handleAppointmentClick(home._id)}
-                    >
-                      <FontAwesomeIcon icon={faCalendarCheck} />
-                    </button>
-                  )}
-                  {(profile?.role === "manager" &&
-                    profile._id === home.manager_id._id) ||
-                  profile?.role === "admin" ? (
-                    <button
-                      onClick={() => handleDelete(home._id)}
-                      className="flex items-center justify-center w-10 h-10 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition"
-                      title="Delete"
-                    >
-                      <FontAwesomeIcon icon={faTrash} />
-                    </button>
-                  ) : null}
-                </div>
+                {renderActionButtons(home)}
               </div>
             ))}
           </div>
