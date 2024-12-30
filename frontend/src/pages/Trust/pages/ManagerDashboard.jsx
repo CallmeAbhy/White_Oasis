@@ -6,6 +6,7 @@ import {
   faCheck,
   faTimes,
   faComments,
+  faUser,
 } from "@fortawesome/free-solid-svg-icons";
 import Navbar from "../../../components/Navbar";
 import { useToken } from "../../../context/TokenContext";
@@ -16,7 +17,9 @@ const ManagerDashboard = () => {
   const [message, setMessage] = useState("");
   const [feedback, setFeedback] = useState("");
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
+  const [showUserInfoModal, setShowUserInfoModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
+  const [selectedUser, setSelectedUser] = useState(null);
   const { token } = useToken();
   const navigate = useNavigate();
   const { profile } = useProfile();
@@ -74,9 +77,7 @@ const ManagerDashboard = () => {
         setAppointments(
           appointments.filter((apt) => apt._id !== appointmentId)
         );
-        setShowFeedbackModal(false);
-        setFeedback("");
-        setSelectedAppointment(null);
+        closeFeedbackModal();
       }
     } catch (error) {
       console.error("Error updating appointment status:", error);
@@ -84,9 +85,27 @@ const ManagerDashboard = () => {
     }
   };
 
+  const openUserInfoModal = (user) => {
+    setShowFeedbackModal(false);
+    setSelectedUser(user);
+    setShowUserInfoModal(true);
+  };
+
+  const closeUserInfoModal = () => {
+    setSelectedUser(null);
+    setShowUserInfoModal(false);
+  };
+
   const openFeedbackModal = (appointment) => {
+    setShowUserInfoModal(false);
     setSelectedAppointment(appointment);
     setShowFeedbackModal(true);
+  };
+
+  const closeFeedbackModal = () => {
+    setSelectedAppointment(null);
+    setShowFeedbackModal(false);
+    setFeedback("");
   };
 
   return (
@@ -114,7 +133,7 @@ const ManagerDashboard = () => {
           {appointments.map((appointment) => (
             <div
               key={appointment._id}
-              className="bg-white rounded-lg shadow-lg p-6 transition-transform hover:scale-105"
+              className="bg-white rounded-lg shadow-lg p-6"
             >
               <div className="flex items-center mb-4">
                 <FontAwesomeIcon
@@ -147,6 +166,13 @@ const ManagerDashboard = () => {
 
               <div className="flex space-x-2">
                 <button
+                  onClick={() => openUserInfoModal(appointment.user_profile)}
+                  className="flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm transition-colors"
+                >
+                  <FontAwesomeIcon icon={faUser} className="mr-2" />
+                  View User Info
+                </button>
+                <button
                   onClick={() =>
                     handleAppointmentStatus(appointment._id, "Approved")
                   }
@@ -167,9 +193,105 @@ const ManagerDashboard = () => {
           ))}
         </div>
 
+        {/* User Info Modal */}
+        {showUserInfoModal && selectedUser && (
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-lg p-6 w-full max-w-2xl">
+              <div className="flex justify-between items-center mb-4">
+                <h3 className="text-xl font-bold text-gray-800">
+                  User Information
+                </h3>
+                <button
+                  onClick={closeUserInfoModal}
+                  className="text-gray-500 hover:text-gray-700"
+                >
+                  <FontAwesomeIcon icon={faTimes} />
+                </button>
+              </div>
+
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div className="space-y-4">
+                  <div>
+                    <img
+                      src={`http://localhost:7001/uploads/${selectedUser.userPhoto}`}
+                      alt="User Photo"
+                      className="w-32 h-32 rounded-full object-cover border-4 border-blue-500"
+                    />
+                  </div>
+                  <div>
+                    <label className="font-semibold text-gray-600">
+                      Username:
+                    </label>
+                    <p className="text-gray-800">{selectedUser.username}</p>
+                  </div>
+                  <div>
+                    <label className="font-semibold text-gray-600">
+                      Email:
+                    </label>
+                    <p className="text-gray-800">{selectedUser.email}</p>
+                  </div>
+                  <div>
+                    <label className="font-semibold text-gray-600">
+                      Phone:
+                    </label>
+                    <p className="text-gray-800">{selectedUser.phone}</p>
+                  </div>
+                </div>
+
+                <div className="space-y-4">
+                  <div>
+                    <label className="font-semibold text-gray-600">
+                      Address:
+                    </label>
+                    <p className="text-gray-800">{selectedUser.address}</p>
+                  </div>
+                  <div>
+                    <label className="font-semibold text-gray-600">City:</label>
+                    <p className="text-gray-800">{selectedUser.city}</p>
+                  </div>
+                  <div>
+                    <label className="font-semibold text-gray-600">
+                      State:
+                    </label>
+                    <p className="text-gray-800">{selectedUser.state}</p>
+                  </div>
+                  <div>
+                    <label className="font-semibold text-gray-600">
+                      Country:
+                    </label>
+                    <p className="text-gray-800">{selectedUser.country}</p>
+                  </div>
+                  <div>
+                    <label className="font-semibold text-gray-600">
+                      Government ID:
+                    </label>
+                    <a
+                      href={`http://localhost:7001/uploads/${selectedUser.governmentIdCard}`}
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-blue-500 hover:text-blue-700 underline"
+                    >
+                      View Document
+                    </a>
+                  </div>
+                </div>
+              </div>
+
+              <div className="mt-6 flex justify-end">
+                <button
+                  onClick={closeUserInfoModal}
+                  className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md"
+                >
+                  Close
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
+
         {/* Feedback Modal */}
         {showFeedbackModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4">
+          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
             <div className="bg-white rounded-lg p-6 w-full max-w-md">
               <div className="flex items-center mb-4">
                 <FontAwesomeIcon
@@ -187,7 +309,7 @@ const ManagerDashboard = () => {
               />
               <div className="flex justify-end space-x-2">
                 <button
-                  onClick={() => setShowFeedbackModal(false)}
+                  onClick={closeFeedbackModal}
                   className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-md transition-colors"
                 >
                   Cancel
