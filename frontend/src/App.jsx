@@ -14,6 +14,7 @@ import About from "./pages/Trust/About";
 import ManagerDashboard from "./pages/Trust/pages/ManagerDashboard";
 import BookAppointment from "./pages/User/BookAppointment";
 import UserDashboard from "./pages/User/UserDashboard";
+import ProtectedRoute from "./components/ProtectedRoute";
 
 const App = () => {
   return (
@@ -22,24 +23,71 @@ const App = () => {
         <ProfileProvider>
           <Router>
             <Routes>
+              {/* Public Routes */}
               <Route path="/" element={<Home />} />
               <Route path="/login" element={<Login />} />
               <Route path="/signup" element={<Signup />} />
-              <Route path="/dashboard" element={<Dashboard />} />
               <Route path="/reset" element={<ResetPassword />} />
-              <Route path="/user-detail" element={<UserDetail />} />
               <Route path="/near-me" element={<NearMe />} />
+              {/* Protected Admin Routes */}
+              <Route
+                path="/dashboard"
+                element={
+                  <ProtectedRoute allowedRoles={["admin"]}>
+                    <Dashboard />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/user-detail"
+                element={
+                  <ProtectedRoute allowedRoles={["admin"]}>
+                    <UserDetail />
+                  </ProtectedRoute>
+                }
+              />
+              {/* Protected Manager Route */}
               <Route
                 path="/create-old-age-home"
-                element={<CreateOldAgeHome />}
+                element={
+                  <ProtectedRoute allowedRoles={["manager"]}>
+                    <CreateOldAgeHome />
+                  </ProtectedRoute>
+                }
               />
-              <Route path="/about/:id" element={<About />} />
-              <Route path="/managerdashboard" element={<ManagerDashboard />} />
+              <Route
+                path="/managerdashboard"
+                element={
+                  <ProtectedRoute allowedRoles={["manager"]}>
+                    <ManagerDashboard />
+                  </ProtectedRoute>
+                }
+              />
+              {/* Protected User Route */}
+              <Route
+                path="/UserDashboard"
+                element={
+                  <ProtectedRoute allowedRoles={["user"]}>
+                    <UserDashboard />
+                  </ProtectedRoute>
+                }
+              />
               <Route
                 path="/book-appointment/:homeId"
-                element={<BookAppointment />}
+                element={
+                  <ProtectedRoute allowedRoles={["user"]}>
+                    <BookAppointment />
+                  </ProtectedRoute>
+                }
               />
-              <Route path="/UserDashboard" element={<UserDashboard />} />
+              <Route
+                path="/about/:id"
+                element={
+                  <ProtectedRoute allowedRoles={["user", "manager", "admin"]}>
+                    <About />
+                  </ProtectedRoute>
+                }
+              />
             </Routes>
           </Router>
         </ProfileProvider>
