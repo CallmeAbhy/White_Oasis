@@ -13,6 +13,7 @@ import { useToken } from "../../../context/TokenContext";
 import { useProfile } from "../../../context/ProfileContext";
 
 const ManagerDashboard = () => {
+  const [activeTab, setActiveTab] = useState("Pending");
   const [appointments, setAppointments] = useState([]);
   const [message, setMessage] = useState("");
   const [feedback, setFeedback] = useState("");
@@ -24,6 +25,8 @@ const ManagerDashboard = () => {
   const navigate = useNavigate();
   const { profile } = useProfile();
 
+  const tabs = ["Pending", "Approved", "Rejected"];
+
   // Authorization check
   useEffect(() => {
     if (!profile || profile.role !== "manager" || !token) {
@@ -32,13 +35,13 @@ const ManagerDashboard = () => {
     }
   }, [profile, navigate, token]);
 
-  // Fetch pending appointments
+  // Fetch appointments based on status
   useEffect(() => {
-    const fetchPendingAppointments = async () => {
+    const fetchAppointments = async () => {
       if (profile && profile.role === "manager") {
         try {
           const response = await fetch(
-            "http://localhost:7001/api/appointments/pending/Pending",
+            `http://localhost:7001/api/appointments/pending/${activeTab}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -53,8 +56,8 @@ const ManagerDashboard = () => {
         }
       }
     };
-    fetchPendingAppointments();
-  }, [profile, token]);
+    fetchAppointments();
+  }, [profile, token, activeTab]);
 
   const handleAppointmentStatus = async (appointmentId, status) => {
     try {
@@ -118,7 +121,7 @@ const ManagerDashboard = () => {
           </h2>
           <div className="bg-white px-4 py-2 rounded-lg shadow">
             <span className="font-medium text-gray-600">
-              Pending Appointments: {appointments.length}
+              {activeTab} Appointments: {appointments.length}
             </span>
           </div>
         </div>
@@ -129,69 +132,105 @@ const ManagerDashboard = () => {
           </div>
         )}
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {appointments.map((appointment) => (
-            <div
-              key={appointment._id}
-              className="bg-white rounded-lg shadow-lg p-6"
+        {/* Tabs */}
+        <div className="flex space-x-4 mb-6">
+          {tabs.map((tab) => (
+            <button
+              key={tab}
+              onClick={() => setActiveTab(tab)}
+              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+                activeTab === tab
+                  ? "bg-blue-500 text-white"
+                  : "bg-white text-gray-600 hover:bg-gray-50"
+              }`}
             >
-              <div className="flex items-center mb-4">
-                <FontAwesomeIcon
-                  icon={faCalendar}
-                  className="text-blue-500 mr-2"
-                />
-                <h3 className="text-lg font-bold text-gray-800">
-                  Appointment Details
-                </h3>
-              </div>
-
-              <div className="space-y-2 mb-4">
-                <p className="text-sm text-gray-600">
-                  <span className="font-medium">Date:</span>{" "}
-                  {new Date(appointment.appointment_date).toLocaleDateString()}
-                </p>
-                <p className="text-sm text-gray-600">
-                  <span className="font-medium">Time:</span>{" "}
-                  {appointment.start_time} - {appointment.end_time}
-                </p>
-                <p className="text-sm text-gray-600">
-                  <span className="font-medium">Type:</span>{" "}
-                  {appointment.appointment_type}
-                </p>
-                <p className="text-sm text-gray-600">
-                  <span className="font-medium">Reason:</span>{" "}
-                  {appointment.reason}
-                </p>
-              </div>
-
-              <div className="flex space-x-2">
-                <button
-                  onClick={() => openUserInfoModal(appointment.user_profile)}
-                  className="flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm transition-colors"
-                >
-                  <FontAwesomeIcon icon={faUser} className="mr-2" />
-                  View User Info
-                </button>
-                <button
-                  onClick={() =>
-                    handleAppointmentStatus(appointment._id, "Approved")
-                  }
-                  className="flex items-center justify-center bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm transition-colors"
-                >
-                  <FontAwesomeIcon icon={faCheck} className="mr-2" />
-                  Approve
-                </button>
-                <button
-                  onClick={() => openFeedbackModal(appointment)}
-                  className="flex items-center justify-center bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm transition-colors"
-                >
-                  <FontAwesomeIcon icon={faTimes} className="mr-2" />
-                  Reject
-                </button>
-              </div>
-            </div>
+              {tab}
+            </button>
           ))}
         </div>
+
+        {appointments.length === 0 ? (
+          <div className="text-center text-gray-500 py-8">
+            No {activeTab.toLowerCase()} appointments found.
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {appointments.map((appointment) => (
+              <div
+                key={appointment._id}
+                className="bg-white rounded-lg shadow-lg p-6"
+              >
+                <div className="flex items-center mb-4">
+                  <FontAwesomeIcon
+                    icon={faCalendar}
+                    className="text-blue-500 mr-2"
+                  />
+                  <h3 className="text-lg font-bold text-gray-800">
+                    Appointment Details
+                  </h3>
+                </div>
+
+                <div className="space-y-2 mb-4">
+                  <p className="text-sm text-gray-600">
+                    <span className="font-medium">Date:</span>{" "}
+                    {new Date(
+                      appointment.appointment_date
+                    ).toLocaleDateString()}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    <span className="font-medium">Time:</span>{" "}
+                    {appointment.start_time} - {appointment.end_time}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    <span className="font-medium">Type:</span>{" "}
+                    {appointment.appointment_type}
+                  </p>
+                  <p className="text-sm text-gray-600">
+                    <span className="font-medium">Reason:</span>{" "}
+                    {appointment.reason}
+                  </p>
+                  {(activeTab === "Approved" || activeTab === "Rejected") && (
+                    <p className="text-sm text-gray-600">
+                      <span className="font-medium">Feedback:</span>{" "}
+                      {appointment.feedback}
+                    </p>
+                  )}
+                </div>
+
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => openUserInfoModal(appointment.user_profile)}
+                    className="flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm transition-colors"
+                  >
+                    <FontAwesomeIcon icon={faUser} className="mr-2" />
+                    View User Info
+                  </button>
+
+                  {activeTab === "Pending" && (
+                    <>
+                      <button
+                        onClick={() =>
+                          handleAppointmentStatus(appointment._id, "Approved")
+                        }
+                        className="flex items-center justify-center bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm transition-colors"
+                      >
+                        <FontAwesomeIcon icon={faCheck} className="mr-2" />
+                        Approve
+                      </button>
+                      <button
+                        onClick={() => openFeedbackModal(appointment)}
+                        className="flex items-center justify-center bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm transition-colors"
+                      >
+                        <FontAwesomeIcon icon={faTimes} className="mr-2" />
+                        Reject
+                      </button>
+                    </>
+                  )}
+                </div>
+              </div>
+            ))}
+          </div>
+        )}
 
         {/* User Info Modal */}
         {showUserInfoModal && selectedUser && (
@@ -213,7 +252,7 @@ const ManagerDashboard = () => {
                 <div className="space-y-4">
                   <div>
                     <img
-                      src={`http://localhost:7001/uploads/${selectedUser.userPhoto}`}
+                      src={`http://localhost:7001/api/files/file/${selectedUser.userPhoto}`}
                       alt="User Photo"
                       className="w-32 h-32 rounded-full object-cover border-4 border-blue-500"
                     />
@@ -266,7 +305,7 @@ const ManagerDashboard = () => {
                       Government ID:
                     </label>
                     <a
-                      href={`http://localhost:7001/uploads/${selectedUser.governmentIdCard}`}
+                      href={`http://localhost:7001/api/files/file/${selectedUser.governmentIdCard}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-500 hover:text-blue-700 underline"

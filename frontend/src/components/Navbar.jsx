@@ -10,7 +10,10 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useProfile } from "../context/ProfileContext";
 import { useToken } from "../context/TokenContext";
 import PropTypes from "prop-types";
-import { navigateToLogin } from "../utils/navigationUtils";
+import {
+  navigateToLogin,
+  navigateToUserDashboard,
+} from "../utils/navigationUtils";
 
 const navigation = [
   { name: "Home", href: "/", current: true },
@@ -145,11 +148,26 @@ const Navbar = () => {
                 </button>
               </>
             )}
-            {profile && profile.role !== "admin" && (
+            {profile && profile.role === "manager" && (
               <>
                 <button
                   className="relative focus:outline-none"
                   onClick={() => navigate("/managerdashboard")}
+                >
+                  <BellIcon className="h-6 w-6 text-gray-500 hover:text-gray-700" />
+                  {pendingCount > 0 && (
+                    <span className="absolute -top-1 -right-1 flex items-center justify-center h-5 w-5 rounded-full bg-red-600 text-xs font-bold text-white">
+                      {pendingCount}
+                    </span>
+                  )}
+                </button>
+              </>
+            )}
+            {profile && profile.role === "user" && (
+              <>
+                <button
+                  className="relative focus:outline-none"
+                  onClick={() => navigateToUserDashboard(navigate)}
                 >
                   <BellIcon className="h-6 w-6 text-gray-500 hover:text-gray-700" />
                   {pendingCount > 0 && (

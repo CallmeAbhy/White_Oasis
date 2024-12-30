@@ -13,6 +13,7 @@ import CreateOldAgeHome from "./pages/Trust/CreateOldAgeHome";
 import About from "./pages/Trust/About";
 import ManagerDashboard from "./pages/Trust/pages/ManagerDashboard";
 import BookAppointment from "./pages/User/BookAppointment";
+import UserDashboard from "./pages/User/UserDashboard";
 
 const App = () => {
   return (
@@ -38,6 +39,7 @@ const App = () => {
                 path="/book-appointment/:homeId"
                 element={<BookAppointment />}
               />
+              <Route path="/UserDashboard" element={<UserDashboard />} />
             </Routes>
           </Router>
         </ProfileProvider>

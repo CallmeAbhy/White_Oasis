@@ -24,3 +24,7 @@ export const navigateToUserDetail = (navigate, user) => {
 export const navigatetoAppointment = (navigate, id) => {
   navigateWithState(navigate, `/book-appointment/${id}`);
 };
+
+export const navigateToUserDashboard = (navigate) => {
+  navigateWithState(navigate, "/UserDashboard");
+};
