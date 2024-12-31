@@ -10,10 +10,17 @@ const UserDashboard = () => {
   const [activeTab, setActiveTab] = useState("Pending");
   const [appointments, setAppointments] = useState([]);
   const [message, setMessage] = useState("");
+  const [homes, setHomes] = useState({}); // Add this with other state declarations
   const { token } = useToken();
   const navigate = useNavigate();
   const { profile } = useProfile();
-
+  const handleInfoClick = (homeId) => {
+    const homeData = homes[homeId];
+    const { _id } = homeData;
+    if (homeData) {
+      navigate(`/about/${_id}`, { state: homeData });
+    }
+  };
   // Authorization check
   useEffect(() => {
     if (!profile || profile.role !== "user" || !token) {
@@ -37,6 +44,22 @@ const UserDashboard = () => {
           );
           const data = await response.json();
           setAppointments(data.appointments);
+
+          // Fetch home information for each appointment
+          const homeData = {};
+          for (const appointment of data.appointments) {
+            const homeResponse = await fetch(
+              `http://localhost:7001/api/old-age-homes/manager-homes/${appointment.old_age_home_id}`,
+              {
+                headers: {
+                  Authorization: `Bearer ${token}`,
+                },
+              }
+            );
+            const home = await homeResponse.json();
+            homeData[appointment.old_age_home_id] = home;
+          }
+          setHomes(homeData);
         } catch (e) {
           console.error("Error Fetching Appointments", e);
           setMessage("Error loading appointments");
@@ -137,6 +160,15 @@ const UserDashboard = () => {
                   </p>
                 )}
               </div>
+              {/* Add the Info button */}
+
+              <button
+                onClick={() => handleInfoClick(appointment.old_age_home_id)}
+                className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition-colors"
+                disabled={!homes[appointment.old_age_home_id]}
+              >
+                View Home Info
+              </button>
             </div>
           ))}
         </div>

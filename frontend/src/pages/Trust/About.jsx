@@ -35,7 +35,6 @@ const SOCIAL_PLATFORMS = {
 
 const About = () => {
   const { state: home } = useLocation();
-
   return (
     <>
       <Navbar />
