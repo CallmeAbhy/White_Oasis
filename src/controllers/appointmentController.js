@@ -327,7 +327,7 @@ const getAppointments = async (req, res) => {
     });
   }
 };
-const getuserAppointments = async (req, res) => {
+const getUserAppointments = async (req, res) => {
   try {
     const userId = req.user.id;
     const { status } = req.params;
@@ -393,11 +393,60 @@ const getUserNotificationCount = async (req, res) => {
     });
   }
 };
+const getHomeNotificationCount = async (req, res) => {
+  try {
+    const managerId = req.user.id;
+    const oldagehome = await OldAgeHome.findOne({
+      manager_id: managerId,
+    });
+    if (!oldagehome) {
+      return res
+        .status(404)
+        .json({ message: "Old age home not found for this manager" });
+    }
+    const appointments = await Appointment.find({
+      old_age_home_id: oldagehome._id,
+    });
+    const counts = {
+      pending: 0,
+      approved: 0,
+      rejected: 0,
+      total: 0,
+    };
+    appointments.forEach((appointment) => {
+      switch (appointment.status) {
+        case "Pending":
+          counts.pending++;
+          break;
+        case "Approved":
+          counts.approved++;
+          break;
+        case "Rejected":
+          counts.rejected++;
+          break;
+      }
+    });
+    counts.total = counts.pending + counts.approved + counts.rejected;
+    res.status(200).json({
+      success: true,
+      counts: counts,
+      message: "Notification counts retrieved successfully",
+    });
+  } catch (error) {
+    console.error("Error getting notification counts:", error);
+    res.status(500).json({
+      success: false,
+      message: "Error retrieving notification counts",
+      error: error.message,
+    });
+  }
+};
 module.exports = {
   createAppointment,
   updatetheAppointment,
   getAvailableSlots,
   getAppointments,
-  getuserAppointments,
+  getUserAppointments,
   getUserNotificationCount,
+  getHomeNotificationCount,
 };
