@@ -109,11 +109,13 @@ const getAllOldAgeHomes = async (req, res) => {
 };
 // Get old-age homes by manager
 
-const getManagerOldAgeHomes = async (req, res) => {
+const getOldAgeHomeById = async (req, res) => {
   try {
     const { id } = req.params;
-    const manager_id = id;
-    const oldAgeHomes = await OldAgeHome.find({ manager_id });
+    const oldAgeHomes = await OldAgeHome.findById(id).populate({
+      path: "manager_id",
+      select: "name_of_trust trust_logo yearOfEstablishment",
+    });
     res.status(200).json(oldAgeHomes);
   } catch (error) {
     res.status(500).json({ message: `Something went wrong: ${error.message}` });
@@ -309,7 +311,7 @@ module.exports = {
   createOldAgeHome,
   getHomeReview,
   getAllOldAgeHomes,
-  getManagerOldAgeHomes,
+  getOldAgeHomeById,
   updateRating,
   deleteOldAgeHome,
   deleteReview,
