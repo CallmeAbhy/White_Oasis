@@ -109,10 +109,9 @@ const getAllOldAgeHomes = async (req, res) => {
 };
 // Get old-age homes by manager
 
-const getManagerOldAgeHomes = async (req, res) => {
+const getOldAgeHomeById = async (req, res) => {
   try {
     const { id } = req.params;
-    const manager_id = id;
     const oldAgeHomes = await OldAgeHome.findById(id).populate({
       path: "manager_id",
       select: "name_of_trust trust_logo yearOfEstablishment",
@@ -312,7 +311,7 @@ module.exports = {
   createOldAgeHome,
   getHomeReview,
   getAllOldAgeHomes,
-  getManagerOldAgeHomes,
+  getOldAgeHomeById,
   updateRating,
   deleteOldAgeHome,
   deleteReview,

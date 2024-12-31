@@ -5,7 +5,7 @@ const {
   createOldAgeHome,
   getHomeReview,
   getAllOldAgeHomes,
-  getManagerOldAgeHomes,
+  getOldAgeHomeById,
   updateRating,
   deleteOldAgeHome,
   deleteReview,
@@ -19,10 +19,10 @@ router.post(
 );
 router.get("/all", getAllOldAgeHomes);
 router.get(
-  "/manager-homes/:id",
+  "/homes/:id",
   verifyToken,
   authorizedRoles("manager", "user"),
-  getManagerOldAgeHomes
+  getOldAgeHomeById
 );
 
 router.post(

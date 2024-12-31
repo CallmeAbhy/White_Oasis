@@ -49,7 +49,7 @@ const UserDashboard = () => {
           const homeData = {};
           for (const appointment of data.appointments) {
             const homeResponse = await fetch(
-              `http://localhost:7001/api/old-age-homes/manager-homes/${appointment.old_age_home_id}`,
+              `http://localhost:7001/api/old-age-homes/homes/${appointment.old_age_home_id}`,
               {
                 headers: {
                   Authorization: `Bearer ${token}`,
