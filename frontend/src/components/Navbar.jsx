@@ -10,6 +10,7 @@ import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useProfile } from "../context/ProfileContext";
 import { useToken } from "../context/TokenContext";
 import PropTypes from "prop-types";
+import { Popover } from "@headlessui/react";
 import {
   navigateToLogin,
   navigateToUserDashboard,
@@ -28,6 +29,11 @@ const Navbar = () => {
   const location = useLocation();
   const { token, updateToken } = useToken();
   const [pendingCount, setPendingCount] = useState(0);
+  const [notificationStats, setNotificationStats] = useState({
+    pending: 0,
+    approved: 0,
+    rejected: 0,
+  });
   const [showProfileCard, setShowProfileCard] = useState(false);
   const navigate = useNavigate();
   const isCurrentPath = (path) => {
@@ -52,13 +58,17 @@ const Navbar = () => {
         case "manager":
           try {
             const response = await fetch(
-              "http://localhost:7001/api/appointments/pending/Pending",
+              "http://localhost:7001/api/appointments/home/notification/count",
               { headers: { Authorization: `Bearer ${token}` } }
             );
             const data = await response.json();
-            console.log(data);
-            const { count } = data;
-            setPendingCount(count);
+            if (data.success) {
+              setNotificationStats({
+                pending: data.counts.pending,
+                approved: data.counts.approved,
+                rejected: data.counts.rejected,
+              });
+            }
           } catch (error) {
             console.error("Error Fetching the Pending Appointments", error);
           }
@@ -70,9 +80,12 @@ const Navbar = () => {
               { headers: { Authorization: `Bearer ${token}` } }
             );
             const data = await response.json();
-            console.log(data);
             if (data.success) {
-              setPendingCount(data.counts.total);
+              setNotificationStats({
+                pending: data.counts.pending,
+                approved: data.counts.approved,
+                rejected: data.counts.rejected,
+              });
             }
           } catch (error) {
             console.error("Error Fetching the Pending Approval", error);
@@ -148,35 +161,96 @@ const Navbar = () => {
                 </button>
               </>
             )}
+
             {profile && profile.role === "manager" && (
-              <>
-                <button
-                  className="relative focus:outline-none"
-                  onClick={() => navigate("/managerdashboard")}
-                >
-                  <BellIcon className="h-6 w-6 text-gray-500 hover:text-gray-700" />
-                  {pendingCount > 0 && (
-                    <span className="absolute -top-1 -right-1 flex items-center justify-center h-5 w-5 rounded-full bg-red-600 text-xs font-bold text-white">
-                      {pendingCount}
-                    </span>
-                  )}
-                </button>
-              </>
+              <div className="relative">
+                <Popover className="relative">
+                  <Popover.Button className="relative focus:outline-none">
+                    <BellIcon className="h-6 w-6 text-gray-500 hover:text-gray-700" />
+                  </Popover.Button>
+
+                  <Popover.Panel className="absolute z-50 right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 p-4">
+                    <div className="space-y-2">
+                      <h3 className="text-sm font-medium text-gray-700 mb-2">
+                        Notification Stats
+                      </h3>
+
+                      <div className="flex items-center justify-between">
+                        <span className="text-yellow-500 flex items-center">
+                          <div className="w-2 h-2 rounded-full bg-yellow-500 mr-2"></div>
+                          Pending: {notificationStats.pending || 0}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <span className="text-green-500 flex items-center">
+                          <div className="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
+                          Approved: {notificationStats.approved || 0}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <span className="text-red-500 flex items-center">
+                          <div className="w-2 h-2 rounded-full bg-red-500 mr-2"></div>
+                          Rejected: {notificationStats.rejected || 0}
+                        </span>
+                      </div>
+
+                      <button
+                        onClick={() => navigate("/managerdashboard")}
+                        className="w-full mt-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors text-sm"
+                      >
+                        View Dashboard
+                      </button>
+                    </div>
+                  </Popover.Panel>
+                </Popover>
+              </div>
             )}
             {profile && profile.role === "user" && (
-              <>
-                <button
-                  className="relative focus:outline-none"
-                  onClick={() => navigateToUserDashboard(navigate)}
-                >
-                  <BellIcon className="h-6 w-6 text-gray-500 hover:text-gray-700" />
-                  {pendingCount > 0 && (
-                    <span className="absolute -top-1 -right-1 flex items-center justify-center h-5 w-5 rounded-full bg-red-600 text-xs font-bold text-white">
-                      {pendingCount}
-                    </span>
-                  )}
-                </button>
-              </>
+              <div className="relative">
+                <Popover className="relative">
+                  <Popover.Button className="relative focus:outline-none">
+                    <BellIcon className="h-6 w-6 text-gray-500 hover:text-gray-700" />
+                  </Popover.Button>
+
+                  <Popover.Panel className="absolute z-50 right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 p-4">
+                    <div className="space-y-2">
+                      <h3 className="text-sm font-medium text-gray-700 mb-2">
+                        Notification Stats
+                      </h3>
+
+                      <div className="flex items-center justify-between">
+                        <span className="text-yellow-500 flex items-center">
+                          <div className="w-2 h-2 rounded-full bg-yellow-500 mr-2"></div>
+                          Pending: {notificationStats.pending || 0}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <span className="text-green-500 flex items-center">
+                          <div className="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
+                          Approved: {notificationStats.approved || 0}
+                        </span>
+                      </div>
+
+                      <div className="flex items-center justify-between">
+                        <span className="text-red-500 flex items-center">
+                          <div className="w-2 h-2 rounded-full bg-red-500 mr-2"></div>
+                          Rejected: {notificationStats.rejected || 0}
+                        </span>
+                      </div>
+
+                      <button
+                        onClick={() => navigateToUserDashboard(navigate)}
+                        className="w-full mt-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors text-sm"
+                      >
+                        View Dashboard
+                      </button>
+                    </div>
+                  </Popover.Panel>
+                </Popover>
+              </div>
             )}
 
             {/* Profile Section */}
