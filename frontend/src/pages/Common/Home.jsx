@@ -6,6 +6,7 @@ import Navbar from "../../components/Navbar";
 import { useProfile } from "../../context/ProfileContext";
 import { useToken } from "../../context/TokenContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+
 import {
   faUserNurse,
   faPhone,
@@ -21,6 +22,7 @@ import {
   faInstagram,
   faYoutube,
 } from "@fortawesome/free-brands-svg-icons";
+import { validateEmail } from "../../utils/Vallidator";
 
 const Home = () => {
   const { setProfile } = useProfile();
@@ -30,7 +32,7 @@ const Home = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    phone: "",
+    subject: "",
     message: "",
   });
   const [homeSection, SetHomeSection] = useState({
@@ -113,10 +115,56 @@ const Home = () => {
     });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    // Add your form submission logic here
-    console.log(formData);
+
+    // Validate email
+    if (!validateEmail(formData.email)) {
+      alert("Please enter a valid email address");
+      return;
+    }
+
+    // Validate all required fields
+    if (!formData.email || !formData.subject || !formData.message) {
+      alert("Please fill in all required fields");
+      return;
+    }
+
+    try {
+      const response = await axios.post(
+        "http://localhost:7001/api/contact/send",
+        {
+          fromEmail: formData.email,
+          toEmail: "abhaydusane24@gmail.com", // The email where you want to receive messages
+          subject: formData.subject,
+          message: `Name: ${formData.name}\n${formData.message}`,
+        },
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      if (response.status === 200) {
+        alert("Message sent successfully!");
+        // Clear form
+        setFormData({
+          name: "",
+          email: "",
+          subject: "",
+          message: "",
+        });
+      }
+    } catch (error) {
+      console.error("Error sending message:", error);
+      if (error.response?.status === 400) {
+        alert("Please provide all required fields");
+      } else {
+        alert("Failed to send message. Please try again.");
+      }
+    }
   };
 
   if (loading) {
@@ -293,11 +341,11 @@ const Home = () => {
                 </div>
                 <div>
                   <input
-                    type="tel"
-                    name="phone"
-                    value={formData.phone}
+                    type="text"
+                    name="subject"
+                    value={formData.subject}
                     onChange={handleInputChange}
-                    placeholder="Your Phone"
+                    placeholder="Subject"
                     className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
                     required
                   />
