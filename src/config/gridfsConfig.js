@@ -13,7 +13,7 @@ const initGridFS = (mongoURI) => {
 
   conn.once("open", () => {
     gfs = new GridFSBucket(conn.db, {
-      bucketName: "uploads", 
+      bucketName: "uploads",
     });
     console.log("GridFS initialized successfully");
   });
@@ -33,21 +33,86 @@ const storage = new GridFsStorage({
         }
 
         const filename = buf.toString("hex") + path.extname(file.originalname);
+        // const fileInfo = {
+        //   filename: filename,
+        //   bucketName: "uploads",
+        //   metadata: {
+        //     originalname: file.originalname,
+        //     fieldname: file.fieldname,
+        //     uploadedBy: req.body.username || "unknown",
+        //   },
+        // };
+        const metadata = {
+          originalname: file.originalname,
+
+          fieldname: file.fieldname,
+
+          contentType: "home-content",
+
+          fileType: file.fieldname.includes("Video") ? "video" : "image",
+
+          uploadedAt: new Date(),
+        };
+
+        // If it's a hero image, add the day information
+
+        if (file.fieldname === "heroImages") {
+          const dayIndex = parseInt(file.originalname.split("-")[0]);
+
+          const days = [
+            "sunday",
+            "monday",
+            "tuesday",
+            "wednesday",
+            "thursday",
+            "friday",
+            "saturday",
+          ];
+
+          metadata.day = days[dayIndex];
+        }
+
         const fileInfo = {
           filename: filename,
           bucketName: "uploads",
-          metadata: {
-            originalname: file.originalname,
-            fieldname: file.fieldname,
-            uploadedBy: req.body.username || "unknown",
-          },
+          metadata: metadata,
         };
 
-        console.log(`File prepared for upload: ${filename}`);
+        console.log(`File prepared for upload: ${filename}`, metadata);
         resolve(fileInfo);
       });
     });
   },
 });
+// Add function to delete old files
+const deleteFile = async (fileId) => {
+  if (!gfs) {
+    throw new Error("GridFS not initialized");
+  }
+  try {
+    await gfs.delete(new mongoose.Types.ObjectId(fileId));
+  } catch (error) {
+    console.error("Error deleting file:", error);
+    throw error;
+  }
+};
+const getFileStream = async (fileId) => {
+  if (!gfs) {
+    throw new Error("GridFS not initialized");
+  }
 
-module.exports = { initGridFS, storage, getGfs: () => gfs };
+  try {
+    return gfs.openDownloadStream(new mongoose.Types.ObjectId(fileId));
+  } catch (error) {
+    console.error("Error getting file stream:", error);
+
+    throw error;
+  }
+};
+module.exports = {
+  initGridFS,
+  storage,
+  getGfs: () => gfs,
+  deleteFile,
+  getFileStream,
+};

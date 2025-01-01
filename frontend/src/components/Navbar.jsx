@@ -13,6 +13,7 @@ import PropTypes from "prop-types";
 import { Popover } from "@headlessui/react";
 import {
   navigateToLogin,
+  navigateToPanel,
   navigateToUserDashboard,
 } from "../utils/navigationUtils";
 
@@ -114,7 +115,7 @@ const Navbar = () => {
   };
 
   return (
-    <Disclosure as="nav" className="bg-white shadow-lg">
+    <Disclosure as="nav" className="bg-white shadow-lg fixed w-full top-0 z-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
@@ -268,7 +269,7 @@ const Navbar = () => {
                     <div className="flex flex-col items-center justify-center border-b border-gray-200 px-4 py-4">
                       <img
                         src={getProfileImage()}
-                        alt="User Profile"
+                        alt="User  Profile"
                         className="h-20 w-20 rounded-full border-2 border-gray-300"
                       />
                       <div className="mt-2 text-center">
@@ -306,6 +307,18 @@ const Navbar = () => {
                         </div>
                       )}
                     </div>
+
+                    {/* Additional Settings Option for Admin */}
+                    {profile.role === "admin" && (
+                      <div className="border-t border-gray-200">
+                        <button
+                          className="block w-full px-4 py-2 text-left text-sm font-medium text-blue-600 hover:bg-gray-100"
+                          onClick={() => navigateToPanel(navigate)}
+                        >
+                          Settings
+                        </button>
+                      </div>
+                    )}
 
                     {/* Logout Button */}
                     <div className="border-t border-gray-200">
