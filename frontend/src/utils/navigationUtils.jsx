@@ -28,3 +28,9 @@ export const navigatetoAppointment = (navigate, id) => {
 export const navigateToUserDashboard = (navigate) => {
   navigateWithState(navigate, "/UserDashboard");
 };
+export const navigateToPanel = (navigate) => {
+  navigateWithState(navigate, "/panel");
+};
+export const navigateToHome = (navigate) => {
+  navigateWithState(navigate, "/");
+}

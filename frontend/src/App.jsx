@@ -15,6 +15,7 @@ import ManagerDashboard from "./pages/Trust/pages/ManagerDashboard";
 import BookAppointment from "./pages/User/BookAppointment";
 import UserDashboard from "./pages/User/UserDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
+import AdminPanel from "./pages/Admin/AdminPanel";
 
 const App = () => {
   return (
@@ -85,6 +86,14 @@ const App = () => {
                 element={
                   <ProtectedRoute allowedRoles={["user", "manager", "admin"]}>
                     <About />
+                  </ProtectedRoute>
+                }
+              />
+              <Route
+                path="/panel"
+                element={
+                  <ProtectedRoute allowedRoles={["admin"]}>
+                    <AdminPanel />
                   </ProtectedRoute>
                 }
               />

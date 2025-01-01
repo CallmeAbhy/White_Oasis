@@ -16,7 +16,12 @@ const { storage } = require("../config/gridfsConfig");
 // File filter
 
 const fileFilter = (req, file, cb) => {
-  const allowedTypes = ["image/jpeg", "image/png", "application/pdf"];
+  const allowedTypes = [
+    "image/jpeg",
+    "image/png",
+    "application/pdf",
+    "video/mp4",
+  ];
 
   if (allowedTypes.includes(file.mimetype)) {
     console.log(`File Type accepted : ${file.mimetype} `);
@@ -38,7 +43,12 @@ const upload = multer({
   fileFilter: fileFilter,
 
   limits: {
-    fileSize: 5 * 1024 * 1024, // 5MB limit
+    fileSize: (req, file) => {
+      if (file.fieldname.includes("Video")) {
+        return 50 * 1024 * 1024; // 50MB limit for videos
+      }
+      return 5 * 1024 * 1024; // 5MB limit for images
+    },
   },
 });
 
