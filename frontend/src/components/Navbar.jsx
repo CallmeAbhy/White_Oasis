@@ -111,6 +111,7 @@ const Navbar = () => {
   const handleLogout = () => {
     updateToken(null);
     setProfile(null);
+    localStorage.removeItem("hasSkippedIntroVideo");
     navigateToLogin(navigate);
   };
 
