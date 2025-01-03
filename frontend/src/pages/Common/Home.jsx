@@ -6,36 +6,21 @@ import Navbar from "../../components/Navbar";
 import { useProfile } from "../../context/ProfileContext";
 import { useToken } from "../../context/TokenContext";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-
 import {
   faUserNurse,
-  faPhone,
-  faEnvelope,
-  faMapMarkerAlt,
   faClock,
   faCalendarAlt,
   faUserFriends,
 } from "@fortawesome/free-solid-svg-icons";
-import {
-  faFacebook,
-  faTwitter,
-  faInstagram,
-  faYoutube,
-} from "@fortawesome/free-brands-svg-icons";
-import { validateEmail } from "../../utils/Vallidator";
 import { IntroVideo } from "./IntroVideo";
+import Footer from "./Components/Footer";
+import ContactForm from "./Components/ContactForm";
 
 const Home = () => {
   const { setProfile } = useProfile();
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { token } = useToken();
-  const [formData, setFormData] = useState({
-    name: "",
-    email: "",
-    subject: "",
-    message: "",
-  });
   const [homeSection, SetHomeSection] = useState({
     title: "",
     subtitle: "",
@@ -126,66 +111,9 @@ const Home = () => {
 
     fetchData();
   }, [token, navigate, setProfile]);
-  const handleInputChange = (e) => {
-    setFormData({
-      ...formData,
-      [e.target.name]: e.target.value,
-    });
-  };
+
   const handleSkipIntro = () => {
     setShowIntro(false);
-  };
-
-  const handleSubmit = async (e) => {
-    e.preventDefault();
-
-    // Validate email
-    if (!validateEmail(formData.email)) {
-      alert("Please enter a valid email address");
-      return;
-    }
-
-    // Validate all required fields
-    if (!formData.email || !formData.subject || !formData.message) {
-      alert("Please fill in all required fields");
-      return;
-    }
-
-    try {
-      const response = await axios.post(
-        "http://localhost:7001/api/contact/send",
-        {
-          fromEmail: formData.email,
-          toEmail: "abhaydusane24@gmail.com", // The email where you want to receive messages
-          subject: formData.subject,
-          message: `Name: ${formData.name}\n${formData.message}`,
-        },
-        {
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${token}`,
-          },
-        }
-      );
-
-      if (response.status === 200) {
-        alert("Message sent successfully!");
-        // Clear form
-        setFormData({
-          name: "",
-          email: "",
-          subject: "",
-          message: "",
-        });
-      }
-    } catch (error) {
-      console.error("Error sending message:", error);
-      if (error.response?.status === 400) {
-        alert("Please provide all required fields");
-      } else {
-        alert("Failed to send message. Please try again.");
-      }
-    }
   };
 
   if (loading) {
@@ -320,200 +248,27 @@ const Home = () => {
             </div>
 
             {/* Contact Form Section */}
-            <div className="py-16 bg-white">
-              <div className="container mx-auto px-6 md:px-12">
-                <div className="max-w-4xl mx-auto">
-                  <h2 className="text-3xl font-bold text-center mb-10">
-                    Contact Us
-                  </h2>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="space-y-6">
-                      <h3 className="text-xl font-semibold">Get in Touch</h3>
-                      <div className="space-y-4">
-                        <div className="flex items-center space-x-4">
-                          <FontAwesomeIcon
-                            icon={faPhone}
-                            className="text-blue-600 w-5"
-                          />
-                          <span>{homeSection.phone}</span>
-                        </div>
-                        <div className="flex items-center space-x-4">
-                          <FontAwesomeIcon
-                            icon={faEnvelope}
-                            className="text-blue-600 w-5"
-                          />
-                          <span>{homeSection.email}</span>
-                        </div>
-                        <div className="flex items-center space-x-4">
-                          <FontAwesomeIcon
-                            icon={faMapMarkerAlt}
-                            className="text-blue-600 w-5"
-                          />
-                          <span>{homeSection.address}</span>
-                        </div>
-                      </div>
-                    </div>
-
-                    <form onSubmit={handleSubmit} className="space-y-6">
-                      <input
-                        type="text"
-                        name="name"
-                        value={formData.name}
-                        onChange={handleInputChange}
-                        placeholder="Your Name"
-                        className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                        required
-                      />
-                      <input
-                        type="email"
-                        name="email"
-                        value={formData.email}
-                        onChange={handleInputChange}
-                        placeholder="Your Email"
-                        className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                        required
-                      />
-                      <input
-                        type="text"
-                        name="subject"
-                        value={formData.subject}
-                        onChange={handleInputChange}
-                        placeholder="Subject"
-                        className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                        required
-                      />
-                      <textarea
-                        name="message"
-                        value={formData.message}
-                        onChange={handleInputChange}
-                        placeholder="Your Message"
-                        rows="4"
-                        className="w-full px-4 py-3 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
-                        required
-                      ></textarea>
-                      <button
-                        type="submit"
-                        className="w-full bg-blue-600 text-white py-3 rounded-lg font-semibold hover:bg-blue-700 transition"
-                      >
-                        Send Message
-                      </button>
-                    </form>
-                  </div>
-                </div>
-              </div>
-            </div>
+            <ContactForm
+              contactInfo={{
+                phone: homeSection.phone,
+                email: homeSection.email,
+                address: homeSection.address,
+              }}
+            />
 
             {/* Footer */}
-            <footer className="bg-gray-900 text-white">
-              <div className="container mx-auto px-6 md:px-12 py-10 md:py-16">
-                <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-                  <div>
-                    <h3 className="text-xl font-bold mb-4">White Oasis</h3>
-                    <p className="text-gray-400 mb-6">{homeSection.subtitle}</p>
-                    <div className="flex space-x-4">
-                      {homeSection.facebook && (
-                        <a
-                          href={homeSection.facebook}
-                          target="_blank"
-                          className="text-gray-400 hover:text-white transition"
-                        >
-                          <FontAwesomeIcon icon={faFacebook} size="lg" />
-                        </a>
-                      )}
-                      {homeSection.twitter && (
-                        <a
-                          href={homeSection.twitter}
-                          target="_blank"
-                          className="text-gray-400 hover:text-white transition"
-                        >
-                          <FontAwesomeIcon icon={faTwitter} size="lg" />
-                        </a>
-                      )}
-                      {homeSection.instagram && (
-                        <a
-                          href={homeSection.instagram}
-                          target="_blank"
-                          className="text-gray-400 hover:text-white transition"
-                        >
-                          <FontAwesomeIcon icon={faInstagram} size="lg" />
-                        </a>
-                      )}
-                      {homeSection.youtube && (
-                        <a
-                          href={homeSection.youtube}
-                          target="_blank"
-                          className="text-gray-400 hover:text-white transition"
-                        >
-                          <FontAwesomeIcon icon={faYoutube} size="lg" />
-                        </a>
-                      )}
-                    </div>
-                  </div>
-
-                  <div>
-                    <h3 className="text-xl font-bold mb-4">Quick Links</h3>
-                    <ul className="space-y-2">
-                      <li>
-                        <a
-                          href="#"
-                          className="text-gray-400 hover:text-white transition"
-                        >
-                          About Us
-                        </a>
-                      </li>
-                      <li>
-                        <a
-                          href="/near-me"
-                          className="text-gray-400 hover:text-white transition"
-                        >
-                          Find Care Homes
-                        </a>
-                      </li>
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h3 className="text-xl font-bold mb-4">Our Services</h3>
-                    <ul className="space-y-2">
-                      <li className="text-gray-400">24/7 Care Support</li>
-                      <li className="text-gray-400">Medical Assistance</li>
-                      <li className="text-gray-400">Recreational Activities</li>
-                      <li className="text-gray-400">
-                        Specialized Care Programs
-                      </li>
-                    </ul>
-                  </div>
-
-                  <div>
-                    <h3 className="text-xl font-bold mb-4">Contact Us</h3>
-                    <ul className="space-y-2">
-                      <li className="text-gray-400 flex items-center">
-                        <FontAwesomeIcon
-                          icon={faMapMarkerAlt}
-                          className="mr-2"
-                        />
-                        {homeSection.address}
-                      </li>
-                      <li className="text-gray-400 flex items-center">
-                        <FontAwesomeIcon icon={faPhone} className="mr-2" />
-                        {homeSection.phone}
-                      </li>
-                      <li className="text-gray-400 flex items-center">
-                        <FontAwesomeIcon icon={faEnvelope} className="mr-2" />
-                        {homeSection.email}
-                      </li>
-                    </ul>
-                  </div>
-                </div>
-
-                <div className="border-t border-gray-800 mt-12 pt-6 text-center md:text-left">
-                  <p className="text-gray-400">
-                    © {new Date().getFullYear()} White Oasis. All rights
-                    reserved.
-                  </p>
-                </div>
-              </div>
-            </footer>
+            <Footer
+              footerInfo={{
+                subtitle: homeSection.subtitle,
+                facebook: homeSection.facebook,
+                twitter: homeSection.twitter,
+                instagram: homeSection.instagram,
+                youtube: homeSection.youtube,
+                phone: homeSection.phone,
+                email: homeSection.email,
+                address: homeSection.address,
+              }}
+            />
           </div>
         </>
       )}
