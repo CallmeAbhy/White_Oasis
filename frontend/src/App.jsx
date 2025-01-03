@@ -47,6 +47,14 @@ const App = () => {
                   </ProtectedRoute>
                 }
               />
+              <Route
+                path="/panel"
+                element={
+                  <ProtectedRoute allowedRoles={["admin"]}>
+                    <AdminPanel />
+                  </ProtectedRoute>
+                }
+              />
               {/* Protected Manager Route */}
               <Route
                 path="/create-old-age-home"
@@ -86,14 +94,6 @@ const App = () => {
                 element={
                   <ProtectedRoute allowedRoles={["user", "manager", "admin"]}>
                     <About />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/panel"
-                element={
-                  <ProtectedRoute allowedRoles={["admin"]}>
-                    <AdminPanel />
                   </ProtectedRoute>
                 }
               />
