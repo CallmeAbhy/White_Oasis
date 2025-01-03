@@ -5,6 +5,8 @@ import { useToken } from "../../context/TokenContext";
 import Navbar from "../../components/Navbar";
 import { navigateToHome } from "../../utils/navigationUtils";
 import { useNavigate } from "react-router-dom";
+import ContactForm from "../Common/Components/ContactForm";
+import Footer from "../Common/Components/Footer";
 
 const AdminPanel = () => {
   const { token } = useToken();
@@ -249,6 +251,8 @@ const AdminPanel = () => {
           )}
         </form>
       </div>
+      <ContactForm />
+      <Footer />
     </>
   );
 };

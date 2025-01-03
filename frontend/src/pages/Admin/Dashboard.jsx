@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import { navigateToUserDetail } from "../../utils/navigationUtils";
 import { useToken } from "../../context/TokenContext";
 import { useProfile } from "../../context/ProfileContext";
+import ContactForm from "../Common/Components/ContactForm";
+import Footer from "../Common/Components/Footer";
 
 const Dashboard = () => {
   const [message, setMessage] = useState("");
@@ -91,6 +93,8 @@ const Dashboard = () => {
           ))}
         </div>
       </div>
+      <ContactForm />
+      <Footer />
     </div>
   );
 };

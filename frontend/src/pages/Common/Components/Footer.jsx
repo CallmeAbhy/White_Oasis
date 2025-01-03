@@ -11,47 +11,48 @@ import {
   faPhone,
   faEnvelope,
 } from "@fortawesome/free-solid-svg-icons";
-import PropTypes from "prop-types";
+import { useHome } from "../../../context/HomeContext";
 
-const Footer = ({ footerInfo }) => {
+const Footer = () => {
+  const homedata = useHome();
   return (
     <footer className="bg-gray-900 text-white">
       <div className="container mx-auto px-6 md:px-12 py-10 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
             <h3 className="text-xl font-bold mb-4">White Oasis</h3>
-            <p className="text-gray-400 mb-6">{footerInfo.subtitle}</p>
+            <p className="text-gray-400 mb-6">{homedata.subtitle}</p>
             <div className="flex space-x-4">
-              {footerInfo.facebook && (
+              {homedata.facebook && (
                 <a
-                  href={footerInfo.facebook}
+                  href={homedata.facebook}
                   target="_blank"
                   className="text-gray-400 hover:text-white transition"
                 >
                   <FontAwesomeIcon icon={faFacebook} size="lg" />
                 </a>
               )}
-              {footerInfo.twitter && (
+              {homedata.twitter && (
                 <a
-                  href={footerInfo.twitter}
+                  href={homedata.twitter}
                   target="_blank"
                   className="text-gray-400 hover:text-white transition"
                 >
                   <FontAwesomeIcon icon={faTwitter} size="lg" />
                 </a>
               )}
-              {footerInfo.instagram && (
+              {homedata.instagram && (
                 <a
-                  href={footerInfo.instagram}
+                  href={homedata.instagram}
                   target="_blank"
                   className="text-gray-400 hover:text-white transition"
                 >
                   <FontAwesomeIcon icon={faInstagram} size="lg" />
                 </a>
               )}
-              {footerInfo.youtube && (
+              {homedata.youtube && (
                 <a
-                  href={footerInfo.youtube}
+                  href={homedata.youtube}
                   target="_blank"
                   className="text-gray-400 hover:text-white transition"
                 >
@@ -97,15 +98,15 @@ const Footer = ({ footerInfo }) => {
             <ul className="space-y-2">
               <li className="text-gray-400 flex items-center">
                 <FontAwesomeIcon icon={faMapMarkerAlt} className="mr-2" />
-                {footerInfo.address}
+                {homedata.address}
               </li>
               <li className="text-gray-400 flex items-center">
                 <FontAwesomeIcon icon={faPhone} className="mr-2" />
-                {footerInfo.phone}
+                {homedata.phone}
               </li>
               <li className="text-gray-400 flex items-center">
                 <FontAwesomeIcon icon={faEnvelope} className="mr-2" />
-                {footerInfo.email}
+                {homedata.email}
               </li>
             </ul>
           </div>
@@ -118,17 +119,5 @@ const Footer = ({ footerInfo }) => {
       </div>
     </footer>
   );
-};
-Footer.propTypes = {
-  footerInfo: PropTypes.shape({
-    subtitle: PropTypes.string.isRequired,
-    address: PropTypes.string.isRequired,
-    phone: PropTypes.string.isRequired,
-    email: PropTypes.string.isRequired,
-    facebook: PropTypes.string,
-    twitter: PropTypes.string,
-    instagram: PropTypes.string,
-    youtube: PropTypes.string,
-  }).isRequired,
 };
 export default Footer;

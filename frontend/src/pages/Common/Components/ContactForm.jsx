@@ -9,9 +9,10 @@ import {
 import axios from "axios";
 import { validateEmail } from "../../../utils/Vallidator";
 import { useToken } from "../../../context/TokenContext";
-import PropTypes from "prop-types";
-const ContactForm = ({ contactInfo }) => {
+import { useHome } from "../../../context/HomeContext";
+const ContactForm = () => {
   const { token } = useToken();
+  const homedata = useHome();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -89,21 +90,21 @@ const ContactForm = ({ contactInfo }) => {
                     icon={faPhone}
                     className="text-blue-600 w-5"
                   />
-                  <span>{contactInfo.phone}</span>
+                  <span>{homedata.phone}</span>
                 </div>
                 <div className="flex items-center space-x-4">
                   <FontAwesomeIcon
                     icon={faEnvelope}
                     className="text-blue-600 w-5"
                   />
-                  <span>{contactInfo.email}</span>
+                  <span>{homedata.email}</span>
                 </div>
                 <div className="flex items-center space-x-4">
                   <FontAwesomeIcon
                     icon={faMapMarkerAlt}
                     className="text-blue-600 w-5"
                   />
-                  <span>{contactInfo.address}</span>
+                  <span>{homedata.address}</span>
                 </div>
               </div>
             </div>
@@ -158,12 +159,5 @@ const ContactForm = ({ contactInfo }) => {
       </div>
     </div>
   );
-};
-ContactForm.propTypes = {
-  contactInfo: PropTypes.shape({
-    phone: PropTypes.string.isRequired,
-    email: PropTypes.string.isRequired,
-    address: PropTypes.string.isRequired,
-  }).isRequired,
 };
 export default ContactForm;

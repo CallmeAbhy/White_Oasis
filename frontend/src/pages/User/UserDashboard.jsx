@@ -5,6 +5,8 @@ import { faCalendar } from "@fortawesome/free-solid-svg-icons";
 import Navbar from "../../components/Navbar";
 import { useToken } from "../../context/TokenContext";
 import { useProfile } from "../../context/ProfileContext";
+import ContactForm from "../Common/Components/ContactForm";
+import Footer from "../Common/Components/Footer";
 
 const UserDashboard = () => {
   const [activeTab, setActiveTab] = useState("Pending");
@@ -179,6 +181,8 @@ const UserDashboard = () => {
           </div>
         )}
       </div>
+      <ContactForm />
+      <Footer />
     </div>
   );
 };

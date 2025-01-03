@@ -11,6 +11,8 @@ import {
 import Navbar from "../../../components/Navbar";
 import { useToken } from "../../../context/TokenContext";
 import { useProfile } from "../../../context/ProfileContext";
+import ContactForm from "../../Common/Components/ContactForm";
+import Footer from "../../Common/Components/Footer";
 
 const ManagerDashboard = () => {
   const [activeTab, setActiveTab] = useState("Pending");
@@ -366,6 +368,8 @@ const ManagerDashboard = () => {
           </div>
         )}
       </div>
+      <ContactForm />
+      <Footer />
     </div>
   );
 };

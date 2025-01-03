@@ -14,6 +14,8 @@ import {
   faCalendarCheck,
 } from "@fortawesome/free-solid-svg-icons";
 import { navigatetoAppointment } from "../../utils/navigationUtils";
+import ContactForm from "./Components/ContactForm";
+import Footer from "./Components/Footer";
 
 const NearMe = () => {
   const [oldAgeHomes, setOldAgeHomes] = useState([]);
@@ -307,6 +309,9 @@ const NearMe = () => {
           />
         )}
       </div>
+
+      <ContactForm />
+      <Footer />
     </div>
   );
 };

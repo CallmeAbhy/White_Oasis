@@ -12,6 +12,8 @@ import { FacilitiesStep } from "./components/FormSteps/FacilitiesStep";
 import { FormNavigation } from "./components/FormNavigation";
 import { initialFormState } from "./constants/formInitialState";
 import { validateStep } from "./utils/formValidation";
+import ContactForm from "../Common/Components/ContactForm";
+import Footer from "../Common/Components/Footer";
 
 const CreateOldAgeHome = () => {
   const navigate = useNavigate();
@@ -168,6 +170,8 @@ const CreateOldAgeHome = () => {
           </form>
         </div>
       </div>
+      <ContactForm />
+      <Footer />
     </div>
   );
 };

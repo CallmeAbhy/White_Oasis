@@ -23,6 +23,8 @@ import {
   faYoutube,
 } from "@fortawesome/free-brands-svg-icons";
 import { generateBrochure } from "./hooks/generateBrochure";
+import ContactForm from "../Common/Components/ContactForm";
+import Footer from "../Common/Components/Footer";
 
 const SOCIAL_PLATFORMS = {
   facebook: { icon: faFacebook, name: "Facebook" },
@@ -223,6 +225,8 @@ const About = () => {
           </button>
         </div>
       </div>
+      <ContactForm />
+      <Footer />
     </>
   );
 };

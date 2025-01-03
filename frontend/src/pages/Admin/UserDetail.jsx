@@ -3,6 +3,8 @@ import { useLocation, useNavigate } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import { navigateToDashboard } from "../../utils/navigationUtils";
 import { useToken } from "../../context/TokenContext";
+import ContactForm from "../Common/Components/ContactForm";
+import Footer from "../Common/Components/Footer";
 
 const UserDetail = () => {
   const navigate = useNavigate();
@@ -193,6 +195,8 @@ const UserDetail = () => {
           {error && <p className="mt-4 text-red-500">{error}</p>}
         </div>
       </div>
+      <ContactForm />
+      <Footer />
     </div>
   );
 };
