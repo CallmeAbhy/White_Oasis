@@ -3,6 +3,8 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useToken } from "../../context/TokenContext";
 import Navbar from "../../components/Navbar";
+import ContactForm from "../Common/Components/ContactForm";
+import Footer from "../Common/Components/Footer";
 const BookAppointment = () => {
   const { homeId } = useParams();
   const { token } = useToken();
@@ -189,6 +191,8 @@ const BookAppointment = () => {
           </button>
         </form>
       </div>
+      <ContactForm />
+      <Footer />
     </>
   );
 };

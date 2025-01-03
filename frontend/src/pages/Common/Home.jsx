@@ -15,26 +15,14 @@ import {
 import { IntroVideo } from "./IntroVideo";
 import Footer from "./Components/Footer";
 import ContactForm from "./Components/ContactForm";
+import { useHome } from "../../context/HomeContext";
 
 const Home = () => {
   const { setProfile } = useProfile();
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { token } = useToken();
-  const [homeSection, SetHomeSection] = useState({
-    title: "",
-    subtitle: "",
-    heroImages: "",
-    desktopVideo: "",
-    mobileVideo: "",
-    email: "",
-    phone: "",
-    address: "",
-    facebook: "",
-    instagram: "",
-    twitter: "",
-    youtube: "",
-  });
+  const homeData = useHome();
   const [showIntro, setShowIntro] = useState(false);
   useEffect(() => {
     if (!token) {
@@ -63,45 +51,6 @@ const Home = () => {
             console.error("Error fetching profile:", error);
           }
         }
-
-        // Fetch home section data
-
-        const homeSectionResponse = await axios.get(
-          "http://localhost:7001/api/landing",
-          {
-            headers: {
-              "Content-Type": "application/json",
-            },
-          }
-        );
-
-        const jsondata = homeSectionResponse.data;
-
-        SetHomeSection({
-          title: jsondata.title,
-
-          subtitle: jsondata.subtitle,
-
-          heroImages: jsondata.currentDayImage.url,
-
-          desktopVideo: jsondata.heroVideoBig.url,
-
-          mobileVideo: jsondata.heroVideoSmall.url,
-
-          email: jsondata.email,
-
-          phone: jsondata.phone,
-
-          facebook: jsondata.facebook,
-
-          twitter: jsondata.twitter,
-
-          instagram: jsondata.instagram,
-
-          address: jsondata.address,
-
-          youtube: jsondata.youtube,
-        });
       } catch (error) {
         console.error("Error fetching data:", error);
       } finally {
@@ -122,11 +71,11 @@ const Home = () => {
 
   return (
     <>
-      {showIntro && homeSection.desktopVideo ? (
+      {showIntro && homeData.desktopVideo ? (
         <IntroVideo
           onSkip={handleSkipIntro}
-          desktopVideo={homeSection.desktopVideo}
-          mobileVideo={homeSection.mobileVideo}
+          desktopVideo={homeData.desktopVideo}
+          mobileVideo={homeData.mobileVideo}
         />
       ) : (
         <>
@@ -137,7 +86,7 @@ const Home = () => {
             <div className="relative h-[90vh]">
               <div className="absolute inset-0">
                 <img
-                  src={homeSection.heroImages || "/images/elderly-care.jpg"}
+                  src={homeData.heroImages || "/images/elderly-care.jpg"}
                   className="w-full h-full object-cover"
                   alt="Elderly Care"
                 />
@@ -146,10 +95,9 @@ const Home = () => {
               <div className="relative container mx-auto px-4 h-full flex items-center">
                 <div className="max-w-2xl text-white">
                   <h1 className="text-5xl font-bold mb-6">
-                    {homeSection.title ||
-                      "Compassionate Elderly Care for Elders"}
+                    {homeData.title || "Compassionate Elderly Care for Elders"}
                   </h1>
-                  <p className="text-xl mb-8">{homeSection.subtitle}</p>
+                  <p className="text-xl mb-8">{homeData.subtitle}</p>
                   <button
                     onClick={() => navigate("/near-me")}
                     className="bg-blue-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 transition duration-300"
@@ -248,27 +196,10 @@ const Home = () => {
             </div>
 
             {/* Contact Form Section */}
-            <ContactForm
-              contactInfo={{
-                phone: homeSection.phone,
-                email: homeSection.email,
-                address: homeSection.address,
-              }}
-            />
+            <ContactForm />
 
             {/* Footer */}
-            <Footer
-              footerInfo={{
-                subtitle: homeSection.subtitle,
-                facebook: homeSection.facebook,
-                twitter: homeSection.twitter,
-                instagram: homeSection.instagram,
-                youtube: homeSection.youtube,
-                phone: homeSection.phone,
-                email: homeSection.email,
-                address: homeSection.address,
-              }}
-            />
+            <Footer />
           </div>
         </>
       )}
