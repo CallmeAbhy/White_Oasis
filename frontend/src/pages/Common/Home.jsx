@@ -1,5 +1,5 @@
 // Home.jsx
-import { useEffect, useState, useCallback } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import Navbar from "../../components/Navbar";
@@ -50,11 +50,11 @@ const Home = () => {
     twitter: "",
     youtube: "",
   });
-  const [showIntroVideo, setShowIntroVideo] = useState(true);
-  const [hasSkippedVideo, setHasSkippedVideo] = useState(
-    localStorage.getItem("hasSkippedIntroVideo") === "true"
-  );
+  const [showIntro, setShowIntro] = useState(false);
   useEffect(() => {
+    if (!token) {
+      setShowIntro(true);
+    }
     const fetchData = async () => {
       setLoading(true);
 
@@ -132,13 +132,9 @@ const Home = () => {
       [e.target.name]: e.target.value,
     });
   };
-  const handleSkipVideo = useCallback(() => {
-    setShowIntroVideo(false);
-
-    setHasSkippedVideo(true);
-
-    localStorage.setItem("hasSkippedIntroVideo", "true");
-  }, []);
+  const handleSkipIntro = () => {
+    setShowIntro(false);
+  };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -198,9 +194,9 @@ const Home = () => {
 
   return (
     <>
-      {!hasSkippedVideo && showIntroVideo && homeSection.desktopVideo ? (
+      {showIntro && homeSection.desktopVideo ? (
         <IntroVideo
-          onSkip={handleSkipVideo}
+          onSkip={handleSkipIntro}
           desktopVideo={homeSection.desktopVideo}
           mobileVideo={homeSection.mobileVideo}
         />
