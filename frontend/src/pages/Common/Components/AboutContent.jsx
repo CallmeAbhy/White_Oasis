@@ -316,8 +316,8 @@ const AboutContent = ({ token, setMessage, loading, setLoading }) => {
 };
 AboutContent.propTypes = {
   token: PropTypes.string.isRequired,
-  setMessage: PropTypes.func.isRequired,
+  setMessage: PropTypes.func.func,
   loading: PropTypes.bool.isRequired,
-  setLoading: PropTypes.func.isRequired,
+  setLoading: PropTypes.func.func,
 };
 export default AboutContent;

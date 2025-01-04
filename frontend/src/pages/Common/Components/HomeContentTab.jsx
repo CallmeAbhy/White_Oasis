@@ -283,8 +283,8 @@ const HomeContentTab = ({
 HomeContentTab.propTypes = {
   token: PropTypes.string,
   loading: PropTypes.bool,
-  setLoading: PropTypes.bool,
+  setLoading: PropTypes.func,
   message: PropTypes.string,
-  setMessage: PropTypes.string,
+  setMessage: PropTypes.func,
 };
 export default HomeContentTab;
