@@ -19,7 +19,7 @@ import {
 
 const navigation = [
   { name: "Home", href: "/", current: true },
-  { name: "About us", href: "#", current: false },
+  { name: "About us", href: "/about-us", current: false },
   { name: "Near Me", href: "/near-me", current: false },
 ];
 

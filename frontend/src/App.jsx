@@ -17,6 +17,7 @@ import UserDashboard from "./pages/User/UserDashboard";
 import ProtectedRoute from "./components/ProtectedRoute";
 import AdminPanel from "./pages/Admin/AdminPanel";
 import { HomeProvider } from "./context/HomeContext";
+import AboutUsAndGallery from "./pages/Common/AboutUsAndGallery";
 
 const App = () => {
   return (
@@ -32,6 +33,7 @@ const App = () => {
                 <Route path="/signup" element={<Signup />} />
                 <Route path="/reset" element={<ResetPassword />} />
                 <Route path="/near-me" element={<NearMe />} />
+                <Route path="/about-us" element={<AboutUsAndGallery />} />
                 {/* Protected Admin Routes */}
                 <Route
                   path="/dashboard"
