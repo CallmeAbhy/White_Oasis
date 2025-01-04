@@ -88,7 +88,8 @@ const HomeContentTab = ({
       setLoading(false);
     }
   };
-  const handleReset = async () => {
+  const handleReset = async (e) => {
+    e.preventDefault();
     try {
       setLoading(true);
       await axios.post("http://localhost:7001/api/landing/reset", null, {
