@@ -7,6 +7,7 @@ const {
   updateHomeContent,
   getHomeContent,
   getFile,
+  resetHomeContentController,
 } = require("../controllers/homeContentController");
 const verifyToken = require("../middlewares/authMiddleware");
 const authorizedRoles = require("../middlewares/roleMiddleware");
@@ -30,5 +31,10 @@ router.post(
 
 router.get("/", getHomeContent);
 router.get("/files/:fileId", getFile);
-
+router.post(
+  "/reset",
+  verifyToken,
+  authorizedRoles("admin"),
+  resetHomeContentController
+);
 module.exports = router;

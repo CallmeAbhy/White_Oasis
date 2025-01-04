@@ -178,9 +178,18 @@ const getFile = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+const resetHomeContentController = async (req, res) => {
+  try {
+    await HomeContent.deleteMany({});
+    res.status(200).json({ message: "Home content reset successfully" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 
 module.exports = {
   updateHomeContent,
   getHomeContent,
   getFile,
+  resetHomeContentController,
 };
