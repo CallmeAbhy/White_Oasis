@@ -91,7 +91,31 @@ const AdminPanel = () => {
       setLoading(false);
     }
   };
-
+  const handleReset = async () => {
+    try {
+      setLoading(true);
+      await axios.post("http://localhost:7001/api/landing/reset", null, {
+        headers: {
+          Authorization: `Bearer ${token}`,
+        },
+      });
+      setMessage("Content reset successfully!");
+      // Clear form data
+      setImageFiles({
+        sunday: null,
+        monday: null,
+        tuesday: null,
+        wednesday: null,
+        thursday: null,
+        friday: null,
+        saturday: null,
+      });
+    } catch (error) {
+      setMessage(error.message || "Error resetting content");
+    } finally {
+      setLoading(false);
+    }
+  };
   return (
     <>
       <Navbar />
@@ -236,6 +260,13 @@ const AdminPanel = () => {
             className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
           >
             {loading ? "Uploading..." : "Update Content"}
+          </button>
+          <button
+            disabled={loading}
+            className="bg-blue-500 text-white px-6 py-2 rounded hover:bg-blue-600 disabled:bg-gray-400"
+            onClick={handleReset}
+          >
+            {loading ? "Resetting..." : "Reset Content"}
           </button>
 
           {message && (
