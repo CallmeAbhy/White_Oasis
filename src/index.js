@@ -12,6 +12,7 @@ const passwordResetRoutes = require("./routes/passwordResetRoutes");
 const contactRoutes = require("./routes/contactRoutes");
 const appointmentRoutes = require("./routes/appointmentRoutes");
 const homeContentRoutes = require("./routes/homeContentRoutes");
+const aboutContentRoutes = require("./routes/aboutContentRoutes");
 const { initGridFS } = require("./config/gridfsConfig");
 dbConnect();
 const app = express();
@@ -32,6 +33,7 @@ app.use("/api/contact", contactRoutes);
 app.use("/api/appointments", appointmentRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/landing", homeContentRoutes);
+app.use("/api/aboutus", aboutContentRoutes);
 // Starts the Server
 const PORT = process.env.PORT || 7002;
 app.listen(PORT, () => {
