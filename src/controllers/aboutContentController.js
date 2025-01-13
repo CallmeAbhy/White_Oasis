@@ -77,13 +77,13 @@ const getAboutContent = async (req, res) => {
         fileId: img.fileId,
         filename: img.filename,
         order: img.order,
-        url: `http://localhost:7001/api/about/files/${img.fileId}`,
+        url: `http://localhost:7001/api/aboutus/files/${img.fileId}`,
       })),
       videos: aboutContent.videos.map((vid) => ({
         fileId: vid.fileId,
         filename: vid.filename,
         order: vid.order,
-        url: `http://localhost:7001/api/about/files/${vid.fileId}`,
+        url: `http://localhost:7001/api/aboutus/files/${vid.fileId}`,
       })),
     };
 
@@ -92,7 +92,22 @@ const getAboutContent = async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 };
+const getFile = async (req, res) => {
+  try {
+    const gfs = getGfs();
+    const fileId = new ObjectId(req.params.fileId);
 
+    const file = await gfs.find({ _id: fileId }).toArray();
+    if (!file || file.length === 0) {
+      return res.status(404).json({ message: "File not found" });
+    }
+
+    const readStream = gfs.openDownloadStream(fileId);
+    readStream.pipe(res);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+};
 const resetAboutContent = async (req, res) => {
   try {
     await AboutContent.deleteMany({});
@@ -106,4 +121,5 @@ module.exports = {
   updateAboutContent,
   getAboutContent,
   resetAboutContent,
+  getFile,
 };

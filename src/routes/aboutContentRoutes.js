@@ -7,6 +7,7 @@ const {
   updateAboutContent,
   getAboutContent,
   resetAboutContent,
+  getFile,
 } = require("../controllers/aboutContentController");
 const verifyToken = require("../middlewares/authMiddleware");
 const authorizedRoles = require("../middlewares/roleMiddleware");
@@ -30,5 +31,6 @@ router.post(
 
 router.get("/", getAboutContent);
 router.post("/reset", verifyToken, authorizedRoles("admin"), resetAboutContent);
+router.get("/files/:fileId", getFile);
 
 module.exports = router;

@@ -1,0 +1,202 @@
+import { useState, useEffect } from "react";
+import axios from "axios";
+import Navbar from "../../components/Navbar";
+import Footer from "../Common/Components/Footer";
+
+const AboutUsAndGallery = () => {
+  const [content, setContent] = useState(null);
+  const [loading, setLoading] = useState(true);
+  const [activeTab, setActiveTab] = useState("about");
+
+  useEffect(() => {
+    const fetchContent = async () => {
+      try {
+        const response = await axios.get("http://localhost:7001/api/aboutus");
+        console.log(response.data);
+        setContent(response.data);
+      } catch (error) {
+        console.error("Error fetching content:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchContent();
+  }, []);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-screen bg-gray-50">
+      <Navbar />
+
+      {/* Hero Section */}
+      <div className="relative h-[60vh] overflow-hidden">
+        <div className="absolute inset-0">
+          <img
+            src={`https://api.deepai.org/job-view-file/02eb71c8-d13a-47ed-a41d-e26258c7bf81/outputs/output.jpg`}
+            alt="About Us Hero"
+            className="w-full h-full object-cover"
+          />
+          <div className="absolute inset-0 bg-black opacity-50"></div>
+        </div>
+        <div className="relative container mx-auto px-6 h-full flex items-center">
+          <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight max-w-2xl">
+            About White Oasis
+          </h1>
+        </div>
+      </div>
+
+      {/* Navigation Tabs */}
+      <div className="bg-white shadow">
+        <div className="container mx-auto px-6">
+          <div className="flex space-x-8">
+            <button
+              onClick={() => setActiveTab("about")}
+              className={`py-4 px-2 border-b-2 transition-colors duration-300 ${
+                activeTab === "about"
+                  ? "border-blue-500 text-blue-500"
+                  : "border-transparent text-gray-600 hover:text-blue-500"
+              }`}
+            >
+              About Us
+            </button>
+            <button
+              onClick={() => setActiveTab("gallery")}
+              className={`py-4 px-2 border-b-2 transition-colors duration-300 ${
+                activeTab === "gallery"
+                  ? "border-blue-500 text-blue-500"
+                  : "border-transparent text-gray-600 hover:text-blue-500"
+              }`}
+            >
+              Gallery
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Content Sections */}
+      <div className="container mx-auto px-6 py-12">
+        {activeTab === "about" && (
+          <div className="max-w-4xl mx-auto">
+            <div className="bg-white rounded-xl shadow-lg p-8 mb-12">
+              <h2 className="text-3xl font-bold text-gray-800 mb-6">
+                Our Story
+              </h2>
+              <p className="text-gray-600 leading-relaxed text-lg">
+                {content?.description}
+              </p>
+            </div>
+
+            {/* Mission & Values */}
+            <div className="grid md:grid-cols-2 gap-8">
+              <div className="bg-white rounded-xl shadow-lg p-8">
+                <h3 className="text-2xl font-bold text-gray-800 mb-4">
+                  Our Mission
+                </h3>
+                <p className="text-gray-600">
+                  To provide exceptional care and support for the elderly,
+                  creating a nurturing environment that promotes dignity,
+                  independence, and well-being.
+                </p>
+              </div>
+              <div className="bg-white rounded-xl shadow-lg p-8">
+                <h3 className="text-2xl font-bold text-gray-800 mb-4">
+                  Our Values
+                </h3>
+                <ul className="text-gray-600 space-y-2">
+                  <li>• Compassionate Care</li>
+                  <li>• Respect & Dignity</li>
+                  <li>• Professional Excellence</li>
+                  <li>• Community Integration</li>
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === "gallery" && (
+          <div>
+            {/* Images Section */}
+            <div className="mb-12">
+              <h2 className="text-3xl font-bold text-gray-800 mb-8">
+                Photo Gallery
+              </h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {content?.images.map((image, index) => (
+                  <div
+                    key={image.fileId}
+                    className="group relative overflow-hidden rounded-lg shadow-lg"
+                  >
+                    <img
+                      src={`http://localhost:7001/api/aboutus/files/${image.fileId}`}
+                      alt={`Gallery image ${index + 1}`}
+                      className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
+                    />
+                    <div className="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+                      <button
+                        onClick={() =>
+                          window.open(
+                            `http://localhost:7001/api/aboutus/files/${image.fileId}`,
+                            "_blank"
+                          )
+                        }
+                        className="bg-white text-gray-800 px-4 py-2 rounded-lg transform -translate-y-2 group-hover:translate-y-0 transition-transform duration-300"
+                      >
+                        View Full Size
+                      </button>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Videos Section */}
+            {content?.videos && content.videos.length > 0 && (
+              <div>
+                <h2 className="text-3xl font-bold text-gray-800 mb-8">
+                  Video Gallery
+                </h2>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                  {content.videos.map((video, index) => (
+                    <div
+                      key={video.fileId}
+                      className="bg-white rounded-lg shadow-lg overflow-hidden"
+                    >
+                      <video
+                        controls
+                        className="w-full"
+                        poster={`https://api.deepai.org/job-view-file/0adeb113-276d-42e9-b0ea-cac1041dc74b/outputs/output.jpg`}
+                      >
+                        <source
+                          src={`http://localhost:7001/api/aboutus/files/${video.fileId}`}
+                          type="video/mp4"
+                        />
+                        Your browser does not support the video tag.
+                      </video>
+                      <div className="p-4">
+                        <h3 className="text-lg font-semibold text-gray-800">
+                          Video {index + 1}
+                        </h3>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+          </div>
+        )}
+      </div>
+
+      <Footer />
+    </div>
+  );
+};
+
+export default AboutUsAndGallery;
