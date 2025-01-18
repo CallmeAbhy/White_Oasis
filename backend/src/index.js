@@ -34,8 +34,8 @@ app.use("/api/appointments", appointmentRoutes);
 app.use("/uploads", express.static(path.join(__dirname, "uploads")));
 app.use("/api/landing", homeContentRoutes);
 app.use("/api/aboutus", aboutContentRoutes);
-// Starts the Server
-const PORT = process.env.PORT || 7002;
+// Starts the Servers
+const PORT = process.env.PORT || 7001;
 app.listen(PORT, () => {
   console.log(`Server is running at port  ${PORT}`);
 });

@@ -135,7 +135,7 @@ const getHomeContent = async (req, res) => {
         fileId: currentImage.fileId,
         filename: currentImage.filename,
         day: currentDay,
-        url: `http://localhost:7001/api/landing/files/${currentImage.fileId}`,
+        url: `${process.env.API_URL}/api/landing/files/${currentImage.fileId}`,
       },
     };
 
@@ -143,7 +143,7 @@ const getHomeContent = async (req, res) => {
       response.heroVideoBig = {
         fileId: homeContent.heroVideoBig.fileId,
         filename: homeContent.heroVideoBig.filename,
-        url: `http://localhost:7001/api/landing/files/${homeContent.heroVideoBig.fileId}`,
+        url: `${process.env.API_URL}/api/landing/files/${homeContent.heroVideoBig.fileId}`,
       };
     }
 
@@ -151,7 +151,7 @@ const getHomeContent = async (req, res) => {
       response.heroVideoSmall = {
         fileId: homeContent.heroVideoSmall.fileId,
         filename: homeContent.heroVideoSmall.filename,
-        url: `http://localhost:7001/api/landing/files/${homeContent.heroVideoSmall.fileId}`,
+        url: `${process.env.API_URL}/api/landing/files/${homeContent.heroVideoSmall.fileId}`,
       };
     }
 

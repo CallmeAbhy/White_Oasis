@@ -77,13 +77,13 @@ const getAboutContent = async (req, res) => {
         fileId: img.fileId,
         filename: img.filename,
         order: img.order,
-        url: `http://localhost:7001/api/aboutus/files/${img.fileId}`,
+        url: `${process.env.API_URL}/api/aboutus/files/${img.fileId}`,
       })),
       videos: aboutContent.videos.map((vid) => ({
         fileId: vid.fileId,
         filename: vid.filename,
         order: vid.order,
-        url: `http://localhost:7001/api/aboutus/files/${vid.fileId}`,
+        url: `${process.env.API_URL}/api/aboutus/files/${vid.fileId}`,
       })),
     };
 
