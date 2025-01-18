@@ -26,7 +26,7 @@ const Dashboard = () => {
       if (profile && profile.role === "admin") {
         try {
           const response = await fetch(
-            "http://localhost:7001/api/admin/pending-managers",
+            `${import.meta.env.VITE_API_URL}/api/admin/pending-managers`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -59,7 +59,9 @@ const Dashboard = () => {
               {/* Trust Logo */}
               <div className="w-1/3">
                 <img
-                  src={`http://localhost:7001/api/files/file/${applicant.trust_logo}`}
+                  src={`${import.meta.env.VITE_API_URL}/api/files/file/${
+                    applicant.trust_logo
+                  }`}
                   alt={`${applicant.name_of_trust} Logo`}
                   className="object-contain h-full w-full p-2" // Use object-contain to ensure the logo is fully visible
                 />

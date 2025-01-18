@@ -17,7 +17,7 @@ const ResetPassword = () => {
     e.preventDefault();
     try {
       await axios.post(
-        "http://localhost:7001/api/password-reset/request-reset",
+        `${import.meta.env.VITE_API_URL}/api/password-reset/request-reset`,
         { email }
       );
       alert("OTP sent to your email.");
@@ -31,7 +31,7 @@ const ResetPassword = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:7001/api/password-reset/verify-otp",
+        `${import.meta.env.VITE_API_URL}/api/password-reset/verify-otp`,
         { email, otp }
       );
       alert(response.data.message);
@@ -45,7 +45,7 @@ const ResetPassword = () => {
     e.preventDefault();
     try {
       await axios.post(
-        "http://localhost:7001/api/password-reset/reset-password",
+        `${import.meta.env.VITE_API_URL}/api/password-reset/reset-password`,
         { email, newPassword }
       );
       alert("Password reset successfully!");

@@ -44,7 +44,9 @@ const About = () => {
         {/* Header Section */}
         <div className="flex flex-col md:flex-row items-center bg-gray-100 p-6 rounded-lg shadow-md">
           <img
-            src={`http://localhost:7001/api/files/file/${home.manager_id.trust_logo}`}
+            src={`${import.meta.env.VITE_API_URL}/api/files/file/${
+              home.manager_id.trust_logo
+            }`}
             alt="Trust Logo"
             className="w-24 h-24 rounded-full shadow-lg mb-4 md:mb-0 md:mr-6"
           />

@@ -11,7 +11,9 @@ const AboutUsAndGallery = () => {
   useEffect(() => {
     const fetchContent = async () => {
       try {
-        const response = await axios.get("http://localhost:7001/api/aboutus");
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/aboutus`
+        );
         console.log(response.data);
         setContent(response.data);
       } catch (error) {
@@ -135,7 +137,9 @@ const AboutUsAndGallery = () => {
                     className="group relative overflow-hidden rounded-lg shadow-lg"
                   >
                     <img
-                      src={`http://localhost:7001/api/aboutus/files/${image.fileId}`}
+                      src={`${import.meta.env.VITE_API_URL}/api/aboutus/files/${
+                        image.fileId
+                      }`}
                       alt={`Gallery image ${index + 1}`}
                       className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
                     />
@@ -143,7 +147,9 @@ const AboutUsAndGallery = () => {
                       <button
                         onClick={() =>
                           window.open(
-                            `http://localhost:7001/api/aboutus/files/${image.fileId}`,
+                            `${
+                              import.meta.env.VITE_API_URL
+                            }/api/aboutus/files/${image.fileId}`,
                             "_blank"
                           )
                         }
@@ -175,7 +181,9 @@ const AboutUsAndGallery = () => {
                         poster={`https://api.deepai.org/job-view-file/0adeb113-276d-42e9-b0ea-cac1041dc74b/outputs/output.jpg`}
                       >
                         <source
-                          src={`http://localhost:7001/api/aboutus/files/${video.fileId}`}
+                          src={`${
+                            import.meta.env.VITE_API_URL
+                          }/api/aboutus/files/${video.fileId}`}
                           type="video/mp4"
                         />
                         Your browser does not support the video tag.

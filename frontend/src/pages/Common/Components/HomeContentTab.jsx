@@ -73,12 +73,16 @@ const HomeContentTab = ({
       formData.append("twitter", e.target.twitter.value);
       formData.append("youtube", e.target.youtube.value);
 
-      await axios.post("http://localhost:7001/api/landing/update", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/landing/update`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
 
       setMessage("Content updated successfully!");
       navigateToHome(navigate);
@@ -92,11 +96,15 @@ const HomeContentTab = ({
     e.preventDefault();
     try {
       setLoading(true);
-      await axios.post("http://localhost:7001/api/landing/reset", null, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/landing/reset`,
+        null,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setMessage("Content reset successfully!");
       // Clear form data
       setImageFiles({

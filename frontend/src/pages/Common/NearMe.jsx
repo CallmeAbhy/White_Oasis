@@ -37,7 +37,7 @@ const NearMe = () => {
   const fetchOldAgeHomes = async () => {
     try {
       const response = await fetch(
-        "http://localhost:7001/api/old-age-homes/all"
+        `${import.meta.env.VITE_API_URL}/api/old-age-homes/all`
       );
       const data = await response.json();
       setOldAgeHomes(data);
@@ -93,7 +93,7 @@ const NearMe = () => {
   const handleDelete = async (homeId) => {
     try {
       const response = await fetch(
-        `http://localhost:7001/api/old-age-homes/delete/${homeId}`,
+        `${import.meta.env.VITE_API_URL}/api/old-age-homes/delete/${homeId}`,
         {
           method: "DELETE",
           headers: {
@@ -245,7 +245,9 @@ const NearMe = () => {
                 {/* Left Section: Trust Logo */}
                 <div className="w-24 h-24 flex-shrink-0 rounded-full overflow-hidden border border-gray-300">
                   <img
-                    src={`http://localhost:7001/api/files/file/${home.manager_id.trust_logo}`}
+                    src={`${import.meta.env.VITE_API_URL}/api/files/file/${
+                      home.manager_id.trust_logo
+                    }`}
                     alt="Trust Logo"
                     className="object-cover w-full h-full"
                   />

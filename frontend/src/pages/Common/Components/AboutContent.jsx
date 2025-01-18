@@ -97,11 +97,15 @@ const AboutContent = ({ token, setMessage, loading, setLoading }) => {
   const handleAboutReset = async () => {
     try {
       setLoading(true);
-      await axios.post("http://localhost:7001/api/aboutus/reset", null, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
-      });
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/aboutus/reset`,
+        null,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
       setMessage("Content reset successfully!");
     } catch (error) {
       setMessage(error.message);
@@ -123,12 +127,16 @@ const AboutContent = ({ token, setMessage, loading, setLoading }) => {
       videos.forEach((video) => {
         formData.append("videos", video);
       });
-      await axios.post("http://localhost:7001/api/aboutus/update", formData, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      await axios.post(
+        `${import.meta.env.VITE_API_URL}/api/aboutus/update`,
+        formData,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+            "Content-Type": "multipart/form-data",
+          },
+        }
+      );
       setMessage("About content updated successfully!");
       navigateToHome(navigate);
     } catch (error) {

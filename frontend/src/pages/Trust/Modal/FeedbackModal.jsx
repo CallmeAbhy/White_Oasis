@@ -20,7 +20,9 @@ const FeedbackModal = ({ oldAgeHomeId, onClose, onSubmitSuccess }) => {
   const fetchReviews = async () => {
     try {
       const response = await fetch(
-        `http://localhost:7001/api/old-age-homes/getreviews/${oldAgeHomeId}`,
+        `${
+          import.meta.env.VITE_API_URL
+        }/api/old-age-homes/getreviews/${oldAgeHomeId}`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -45,7 +47,9 @@ const FeedbackModal = ({ oldAgeHomeId, onClose, onSubmitSuccess }) => {
 
     try {
       const response = await fetch(
-        `http://localhost:7001/api/old-age-homes/rate/${oldAgeHomeId}`,
+        `${
+          import.meta.env.VITE_API_URL
+        }/api/old-age-homes/rate/${oldAgeHomeId}`,
         {
           method: "POST",
           headers: {
@@ -79,7 +83,9 @@ const FeedbackModal = ({ oldAgeHomeId, onClose, onSubmitSuccess }) => {
   const handleDeleteReview = async (reviewId) => {
     try {
       const response = await fetch(
-        `http://localhost:7001/api/old-age-homes/${oldAgeHomeId}/reviews/${reviewId}`,
+        `${
+          import.meta.env.VITE_API_URL
+        }/api/old-age-homes/${oldAgeHomeId}/reviews/${reviewId}`,
         {
           method: "DELETE",
           headers: {

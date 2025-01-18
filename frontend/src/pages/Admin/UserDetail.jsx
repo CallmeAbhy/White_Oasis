@@ -18,7 +18,7 @@ const UserDetail = () => {
   const handleApprove = async () => {
     try {
       const response = await fetch(
-        `http://localhost:7001/api/admin/approve-manager/${user._id}`,
+        `${import.meta.env.VITE_API_URL}/api/admin/approve-manager/${user._id}`,
         {
           method: "POST",
           headers: {
@@ -46,7 +46,7 @@ const UserDetail = () => {
     }
     try {
       const response = await fetch(
-        `http://localhost:7001/api/admin/reject-manager/${user._id}`,
+        `${import.meta.env.VITE_API_URL}/api/admin/reject-manager/${user._id}`,
         {
           method: "POST",
           headers: {
@@ -103,7 +103,7 @@ const UserDetail = () => {
                 label: "Trust Document",
                 value: (
                   <a
-                    href={`http://localhost:7001/api/files/file/${user.trust_document}`}
+                    href={`${import.meta.env.VITE_API_URL}/api/files/file/${user.trust_document}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-500 hover:underline"
@@ -116,7 +116,7 @@ const UserDetail = () => {
                 label: "Financial Statements",
                 value: (
                   <a
-                    href={`http://localhost:7001/api/files/file/${user.financial_statements}`}
+                    href={`${import.meta.env.VITE_API_URL}/api/files/file/${user.financial_statements}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-500 hover:underline"
@@ -129,7 +129,7 @@ const UserDetail = () => {
                 label: "Trust Domicile",
                 value: (
                   <a
-                    href={`http://localhost:7001/api/files/file/${user.trust_domicile}`}
+                    href={`${import.meta.env.VITE_API_URL}/api/files/file/${user.trust_domicile}`}
                     target="_blank"
                     rel="noopener noreferrer"
                     className="text-blue-500 hover:underline"
