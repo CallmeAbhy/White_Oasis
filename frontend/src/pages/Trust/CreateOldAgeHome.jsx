@@ -64,7 +64,7 @@ const CreateOldAgeHome = () => {
     }
     try {
       const response = await fetch(
-        "http://localhost:7001/api/old-age-homes/create",
+        `${import.meta.env.VITE_API_URL}/api/old-age-homes/create`,
         {
           method: "POST",
           headers: {

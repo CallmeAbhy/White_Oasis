@@ -23,7 +23,9 @@ export const HomeProvider = ({ children }) => {
   useEffect(() => {
     const fetchHomeData = async () => {
       try {
-        const response = await axios.get("http://localhost:7001/api/landing");
+        const response = await axios.get(
+          `${import.meta.env.VITE_API_URL}/api/landing`
+        );
         const data = response.data;
         console.log(data);
         setHomeData({

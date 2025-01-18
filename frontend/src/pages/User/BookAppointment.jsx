@@ -29,7 +29,11 @@ const BookAppointment = () => {
   const fetchAvailableSlots = async () => {
     try {
       const response = await fetch(
-        `http://localhost:7001/api/appointments/available-slots/${homeId}/${appointmentData.appointment_date}`,
+        `${
+          import.meta.env.VITE_API_URL
+        }/api/appointments/available-slots/${homeId}/${
+          appointmentData.appointment_date
+        }`,
         {
           headers: {
             Authorization: `Bearer ${token}`,
@@ -47,7 +51,7 @@ const BookAppointment = () => {
     e.preventDefault();
     try {
       const response = await fetch(
-        "http://localhost:7001/api/appointments/create",
+        `${import.meta.env.VITE_API_URL}/api/appointments/create`,
         {
           method: "POST",
           headers: {

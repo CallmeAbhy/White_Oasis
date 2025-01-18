@@ -32,7 +32,7 @@ const Login = () => {
       formDataToSend.append("username", formData.username);
       formDataToSend.append("password", formData.password);
       const response = await axios.post(
-        "http://localhost:7001/api/auth/login",
+        `${import.meta.env.VITE_API_URL}/api/auth/login`,
         formDataToSend,
         {
           headers: {

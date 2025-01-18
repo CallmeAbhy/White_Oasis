@@ -47,7 +47,7 @@ const Navbar = () => {
         case "admin":
           try {
             const response = await fetch(
-              "http://localhost:7001/api/admin/pending-managers",
+              `${import.meta.env.VITE_API_URL}/api/admin/pending-managers`,
               { headers: { Authorization: `Bearer ${token}` } }
             );
             const data = await response.json();
@@ -59,7 +59,7 @@ const Navbar = () => {
         case "manager":
           try {
             const response = await fetch(
-              "http://localhost:7001/api/appointments/home/notification/count",
+              `${import.meta.env.VITE_API_URL}/api/appointments/home/notification/count`,
               { headers: { Authorization: `Bearer ${token}` } }
             );
             const data = await response.json();
@@ -77,7 +77,7 @@ const Navbar = () => {
         case "user":
           try {
             const response = await fetch(
-              "http://localhost:7001/api/appointments/notifications/count",
+              `${import.meta.env.VITE_API_URL}/api/appointments/notifications/count`,
               { headers: { Authorization: `Bearer ${token}` } }
             );
             const data = await response.json();
@@ -103,7 +103,7 @@ const Navbar = () => {
     if (!profile) return null;
     return profile.role === "admin"
       ? "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcShT46qRS5GB1TODvjapsbE5sYDtc1xxgMfzQ&s"
-      : `http://localhost:7001/api/files/file/${
+      : `${import.meta.env.VITE_API_URL}/api/files/file/${
           profile.userPhoto || profile.trust_logo
         }`;
   };

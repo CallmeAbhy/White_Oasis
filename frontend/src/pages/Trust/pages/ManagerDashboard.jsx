@@ -43,7 +43,9 @@ const ManagerDashboard = () => {
       if (profile && profile.role === "manager") {
         try {
           const response = await fetch(
-            `http://localhost:7001/api/appointments/pending/${activeTab}`,
+            `${
+              import.meta.env.VITE_API_URL
+            }/api/appointments/pending/${activeTab}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -64,7 +66,9 @@ const ManagerDashboard = () => {
   const handleAppointmentStatus = async (appointmentId, status) => {
     try {
       const response = await fetch(
-        `http://localhost:7001/api/appointments/${appointmentId}/status`,
+        `${
+          import.meta.env.VITE_API_URL
+        }/api/appointments/${appointmentId}/status`,
         {
           method: "PATCH",
           headers: {
@@ -254,7 +258,9 @@ const ManagerDashboard = () => {
                 <div className="space-y-4">
                   <div>
                     <img
-                      src={`http://localhost:7001/api/files/file/${selectedUser.userPhoto}`}
+                      src={`${import.meta.env.VITE_API_URL}/api/files/file/${
+                        selectedUser.userPhoto
+                      }`}
                       alt="User Photo"
                       className="w-32 h-32 rounded-full object-cover border-4 border-blue-500"
                     />
@@ -307,7 +313,9 @@ const ManagerDashboard = () => {
                       Government ID:
                     </label>
                     <a
-                      href={`http://localhost:7001/api/files/file/${selectedUser.governmentIdCard}`}
+                      href={`${import.meta.env.VITE_API_URL}/api/files/file/${
+                        selectedUser.governmentIdCard
+                      }`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-blue-500 hover:text-blue-700 underline"

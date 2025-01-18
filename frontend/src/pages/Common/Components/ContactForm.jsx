@@ -42,7 +42,7 @@ const ContactForm = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:7001/api/contact/send",
+        `${import.meta.env.VITE_API_URL}/api/contact/send`,
         {
           fromEmail: formData.email,
           toEmail: "abhaydusane24@gmail.com",

@@ -37,8 +37,7 @@ const Home = () => {
         if (token) {
           try {
             const profileResponse = await axios.get(
-              `http://localhost:7001/api/users/profile`,
-
+              `${import.meta.env.VITE_API_URL}/api/users/profile`,
               {
                 headers: {
                   Authorization: `Bearer ${token}`,
