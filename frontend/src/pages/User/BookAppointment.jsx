@@ -196,5 +196,6 @@ const BookAppointment = () => {
     </>
   );
 };
+// Add the steps for Adoption For File Upload etc
 
 export default BookAppointment;
