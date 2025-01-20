@@ -8,13 +8,17 @@ export const IntroVideo = ({ onSkip, desktopVideo, mobileVideo }) => {
   const [isVideoLoading, setIsVideoLoading] = useState(true);
 
   useEffect(() => {
+    const preloadVideo = () => {
+      const video = new Audio();
+      video.src = isMobile ? mobileVideo : desktopVideo;
+    };
+    preloadVideo();
     const handleResize = () => {
       setIsMobile(window.innerWidth < 768);
     };
-
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
-  }, []);
+  }, [isMobile, mobileVideo, desktopVideo]);
 
   // Function to handle user interaction and play video with sound
   const handlePlayWithSound = () => {
