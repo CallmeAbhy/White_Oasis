@@ -19,9 +19,11 @@ export const HomeProvider = ({ children }) => {
     twitter: "",
     youtube: "",
   });
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchHomeData = async () => {
+      setIsLoading(true);
       try {
         const response = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/landing`
@@ -44,6 +46,8 @@ export const HomeProvider = ({ children }) => {
         });
       } catch (error) {
         console.error("Error fetching home data:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -51,7 +55,9 @@ export const HomeProvider = ({ children }) => {
   }, []);
 
   return (
-    <HomeContext.Provider value={homeData}>{children}</HomeContext.Provider>
+    <HomeContext.Provider value={{ ...homeData, isLoading }}>
+      {children}
+    </HomeContext.Provider>
   );
 };
 
