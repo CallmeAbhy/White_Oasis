@@ -8,14 +8,32 @@ export const IntroVideo = ({ onSkip, desktopVideo, mobileVideo }) => {
   const [isVideoLoading, setIsVideoLoading] = useState(true);
 
   useEffect(() => {
+    // Handle initial mobile detection
+    const checkMobile = () => {
+      const isMobileDevice =
+        window.innerWidth < 768 ||
+        /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(
+          navigator.userAgent
+        );
+      setIsMobile(isMobileDevice);
+    };
+
+    // Initial check
+    checkMobile();
+
+    // Preload correct video
     const preloadVideo = () => {
-      const video = new Audio();
-      video.src = isMobile ? mobileVideo : desktopVideo;
+      const videoElement = document.createElement("video");
+      videoElement.preload = "auto";
+      videoElement.src = isMobile ? mobileVideo : desktopVideo;
     };
     preloadVideo();
+
+    // Handle resize
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
+      checkMobile();
     };
+
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, [isMobile, mobileVideo, desktopVideo]);
@@ -51,8 +69,14 @@ export const IntroVideo = ({ onSkip, desktopVideo, mobileVideo }) => {
         autoPlay
         playsInline
         muted // Initially muted to allow autoplay
+        preload="auto"
         onLoadedData={handleVideoLoad}
         onEnded={onSkip}
+        onError={(e) => {
+          console.error("Video loading error:", e);
+          setIsVideoLoading(false);
+          onSkip();
+        }}
         src={isMobile ? mobileVideo : desktopVideo}
       />
 
@@ -68,17 +92,16 @@ export const IntroVideo = ({ onSkip, desktopVideo, mobileVideo }) => {
         </button>
       )}
 
-      {/* Skip button - only show when video is loaded */}
-      {!isVideoLoading && (
-        <button
-          onClick={onSkip}
-          className="absolute top-8 right-8 bg-white/90 hover:bg-white text-black 
+      {/* Skip button - always show  */}
+
+      <button
+        onClick={onSkip}
+        className="absolute top-8 right-8 bg-white/90 hover:bg-white text-black 
                      px-6 py-3 rounded-lg transition-all duration-300 
                      font-semibold shadow-lg z-[10000]"
-        >
-          Skip Intro
-        </button>
-      )}
+      >
+        Skip Intro
+      </button>
     </div>
   );
 };
