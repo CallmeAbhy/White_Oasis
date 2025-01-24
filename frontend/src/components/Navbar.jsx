@@ -59,7 +59,9 @@ const Navbar = () => {
         case "manager":
           try {
             const response = await fetch(
-              `${import.meta.env.VITE_API_URL}/api/appointments/home/notification/count`,
+              `${
+                import.meta.env.VITE_API_URL
+              }/api/appointments/home/notification/count`,
               { headers: { Authorization: `Bearer ${token}` } }
             );
             const data = await response.json();
@@ -77,7 +79,9 @@ const Navbar = () => {
         case "user":
           try {
             const response = await fetch(
-              `${import.meta.env.VITE_API_URL}/api/appointments/notifications/count`,
+              `${
+                import.meta.env.VITE_API_URL
+              }/api/appointments/notifications/count`,
               { headers: { Authorization: `Bearer ${token}` } }
             );
             const data = await response.json();

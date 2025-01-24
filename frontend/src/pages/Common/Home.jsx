@@ -16,13 +16,14 @@ import { IntroVideo } from "./IntroVideo";
 import Footer from "./Components/Footer";
 import ContactForm from "./Components/ContactForm";
 import { useHome } from "../../context/HomeContext";
+import { HeroSkeleton } from "../../components/HeroSkeleton";
 
 const Home = () => {
   const { setProfile } = useProfile();
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
   const { token } = useToken();
-  const homeData = useHome();
+  const { isLoading, ...homeData } = useHome();
   const [showIntro, setShowIntro] = useState(false);
   useEffect(() => {
     if (!token) {
@@ -70,7 +71,12 @@ const Home = () => {
 
   return (
     <>
-      {showIntro && homeData.desktopVideo ? (
+      {isLoading ? (
+        <div className="min-h-screen bg-gray-50">
+          <Navbar />
+          <HeroSkeleton />
+        </div>
+      ) : showIntro && homeData.desktopVideo ? (
         <IntroVideo
           onSkip={handleSkipIntro}
           desktopVideo={homeData.desktopVideo}
@@ -85,13 +91,13 @@ const Home = () => {
             <div className="relative h-[90vh]">
               <div className="absolute inset-0">
                 <img
-                  src={homeData.heroImages || "/images/elderly-care.jpg"}
-                  className="w-full h-full object-cover"
+                  src={homeData.heroImages || "http://surl.li/ylszur"}
+                  className="w-full h-full object-cover rounded-lg"
                   alt="Elderly Care"
                 />
                 <div className="absolute inset-0 bg-black opacity-50"></div>
               </div>
-              <div className="relative container mx-auto px-4 h-full flex items-center">
+              <div className="relative container mx-auto px-4 h-full flex flex-col justify-center items-start md:items-center">
                 <div className="max-w-2xl text-white">
                   <h1 className="text-5xl font-bold mb-6">
                     {homeData.title || "Compassionate Elderly Care for Elders"}

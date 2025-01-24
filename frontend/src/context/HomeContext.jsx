@@ -3,6 +3,12 @@ import PropTypes from "prop-types";
 import axios from "axios";
 
 const HomeContext = createContext();
+// Create a cache object outside the component
+const cache = {
+  data: null,
+  timestamp: null,
+};
+const CACHE_DURATION = 5 * 60 * 1000;
 
 export const HomeProvider = ({ children }) => {
   const [homeData, setHomeData] = useState({
@@ -19,16 +25,41 @@ export const HomeProvider = ({ children }) => {
     twitter: "",
     youtube: "",
   });
+  const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
     const fetchHomeData = async () => {
+      setIsLoading(true);
+      // Check if cached data exists and is still valid
+      if (
+        cache.data &&
+        cache.timestamp &&
+        Date.now() - cache.timestamp < CACHE_DURATION
+      ) {
+        setHomeData(cache.data);
+        setIsLoading(false);
+        return;
+      }
+
       try {
+        // Preload hero image
+        const preloadImage = (url) => {
+          return new Promise((resolve, reject) => {
+            const img = new Image();
+            img.src = url;
+            img.onload = resolve;
+            img.onerror = reject;
+          });
+        };
         const response = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/landing`
         );
         const data = response.data;
-        console.log(data);
-        setHomeData({
+        // Start preloading the hero image
+        if (data.currentDayImage?.url) {
+          preloadImage(data.currentDayImage.url);
+        }
+        const processedData = {
           title: data.title,
           subtitle: data.subtitle,
           heroImages: data.currentDayImage.url,
@@ -41,9 +72,15 @@ export const HomeProvider = ({ children }) => {
           instagram: data.instagram,
           address: data.address,
           youtube: data.youtube,
-        });
+        };
+        // Update cache
+        cache.data = processedData;
+        cache.timestamp = Date.now();
+        setHomeData(processedData);
       } catch (error) {
         console.error("Error fetching home data:", error);
+      } finally {
+        setIsLoading(false);
       }
     };
 
@@ -51,7 +88,9 @@ export const HomeProvider = ({ children }) => {
   }, []);
 
   return (
-    <HomeContext.Provider value={homeData}>{children}</HomeContext.Provider>
+    <HomeContext.Provider value={{ ...homeData, isLoading }}>
+      {children}
+    </HomeContext.Provider>
   );
 };
 

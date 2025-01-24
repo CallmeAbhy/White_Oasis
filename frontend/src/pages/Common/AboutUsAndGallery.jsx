@@ -14,7 +14,6 @@ const AboutUsAndGallery = () => {
         const response = await axios.get(
           `${import.meta.env.VITE_API_URL}/api/aboutus`
         );
-        console.log(response.data);
         setContent(response.data);
       } catch (error) {
         console.error("Error fetching content:", error);
@@ -39,29 +38,29 @@ const AboutUsAndGallery = () => {
       <Navbar />
 
       {/* Hero Section */}
-      <div className="relative h-[60vh] overflow-hidden">
+      <div className="relative h-[60vh] lg:h-[80vh] overflow-hidden">
         <div className="absolute inset-0">
           <img
-            src={`https://api.deepai.org/job-view-file/02eb71c8-d13a-47ed-a41d-e26258c7bf81/outputs/output.jpg`}
+            src="https://api.deepai.org/job-view-file/02eb71c8-d13a-47ed-a41d-e26258c7bf81/outputs/output.jpg"
             alt="About Us Hero"
             className="w-full h-full object-cover"
           />
-          <div className="absolute inset-0 bg-black opacity-50"></div>
+          <div className="absolute inset-0 bg-black bg-opacity-50"></div>
         </div>
-        <div className="relative container mx-auto px-6 h-full flex items-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-white leading-tight max-w-2xl">
+        <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-center text-center">
+          <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight max-w-3xl">
             About White Oasis
           </h1>
         </div>
       </div>
 
       {/* Navigation Tabs */}
-      <div className="bg-white shadow">
-        <div className="container mx-auto px-6">
-          <div className="flex space-x-8">
+      <div className="bg-white shadow sticky top-0 z-10">
+        <div className="container mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex flex-wrap justify-center sm:justify-start space-x-4 sm:space-x-8">
             <button
               onClick={() => setActiveTab("about")}
-              className={`py-4 px-2 border-b-2 transition-colors duration-300 ${
+              className={`py-3 px-4 border-b-2 transition-colors duration-300 ${
                 activeTab === "about"
                   ? "border-blue-500 text-blue-500"
                   : "border-transparent text-gray-600 hover:text-blue-500"
@@ -71,7 +70,7 @@ const AboutUsAndGallery = () => {
             </button>
             <button
               onClick={() => setActiveTab("gallery")}
-              className={`py-4 px-2 border-b-2 transition-colors duration-300 ${
+              className={`py-3 px-4 border-b-2 transition-colors duration-300 ${
                 activeTab === "gallery"
                   ? "border-blue-500 text-blue-500"
                   : "border-transparent text-gray-600 hover:text-blue-500"
@@ -84,39 +83,40 @@ const AboutUsAndGallery = () => {
       </div>
 
       {/* Content Sections */}
-      <div className="container mx-auto px-6 py-12">
+      <div className="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
         {activeTab === "about" && (
           <div className="max-w-4xl mx-auto">
-            <div className="bg-white rounded-xl shadow-lg p-8 mb-12">
-              <h2 className="text-3xl font-bold text-gray-800 mb-6">
+            {/* About Section */}
+            <div className="bg-white rounded-lg shadow-lg p-6 sm:p-8 mb-12 overflow-hidden">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-6">
                 Our Story
               </h2>
-              <p className="text-gray-600 leading-relaxed text-lg">
+              <p className="text-gray-600 leading-relaxed text-base sm:text-lg overflow-wrap break-word break-all w-full">
                 {content?.description}
               </p>
             </div>
 
             {/* Mission & Values */}
-            <div className="grid md:grid-cols-2 gap-8">
-              <div className="bg-white rounded-xl shadow-lg p-8">
-                <h3 className="text-2xl font-bold text-gray-800 mb-4">
+            <div className="grid gap-6 sm:gap-8 lg:grid-cols-2">
+              <div className="bg-white rounded-lg shadow-lg p-6 sm:p-8">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4">
                   Our Mission
                 </h3>
-                <p className="text-gray-600">
+                <p className="text-gray-600 text-base sm:text-lg">
                   To provide exceptional care and support for the elderly,
                   creating a nurturing environment that promotes dignity,
                   independence, and well-being.
                 </p>
               </div>
-              <div className="bg-white rounded-xl shadow-lg p-8">
-                <h3 className="text-2xl font-bold text-gray-800 mb-4">
+              <div className="bg-white rounded-lg shadow-lg p-6 sm:p-8">
+                <h3 className="text-xl sm:text-2xl font-bold text-gray-800 mb-4">
                   Our Values
                 </h3>
-                <ul className="text-gray-600 space-y-2">
-                  <li>• Compassionate Care</li>
-                  <li>• Respect & Dignity</li>
-                  <li>• Professional Excellence</li>
-                  <li>• Community Integration</li>
+                <ul className="text-gray-600 space-y-2 list-disc list-inside">
+                  <li>Compassionate Care</li>
+                  <li>Respect & Dignity</li>
+                  <li>Professional Excellence</li>
+                  <li>Community Integration</li>
                 </ul>
               </div>
             </div>
@@ -127,10 +127,10 @@ const AboutUsAndGallery = () => {
           <div>
             {/* Images Section */}
             <div className="mb-12">
-              <h2 className="text-3xl font-bold text-gray-800 mb-8">
+              <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-8">
                 Photo Gallery
               </h2>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
                 {content?.images.map((image, index) => (
                   <div
                     key={image.fileId}
@@ -141,7 +141,7 @@ const AboutUsAndGallery = () => {
                         image.fileId
                       }`}
                       alt={`Gallery image ${index + 1}`}
-                      className="w-full h-64 object-cover transition-transform duration-300 group-hover:scale-110"
+                      className="w-full h-48 sm:h-64 object-cover transition-transform duration-300 group-hover:scale-110"
                     />
                     <div className="absolute inset-0 bg-black bg-opacity-40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
                       <button
@@ -153,7 +153,7 @@ const AboutUsAndGallery = () => {
                             "_blank"
                           )
                         }
-                        className="bg-white text-gray-800 px-4 py-2 rounded-lg transform -translate-y-2 group-hover:translate-y-0 transition-transform duration-300"
+                        className="bg-white text-gray-800 px-4 py-2 rounded-lg transition-transform duration-300"
                       >
                         View Full Size
                       </button>
@@ -166,10 +166,10 @@ const AboutUsAndGallery = () => {
             {/* Videos Section */}
             {content?.videos && content.videos.length > 0 && (
               <div>
-                <h2 className="text-3xl font-bold text-gray-800 mb-8">
+                <h2 className="text-2xl sm:text-3xl font-bold text-gray-800 mb-8">
                   Video Gallery
                 </h2>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                   {content.videos.map((video, index) => (
                     <div
                       key={video.fileId}
