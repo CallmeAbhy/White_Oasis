@@ -125,10 +125,20 @@ const Navbar = () => {
         <div className="flex h-16 items-center justify-between">
           {/* Logo */}
           <div className="flex items-center">
+            {/* Mobile Logo */}
             <img
-              className="h-8 w-auto"
-              src="https://i.postimg.cc/s2BpMXk4/svgviewer-png-output.png"
-              alt="Logo"
+              className="h-8 w-auto block md:hidden transition-transform duration-300 transform hover:scale-110"
+              src=" https://i.im.ge/2025/01/26/HXJyYa.Logo.png"
+              alt="Mobile Logo"
+              onClick={() => navigate("/")}
+            />
+
+            {/* Desktop Logo */}
+            <img
+              className="h-24 w-auto hidden md:block transition-transform duration-300 transform hover:scale-110"
+              src="https://i.im.ge/2025/01/26/HXJF3h.Full-Name-Logo.png "
+              alt="Desktop Logo"
+              onClick={() => navigate("/")}
             />
           </div>
 
