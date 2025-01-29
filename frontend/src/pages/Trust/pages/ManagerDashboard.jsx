@@ -13,7 +13,7 @@ import { useToken } from "../../../context/TokenContext";
 import { useProfile } from "../../../context/ProfileContext";
 import ContactForm from "../../Common/Components/ContactForm";
 import Footer from "../../Common/Components/Footer";
-
+import { Link } from "react-router-dom";
 const ManagerDashboard = () => {
   const [activeTab, setActiveTab] = useState("Pending");
   const [appointments, setAppointments] = useState([]);
@@ -312,16 +312,16 @@ const ManagerDashboard = () => {
                     <label className="font-semibold text-gray-600">
                       Government ID:
                     </label>
-                    <a
-                      href={`${import.meta.env.VITE_API_URL}/api/files/file/${
+                    <Link
+                      to={`${import.meta.env.VITE_API_URL}/api/files/file/${
                         selectedUser.governmentIdCard
                       }`}
-                      target="_blank"
-                      rel="noopener noreferrer"
+                      // target="_blank"
+                      // rel="noopener noreferrer"
                       className="text-blue-500 hover:text-blue-700 underline"
                     >
                       View Document
-                    </a>
+                    </Link>
                   </div>
                 </div>
               </div>

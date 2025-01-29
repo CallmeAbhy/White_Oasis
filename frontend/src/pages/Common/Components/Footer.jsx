@@ -12,7 +12,7 @@ import {
   faEnvelope,
 } from "@fortawesome/free-solid-svg-icons";
 import { useHome } from "../../../context/HomeContext";
-
+import { Link } from "react-router-dom";
 const Footer = () => {
   const homedata = useHome();
   return (
@@ -24,40 +24,40 @@ const Footer = () => {
             <p className="text-gray-400 mb-6">{homedata.subtitle}</p>
             <div className="flex space-x-4">
               {homedata.facebook && (
-                <a
-                  href={homedata.facebook}
-                  target="_blank"
+                <Link
+                  to={homedata.facebook}
+                  // target="_blank"
                   className="text-gray-400 hover:text-white transition"
                 >
                   <FontAwesomeIcon icon={faFacebook} size="lg" />
-                </a>
+                </Link>
               )}
               {homedata.twitter && (
-                <a
-                  href={homedata.twitter}
-                  target="_blank"
+                <Link
+                  to={homedata.twitter}
+                  // target="_blank"
                   className="text-gray-400 hover:text-white transition"
                 >
                   <FontAwesomeIcon icon={faTwitter} size="lg" />
-                </a>
+                </Link>
               )}
               {homedata.instagram && (
-                <a
-                  href={homedata.instagram}
-                  target="_blank"
+                <Link
+                  to={homedata.instagram}
+                  // target="_blank"
                   className="text-gray-400 hover:text-white transition"
                 >
                   <FontAwesomeIcon icon={faInstagram} size="lg" />
-                </a>
+                </Link>
               )}
               {homedata.youtube && (
-                <a
-                  href={homedata.youtube}
-                  target="_blank"
+                <Link
+                  to={homedata.youtube}
+                  // target="_blank"
                   className="text-gray-400 hover:text-white transition"
                 >
                   <FontAwesomeIcon icon={faYoutube} size="lg" />
-                </a>
+                </Link>
               )}
             </div>
           </div>
@@ -66,20 +66,20 @@ const Footer = () => {
             <h3 className="text-xl font-bold mb-4">Quick Links</h3>
             <ul className="space-y-2">
               <li>
-                <a
-                  href="#"
+                <Link
+                  to="/about-us"
                   className="text-gray-400 hover:text-white transition"
                 >
                   About Us
-                </a>
+                </Link>
               </li>
               <li>
-                <a
-                  href="/near-me"
+                <Link
+                  to="/near-me"
                   className="text-gray-400 hover:text-white transition"
                 >
                   Find Care Homes
-                </a>
+                </Link>
               </li>
             </ul>
           </div>
