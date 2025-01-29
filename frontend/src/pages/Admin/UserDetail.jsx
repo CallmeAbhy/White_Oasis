@@ -5,7 +5,7 @@ import { navigateToDashboard } from "../../utils/navigationUtils";
 import { useToken } from "../../context/TokenContext";
 import ContactForm from "../Common/Components/ContactForm";
 import Footer from "../Common/Components/Footer";
-
+import { Link } from "react-router-dom";
 const UserDetail = () => {
   const navigate = useNavigate();
   const location = useLocation();
@@ -102,40 +102,46 @@ const UserDetail = () => {
               {
                 label: "Trust Document",
                 value: (
-                  <a
-                    href={`${import.meta.env.VITE_API_URL}/api/files/file/${user.trust_document}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <Link
+                    to={`${import.meta.env.VITE_API_URL}/api/files/file/${
+                      user.trust_document
+                    }`}
+                    // target="_blank"
+                    // rel="noopener noreferrer"
                     className="text-blue-500 hover:underline"
                   >
                     View Document
-                  </a>
+                  </Link>
                 ),
               },
               {
                 label: "Financial Statements",
                 value: (
-                  <a
-                    href={`${import.meta.env.VITE_API_URL}/api/files/file/${user.financial_statements}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <Link
+                    to={`${import.meta.env.VITE_API_URL}/api/files/file/${
+                      user.financial_statements
+                    }`}
+                    // target="_blank"
+                    // rel="noopener noreferrer"
                     className="text-blue-500 hover:underline"
                   >
                     View Financials
-                  </a>
+                  </Link>
                 ),
               },
               {
                 label: "Trust Domicile",
                 value: (
-                  <a
-                    href={`${import.meta.env.VITE_API_URL}/api/files/file/${user.trust_domicile}`}
-                    target="_blank"
-                    rel="noopener noreferrer"
+                  <Link
+                    to={`${import.meta.env.VITE_API_URL}/api/files/file/${
+                      user.trust_domicile
+                    }`}
+                    // target="_blank"
+                    // rel="noopener noreferrer"
                     className="text-blue-500 hover:underline"
                   >
                     View Domicile
-                  </a>
+                  </Link>
                 ),
               },
               { label: "Status", value: user.status },
