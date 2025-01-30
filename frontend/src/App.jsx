@@ -18,6 +18,7 @@ import ProtectedRoute from "./components/ProtectedRoute";
 import AdminPanel from "./pages/Admin/AdminPanel";
 import { HomeProvider } from "./context/HomeContext";
 import AboutUsAndGallery from "./pages/Common/AboutUsAndGallery";
+import ScrollToTop from "./components/ScrollToTop";
 
 const App = () => {
   return (
@@ -26,6 +27,7 @@ const App = () => {
         <ProfileProvider>
           <HomeProvider>
             <Router>
+              <ScrollToTop />
               <Routes>
                 {/* Public Routes */}
                 <Route path="/" element={<Home />} />
