@@ -128,7 +128,7 @@ const Navbar = () => {
             {/* Mobile Logo */}
             <img
               className="h-8 w-auto block md:hidden transition-transform duration-300 transform hover:scale-110"
-              src=" https://i.im.ge/2025/01/26/HXJyYa.Logo.png"
+              src="https://i.imghippo.com/files/LTop8860BY.png"
               alt="Mobile Logo"
               onClick={() => navigate("/")}
             />
@@ -136,7 +136,7 @@ const Navbar = () => {
             {/* Desktop Logo */}
             <img
               className="h-24 w-auto hidden md:block transition-transform duration-300 transform hover:scale-110"
-              src="https://i.im.ge/2025/01/26/HXJF3h.Full-Name-Logo.png "
+              src="https://i.imghippo.com/files/MW1472mEo.png"
               alt="Desktop Logo"
               onClick={() => navigate("/")}
             />
