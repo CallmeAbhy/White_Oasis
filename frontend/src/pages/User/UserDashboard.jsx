@@ -37,7 +37,9 @@ const UserDashboard = () => {
       if (profile && profile.role === "user") {
         try {
           const response = await fetch(
-            `${import.meta.env.VITE_API_URL}/api/appointments/user/${activeTab}`,
+            `${
+              import.meta.env.VITE_API_URL
+            }/api/appointments/user/${activeTab}`,
             {
               headers: {
                 Authorization: `Bearer ${token}`,
@@ -51,7 +53,9 @@ const UserDashboard = () => {
           const homeData = {};
           for (const appointment of data.appointments) {
             const homeResponse = await fetch(
-              `${import.meta.env.VITE_API_URL}/api/old-age-homes/homes/${appointment.old_age_home_id}`,
+              `${import.meta.env.VITE_API_URL}/api/old-age-homes/homes/${
+                appointment.old_age_home_id
+              }`,
               {
                 headers: {
                   Authorization: `Bearer ${token}`,

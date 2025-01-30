@@ -24,12 +24,8 @@ const Home = () => {
   const navigate = useNavigate();
   const { token } = useToken();
   const { isLoading, ...homeData } = useHome();
-  const [showIntro, setShowIntro] = useState(false);
-  const [showManualIntro, setShowManualIntro] = useState(false);
+  const [showVideo, setShowVideo] = useState(false);
   useEffect(() => {
-    if (!token) {
-      setShowIntro(true);
-    }
     const fetchData = async () => {
       setLoading(true);
 
@@ -63,7 +59,7 @@ const Home = () => {
   }, [token, navigate, setProfile]);
 
   const handleSkipIntro = () => {
-    setShowIntro(false);
+    setShowVideo(false);
   };
 
   if (loading) {
@@ -77,11 +73,10 @@ const Home = () => {
           <Navbar />
           <HeroSkeleton />
         </div>
-      ) : (showIntro || showManualIntro) && homeData.desktopVideo ? (
+      ) : showVideo && homeData.desktopVideo ? (
         <IntroVideo
           onSkip={() => {
             handleSkipIntro();
-            setShowManualIntro(false);
           }}
           desktopVideo={homeData.desktopVideo}
           mobileVideo={homeData.mobileVideo}
@@ -94,7 +89,7 @@ const Home = () => {
             {/* Hero Section */}
             <div className="relative h-[90vh]">
               <button
-                onClick={() => setShowManualIntro(true)}
+                onClick={() => setShowVideo(true)}
                 className="absolute bottom-8 right-8 md:right-12 
 
          bg-white/90 hover:bg-white text-black 
