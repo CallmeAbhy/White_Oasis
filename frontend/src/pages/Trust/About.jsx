@@ -2,7 +2,7 @@ import { useLocation } from "react-router-dom";
 import Navbar from "../../components/Navbar";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import PropTypes from "prop-types";
-
+import { Link } from "react-router-dom";
 import {
   faPhone,
   faEnvelope,
@@ -75,16 +75,16 @@ const About = () => {
             const { icon, name } = SOCIAL_PLATFORMS[platform] || {};
             return (
               link && (
-                <a
+                <Link
                   key={platform}
-                  href={link}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                  to={link}
+                  // target="_blank"
+                  // rel="noopener noreferrer"
                   className="text-gray-600 hover:text-gray-800 transition"
                   title={name}
                 >
                   <FontAwesomeIcon icon={icon} size="2x" />
-                </a>
+                </Link>
               )
             );
           })}

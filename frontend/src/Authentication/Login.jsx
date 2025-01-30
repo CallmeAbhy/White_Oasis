@@ -3,7 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import { useToken } from "../context/TokenContext";
 import CommonFields from "./Common/CommonFields";
-
+import { Link } from "react-router-dom";
 const Login = () => {
   const { updateToken } = useToken();
   const [formData, setFormData] = useState({
@@ -92,13 +92,13 @@ const Login = () => {
 
           {/* Forgot Password */}
           <div className="mt-5 text-sm border-b border-gray-300 py-2 text-[#002D74]">
-            <a
-              href="/reset"
+            <Link
+              to="/reset"
               className="hover:text-[#004aad] duration-300"
               aria-label="Forgot Password"
             >
-              Forgot your password?
-            </a>
+              Forgot your Password
+            </Link>
           </div>
 
           {/* Register Redirect */}
