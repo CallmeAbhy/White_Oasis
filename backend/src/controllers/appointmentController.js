@@ -105,6 +105,10 @@ const createAppointment = async (req, res) => {
       start_time,
       end_time,
       appointment_date
+      oldAgeHome.address,
+      oldAgeHome.city,
+      oldAgeHome.state,
+      oldAgeHome.country
     );
     const appointment = new Appointment({
       old_age_home_id,
@@ -291,7 +295,11 @@ const updatetheAppointment = async (req, res) => {
         reason,
         start_time,
         end_time,
-        appointment_date
+        appointment_date,
+        oldAgeHome.address,
+        oldAgeHome.city,
+        oldAgeHome.state,
+        oldAgeHome.country
       );
     } else {
       appointment.feedback = feedback;

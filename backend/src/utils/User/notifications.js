@@ -18,7 +18,11 @@ const sendAppointmentReq = async (
   reason,
   start_time,
   end_time,
-  appointment_date
+  appointment_date,
+  address,
+  city,
+  state,
+  country
 ) => {
   const templatePath = path.join(
     __dirname,
@@ -64,7 +68,11 @@ const sendAppointmentConfirmation = async (
   reason,
   start_time,
   end_time,
-  appointment_date
+  appointment_date,
+  address,
+  city,
+  state,
+  country
 ) => {
   const templatePath = path.join(
     __dirname,
