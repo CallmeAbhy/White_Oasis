@@ -107,8 +107,8 @@ const UserDetail = () => {
                     to={`${import.meta.env.VITE_API_URL}/api/files/file/${
                       user.trust_document
                     }`}
-                    // target="_blank"
-                    // rel="noopener noreferrer"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-blue-500 hover:underline"
                   >
                     View Document
@@ -122,8 +122,8 @@ const UserDetail = () => {
                     to={`${import.meta.env.VITE_API_URL}/api/files/file/${
                       user.financial_statements
                     }`}
-                    // target="_blank"
-                    // rel="noopener noreferrer"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-blue-500 hover:underline"
                   >
                     View Financials
@@ -137,8 +137,8 @@ const UserDetail = () => {
                     to={`${import.meta.env.VITE_API_URL}/api/files/file/${
                       user.trust_domicile
                     }`}
-                    // target="_blank"
-                    // rel="noopener noreferrer"
+                    target="_blank"
+                    rel="noopener noreferrer"
                     className="text-blue-500 hover:underline"
                   >
                     View Domicile

@@ -316,8 +316,8 @@ const ManagerDashboard = () => {
                       to={`${import.meta.env.VITE_API_URL}/api/files/file/${
                         selectedUser.governmentIdCard
                       }`}
-                      // target="_blank"
-                      // rel="noopener noreferrer"
+                      target="_blank"
+                      rel="noopener noreferrer"
                       className="text-blue-500 hover:text-blue-700 underline"
                     >
                       View Document

@@ -26,7 +26,7 @@ const Footer = () => {
               {homedata.facebook && (
                 <Link
                   to={homedata.facebook}
-                  // target="_blank"
+                  target="_blank"
                   className="text-gray-400 hover:text-white transition"
                 >
                   <FontAwesomeIcon icon={faFacebook} size="lg" />
@@ -35,7 +35,7 @@ const Footer = () => {
               {homedata.twitter && (
                 <Link
                   to={homedata.twitter}
-                  // target="_blank"
+                  target="_blank"
                   className="text-gray-400 hover:text-white transition"
                 >
                   <FontAwesomeIcon icon={faTwitter} size="lg" />
@@ -44,7 +44,7 @@ const Footer = () => {
               {homedata.instagram && (
                 <Link
                   to={homedata.instagram}
-                  // target="_blank"
+                  target="_blank"
                   className="text-gray-400 hover:text-white transition"
                 >
                   <FontAwesomeIcon icon={faInstagram} size="lg" />
@@ -53,7 +53,7 @@ const Footer = () => {
               {homedata.youtube && (
                 <Link
                   to={homedata.youtube}
-                  // target="_blank"
+                  target="_blank"
                   className="text-gray-400 hover:text-white transition"
                 >
                   <FontAwesomeIcon icon={faYoutube} size="lg" />

@@ -176,7 +176,7 @@ const login = async (req, res) => {
         role: user.role,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "2h" }
     );
     // const userObject = user.toObject();
     // const { password: userPassword, ...profileWithoutPassword } = userObject;
