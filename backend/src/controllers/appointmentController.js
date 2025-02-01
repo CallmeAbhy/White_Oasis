@@ -25,7 +25,7 @@ const createAppointment = async (req, res) => {
     }
     console.log(old_age_home_id);
     let oldAgeHome = await OldAgeHome.findById(old_age_home_id);
-    let manager = await Manager.findById(oldagehome.manager_id._id);
+    let manager = await Manager.findById(oldAgeHome.manager_id._id);
     if (!oldAgeHome) {
       return res.status(404).json({ message: "Old age home not found!" });
     }
