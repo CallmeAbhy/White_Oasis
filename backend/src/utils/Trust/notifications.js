@@ -8,13 +8,14 @@ const transporter = nodemailer.createTransport({
     pass: process.env.EMAIL_PASS,
   },
 });
+
 const sendHomePostInfo = async (
   email,
   manager_email,
   name_of_trust,
   username
 ) => {
-  const templatePath = path.join(__dirname, "../templates", "homepost.html");
+  const templatePath = path.join(__dirname, "../../templates", "homepost.html");
   let htmlTemplate = fs.readFileSync(templatePath, "utf-8");
   htmlTemplate = htmlTemplate.replace(/{{manager_username}}/g, username);
   htmlTemplate = htmlTemplate.replace(/{{old_age_home_name}}/g, name_of_trust);
@@ -34,7 +35,12 @@ const sendHomeDeleteInfo = async (
   name_of_trust,
   username
 ) => {
-  const templatePath = path.join(__dirname, "../templates", "homedelete.html");
+  const templatePath = path.join(
+    __dirname,
+    "../../templates",
+    "homedelete.html"
+  );
+
   let htmlTemplate = fs.readFileSync(templatePath, "utf-8");
   htmlTemplate = htmlTemplate.replace(/{{manager_username}}/g, username);
   htmlTemplate = htmlTemplate.replace(/{{old_age_home_name}}/g, name_of_trust);
