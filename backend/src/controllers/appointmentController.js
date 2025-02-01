@@ -1,6 +1,12 @@
-const { User } = require("../models/userModel");
+const { User, Manager } = require("../models/userModel");
 const OldAgeHome = require("../models/oldAgeHomeModel");
 const Appointment = require("../models/appointmentModel");
+const {
+  sendAppointmentReq,
+  sendAppointmentConfirmation,
+  sendAppointmentRejection,
+} = require("../utils/User/notifications");
+
 // Create appointment (for users)
 const createAppointment = async (req, res) => {
   try {
@@ -19,6 +25,7 @@ const createAppointment = async (req, res) => {
     }
     console.log(old_age_home_id);
     let oldAgeHome = await OldAgeHome.findById(old_age_home_id);
+    let manager = await Manager.findById(oldagehome.manager_id._id);
     if (!oldAgeHome) {
       return res.status(404).json({ message: "Old age home not found!" });
     }
@@ -87,6 +94,18 @@ const createAppointment = async (req, res) => {
         .status(400)
         .json({ message: "Maximum appointments for this day reached" });
     }
+    await sendAppointmentReq(
+      user.email,
+      oldAgeHome.email,
+      manager.email,
+      user.username,
+      oldAgeHome.name,
+      appointment_type,
+      reason,
+      start_time,
+      end_time,
+      appointment_date
+    );
     const appointment = new Appointment({
       old_age_home_id,
       user_id: userId,
@@ -232,8 +251,11 @@ const updatetheAppointment = async (req, res) => {
     if (!appointment) {
       return res.status(404).json({ message: "Appointment not Found" });
     }
+    let userId = req.user.id;
+    const user = await User.findById(userId);
     // verify manager belongs to requested old age home
     const oldagehome = await OldAgeHome.findById(appointment.old_age_home_id);
+    let manager = await Manager.findById(oldagehome.manager_id._id);
     console.log(oldagehome.manager_id._id);
     if (oldagehome.manager_id._id.toString() !== req.user.id) {
       return res.status(403).json({ message: "Not authorized" });
@@ -259,8 +281,27 @@ const updatetheAppointment = async (req, res) => {
         .json({ message: "Feedback Required for Rejection" });
     } else if (status === "Approved") {
       appointment.feedback = "Looking forward to your appointment";
+      await sendAppointmentConfirmation(
+        user.email,
+        oldAgeHome.email,
+        manager.email,
+        user.username,
+        oldAgeHome.name,
+        appointment_type,
+        reason,
+        start_time,
+        end_time,
+        appointment_date
+      );
     } else {
       appointment.feedback = feedback;
+      await sendAppointmentRejection(
+        user.email,
+        oldAgeHome.email,
+        manager.email,
+        user.username,
+        feedback
+      );
     }
     await appointment.save();
     res.status(200).json({

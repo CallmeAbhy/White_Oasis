@@ -78,8 +78,8 @@ const About = () => {
                 <Link
                   key={platform}
                   to={link}
-                  // target="_blank"
-                  // rel="noopener noreferrer"
+                  target="_blank"
+                  rel="noopener noreferrer"
                   className="text-gray-600 hover:text-gray-800 transition"
                   title={name}
                 >
