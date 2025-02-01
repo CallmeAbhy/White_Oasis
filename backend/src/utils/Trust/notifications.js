@@ -47,3 +47,4 @@ const sendHomeDeleteInfo = async (
   };
   await transporter.sendMail(mailOptions);
 };
+module.exports = { sendHomePostInfo, sendHomeDeleteInfo };
