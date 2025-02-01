@@ -5,11 +5,13 @@ import { useToken } from "../../context/TokenContext";
 import Navbar from "../../components/Navbar";
 import ContactForm from "../Common/Components/ContactForm";
 import Footer from "../Common/Components/Footer";
+import ErrorPopUp from "../Common/Components/ErrorPopUp";
+
 const BookAppointment = () => {
   const { homeId } = useParams();
   const { token } = useToken();
   const navigate = useNavigate();
-
+  const [error, setError] = useState("");
   const [appointmentData, setAppointmentData] = useState({
     appointment_type: "",
     reason: "",
@@ -28,6 +30,7 @@ const BookAppointment = () => {
 
   const fetchAvailableSlots = async () => {
     try {
+      setError("");
       const response = await fetch(
         `${
           import.meta.env.VITE_API_URL
@@ -44,12 +47,17 @@ const BookAppointment = () => {
       setAvailableSlots(data.availableSlots);
     } catch (error) {
       console.error("Error fetching slots:", error);
+      setError(
+        error.message ||
+          "Failed to fetch available slots. Please try again later."
+      );
     }
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
+      setError("");
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/appointments/create`,
         {
@@ -71,14 +79,19 @@ const BookAppointment = () => {
       }
     } catch (error) {
       console.error("Error booking appointment:", error);
+      setError(
+        error.message || "Failed to book appointment. Please try again later."
+      );
     }
   };
 
   return (
     <>
       <Navbar />
+
       <div className="max-w-2xl mx-auto p-6">
-        <h2 className="text-2xl font-bold mb-6">Book Appointment</h2>
+        <h2 className="text-2xl font-bold mb-6 mt-6">Book Appointment</h2>
+        {error && <ErrorPopUp error={error} setError={setError} />}
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block mb-2">Appointment Date</label>
