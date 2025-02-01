@@ -104,7 +104,7 @@ const createAppointment = async (req, res) => {
       reason,
       start_time,
       end_time,
-      appointment_date
+      appointment_date,
       oldAgeHome.address,
       oldAgeHome.city,
       oldAgeHome.state,
