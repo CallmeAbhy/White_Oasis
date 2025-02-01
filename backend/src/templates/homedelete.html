@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Deletion Confirmation</title>
+    <style>
+      body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        color: #333;
+        margin: 0;
+        padding: 20px;
+      }
+      .container {
+        max-width: 600px;
+        margin: auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        color: #f44336; /* Red color for deletion */
+      }
+      p {
+        line-height: 1.6;
+      }
+      .footer {
+        margin-top: 20px;
+        font-size: 0.9em;
+        color: #777;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Deletion Confirmation</h1>
+      <p>Dear {{manager_username}},</p>
+      <p>
+        We would like to inform you that the old age home,
+        <strong>{{old_age_home_name}}</strong>, has been successfully deleted
+        from the White Orchid platform.
+      </p>
+      <p>
+        If this action was taken in error or if you have any questions, please
+        do not hesitate to contact our support team.
+      </p>
+      <p>Thank you for your understanding.</p>
+      <p>Best regards,<br />{{manager_username}}</p>
+
+      <div class="footer">
+        <p>&copy; 2025 White Orchid. All rights reserved.</p>
+      </div>
+    </div>
+  </body>
+</html>
