@@ -1,7 +1,10 @@
 const oldAgeHomeModel = require("../models/oldAgeHomeModel");
 const OldAgeHome = require("../models/oldAgeHomeModel");
 const { User, Manager, Admin } = require("../models/userModel");
-
+const {
+  sendHomePostInfo,
+  sendHomeDeleteInfo,
+} = require("../utils/Trust/notifications");
 const createOldAgeHome = async (req, res) => {
   try {
     const {
@@ -59,7 +62,12 @@ const createOldAgeHome = async (req, res) => {
         message: "Working days must be specified as an array of valid days",
       });
     }
-
+    await sendHomePostInfo(
+      email,
+      manager.email,
+      old_age_home_name,
+      manager.username
+    );
     const newOldAgeHome = new OldAgeHome({
       old_age_home_name,
       old_age_home_country,
@@ -220,7 +228,7 @@ const deleteOldAgeHome = async (req, res) => {
   try {
     const { id } = req.params;
     const manager_id = req.user.id; // Get manager ID from the authenticated token
-
+    const manager = await Manager.findById(manager_id);
     // Find the old age home
     const oldAgeHome = await OldAgeHome.findById(id);
 
@@ -244,6 +252,12 @@ const deleteOldAgeHome = async (req, res) => {
       });
     }
 
+    await sendHomeDeleteInfo(
+      manager.email,
+      oldAgeHome.email,
+      oldAgeHome.old_age_home_name,
+      manager.username
+    );
     // If all checks pass, delete the old age home
     await OldAgeHome.findByIdAndDelete(id);
 
