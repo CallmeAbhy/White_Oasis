@@ -46,7 +46,7 @@ const sendAppointmentReq = async (
   htmlTemplate = htmlTemplate.replace(/{{city}}/g, city);
   htmlTemplate = htmlTemplate.replace(/{{state}}/g, state);
   htmlTemplate = htmlTemplate.replace(/{{country}}/g, country);
-  htmlTemplate = htmlTemplate.replace(/{{oldAgeHomeName}}/g, oldAgeHomeName);
+  htmlTemplate = htmlTemplate.replace(/{{oldAgeHomeName}}/g, oldAgeHomename);
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: email,
@@ -96,7 +96,7 @@ const sendAppointmentConfirmation = async (
   htmlTemplate = htmlTemplate.replace(/{{city}}/g, city);
   htmlTemplate = htmlTemplate.replace(/{{state}}/g, state);
   htmlTemplate = htmlTemplate.replace(/{{country}}/g, country);
-  htmlTemplate = htmlTemplate.replace(/{{oldAgeHomeName}}/g, oldAgeHomeName);
+  htmlTemplate = htmlTemplate.replace(/{{oldAgeHomeName}}/g, oldAgeHomename);
   const mailOptions = {
     from: process.env.EMAIL_USER,
     to: email,

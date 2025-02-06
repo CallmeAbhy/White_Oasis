@@ -94,22 +94,6 @@ const createAppointment = async (req, res) => {
         .status(400)
         .json({ message: "Maximum appointments for this day reached" });
     }
-    await sendAppointmentReq(
-      user.email,
-      oldAgeHome.email,
-      manager.email,
-      user.username,
-      oldAgeHome.old_age_home_name,
-      appointment_type,
-      reason,
-      start_time,
-      end_time,
-      appointment_date,
-      oldAgeHome.address,
-      oldAgeHome.city,
-      oldAgeHome.state,
-      oldAgeHome.country
-    );
     const appointment = new Appointment({
       old_age_home_id,
       user_id: userId,
@@ -121,6 +105,22 @@ const createAppointment = async (req, res) => {
       user_profile: user,
     });
     await appointment.save();
+    await sendAppointmentReq(
+      user.email,
+      oldAgeHome.email,
+      manager.email,
+      user.username,
+      oldAgeHome.old_age_home_name,
+      appointment_type,
+      reason,
+      start_time,
+      end_time,
+      appointment_date,
+      oldAgeHome.old_age_home_address,
+      oldAgeHome.old_age_home_city,
+      oldAgeHome.old_age_home_state,
+      oldAgeHome.old_age_home_country
+    );
     res.status(201).json({
       message: "Appointment created successfully",
       appointment,
@@ -255,11 +255,16 @@ const updatetheAppointment = async (req, res) => {
     if (!appointment) {
       return res.status(404).json({ message: "Appointment not Found" });
     }
+    let user_mail = appointment.user_profile.email;
+    let user_username = appointment.user_profile.username;
     let userId = req.user.id;
-    const user = await User.findById(userId);
+    const manager = await Manager.findById(userId);
     // verify manager belongs to requested old age home
     const oldagehome = await OldAgeHome.findById(appointment.old_age_home_id);
-    let manager = await Manager.findById(oldagehome.manager_id._id);
+    // const oldagehome = await OldAgeHome.find({
+    //   _id: appointment.old_age_home_id,
+    // });
+    // let manager = await Manager.findById(oldagehome.manager_id._id);
     console.log(oldagehome.manager_id._id);
     if (oldagehome.manager_id._id.toString() !== req.user.id) {
       return res.status(403).json({ message: "Not authorized" });
@@ -285,37 +290,42 @@ const updatetheAppointment = async (req, res) => {
         .json({ message: "Feedback Required for Rejection" });
     } else if (status === "Approved") {
       appointment.feedback = "Looking forward to your appointment";
+      await appointment.save();
       await sendAppointmentConfirmation(
-        user.email,
-        oldAgeHome.email,
+        user_mail,
+        oldagehome.email,
         manager.email,
-        user.username,
-        oldAgeHome.old_age_home_name,
+        user_username,
+        oldagehome.old_age_home_name,
         appointment_type,
         reason,
         start_time,
         end_time,
         appointment_date,
-        oldAgeHome.address,
-        oldAgeHome.city,
-        oldAgeHome.state,
-        oldAgeHome.country
+        oldagehome.old_age_home_address,
+        oldagehome.old_age_home_city,
+        oldagehome.old_age_home_state,
+        oldagehome.old_age_home_country
       );
+      res.status(200).json({
+        message: "Appointment status updated successfully",
+        appointment,
+      });
     } else {
       appointment.feedback = feedback;
+      await appointment.save();
       await sendAppointmentRejection(
-        user.email,
-        oldAgeHome.email,
+        user_mail,
+        oldagehome.email,
         manager.email,
-        user.username,
+        user_username,
         feedback
       );
+      res.status(200).json({
+        message: "Appointment status updated successfully",
+        appointment,
+      });
     }
-    await appointment.save();
-    res.status(200).json({
-      message: "Appointment status updated successfully",
-      appointment,
-    });
   } catch (error) {
     res.status(500).json({ message: `Something went wrong: ${error.message}` });
   }
