@@ -185,9 +185,9 @@ const Navbar = () => {
                     <BellIcon className="h-6 w-6 text-gray-500 hover:text-gray-700" />
                   </Popover.Button>
 
-                  <Popover.Panel className="absolute z-50 right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 p-4">
+                  <Popover.Panel className="absolute z-50 right-0 mt-2 w-full sm:w-64 bg-white rounded-lg shadow-lg border border-gray-200 p-4">
                     <div className="space-y-2">
-                      <h3 className="text-sm font-medium text-gray-700 mb-2">
+                      <h3 className="text-sm sm:text-base font-medium text-gray-700 mb-2">
                         Notification Stats
                       </h3>
 
@@ -214,7 +214,7 @@ const Navbar = () => {
 
                       <button
                         onClick={() => navigate("/managerdashboard")}
-                        className="w-full mt-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors text-sm"
+                        className="w-full mt-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors text-sm sm:text-base"
                       >
                         View Dashboard
                       </button>
@@ -230,9 +230,9 @@ const Navbar = () => {
                     <BellIcon className="h-6 w-6 text-gray-500 hover:text-gray-700" />
                   </Popover.Button>
 
-                  <Popover.Panel className="absolute z-50 right-0 mt-2 w-64 bg-white rounded-lg shadow-lg border border-gray-200 p-4">
+                  <Popover.Panel className="absolute z-50 right-0 mt-2 w-full sm:w-64 bg-white rounded-lg shadow-lg border border-gray-200 p-4">
                     <div className="space-y-2">
-                      <h3 className="text-sm font-medium text-gray-700 mb-2">
+                      <h3 className="text-sm sm:text-base font-medium text-gray-700 mb-2">
                         Notification Stats
                       </h3>
 
@@ -259,7 +259,7 @@ const Navbar = () => {
 
                       <button
                         onClick={() => navigateToUserDashboard(navigate)}
-                        className="w-full mt-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors text-sm"
+                        className="w-full mt-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors text-sm sm:text-base"
                       >
                         View Dashboard
                       </button>
@@ -279,7 +279,7 @@ const Navbar = () => {
                   onClick={() => setShowProfileCard(!showProfileCard)}
                 />
                 {showProfileCard && (
-                  <div className="fixed top-16 right-4 w-80 max-w-xs bg-white shadow-xl rounded-lg border border-gray-200 z-50 overflow-auto">
+                  <div className="fixed top-16 right-4 w-full max-w-xs bg-white shadow-xl rounded-lg border border-gray-200 z-50 overflow-auto">
                     {/* Profile Card Header with Image */}
                     <div className="flex flex-col items-center justify-center border-b border-gray-200 px-4 py-4">
                       <img
