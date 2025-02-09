@@ -1,5 +1,4 @@
 const mongoose = require("mongoose");
-//https://app.greptile.com/chat/43802e44-d93a-45ee-ac8e-c10ca682029e?repo=github:callmeabhy/white_oasis:main:
 const reviewSchema = new mongoose.Schema({
   username: {
     type: String,

@@ -39,6 +39,3 @@ const PORT = process.env.PORT || 7001;
 app.listen(PORT, () => {
   console.log(`Server is running at port  ${PORT}`);
 });
-// https://www.blackbox.ai/chat/Bh6RhGD
-// https://www.blackbox.ai/chat/
-// https://app.greptile.com/chat/6b4e9bd5-f67c-4187-9773-c51e62822eeb?repo=github%3Acallmeabhy%2Fwhite_oasis%3Amain%3A For Backend Update 18/01/25

@@ -41,7 +41,6 @@ const Signup = () => {
   const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
   const navigate = useNavigate();
-  // https://www.blackbox.ai/chat/mcKwvAl
   const handleChange = (e) => {
     const { name, value } = e.target;
 
@@ -288,4 +287,3 @@ const Signup = () => {
 };
 
 export default Signup;
-// https://www.blackbox.ai/chat/qBgqExa
