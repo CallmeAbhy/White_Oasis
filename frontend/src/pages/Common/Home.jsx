@@ -87,7 +87,7 @@ const Home = () => {
             <Navbar />
 
             {/* Hero Section */}
-            <div className="relative h-[90vh]">
+            <div className="relative h-screen md:h-[90vh] flex flex-col">
               <button
                 onClick={() => setShowVideo(true)}
                 className="absolute bottom-8 right-8 md:right-12 
@@ -130,15 +130,15 @@ const Home = () => {
                 />
                 <div className="absolute inset-0 bg-black opacity-50"></div>
               </div>
-              <div className="relative container mx-auto px-4 h-full flex flex-col justify-center items-start md:items-center">
+              <div className="relative flex flex-col justify-center items-center h-full text-center px-6 md:px-12 z-10">
                 <div className="max-w-2xl text-white">
-                  <h1 className="text-5xl font-bold mb-6">
+                  <h1 className="text-4xl md:text-5xl font-bold mb-4 leading-tight">
                     {homeData.title || "Compassionate Elderly Care for Elders"}
                   </h1>
-                  <p className="text-xl mb-8">{homeData.subtitle}</p>
+                  <p className="text-lg md:text-xl mb-6">{homeData.subtitle}</p>
                   <button
                     onClick={() => navigate("/near-me")}
-                    className="bg-blue-600 text-white px-8 py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 transition duration-300"
+                    className="bg-blue-600 text-white px-6 md:px-8 py-3 rounded-lg text-lg font-semibold hover:bg-blue-700 transition duration-300"
                   >
                     Find Care Homes
                   </button>
