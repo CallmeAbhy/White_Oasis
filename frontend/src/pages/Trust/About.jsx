@@ -41,7 +41,7 @@ const About = () => {
   return (
     <>
       <Navbar />
-      <div className="container mx-auto px-4 py-12">
+      <div className="container mx-auto mt-10 px-4 py-12">
         {/* Header Section */}
         <div className="flex flex-col md:flex-row items-center bg-gray-100 p-6 rounded-lg shadow-md">
           <img

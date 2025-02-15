@@ -187,7 +187,7 @@ const NearMe = () => {
 
       <div className="container mx-auto px-6 py-12">
         {/* Title */}
-        <h1 className="text-4xl font-extrabold text-center text-blue-700 mb-10 tracking-wide">
+        <h1 className="text-4xl mt-4 font-extrabold text-center text-blue-700 mb-10 tracking-wide">
           Old Age Homes Near Me
         </h1>
 

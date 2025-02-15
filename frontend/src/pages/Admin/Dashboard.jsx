@@ -6,10 +6,12 @@ import { useToken } from "../../context/TokenContext";
 import { useProfile } from "../../context/ProfileContext";
 import ContactForm from "../Common/Components/ContactForm";
 import Footer from "../Common/Components/Footer";
+import { HeroSkeleton } from "../../components/HeroSkeleton";
 
 const Dashboard = () => {
   const [message, setMessage] = useState("");
   const [applicants, setApplicants] = useState([]);
+  const [isLoading, setIsLoading] = useState(true);
   const { token } = useToken();
   const navigate = useNavigate();
   const { profile } = useProfile();
@@ -24,6 +26,7 @@ const Dashboard = () => {
   useEffect(() => {
     const fetchNumberofApplicants = async () => {
       if (profile && profile.role === "admin") {
+        setIsLoading(true);
         try {
           const response = await fetch(
             `${import.meta.env.VITE_API_URL}/api/admin/pending-managers`,
@@ -37,11 +40,23 @@ const Dashboard = () => {
           setApplicants(data);
         } catch (e) {
           console.error("Error Fetching the Pending Managers", e);
+          setMessage("Error loading pending requests. Please try again later.");
+        } finally {
+          setIsLoading(false);
         }
       }
     };
     fetchNumberofApplicants();
   }, [profile, token]);
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gray-100">
+        <Navbar />
+        <HeroSkeleton />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen bg-gray-100">
@@ -49,51 +64,62 @@ const Dashboard = () => {
       <div className="container mx-auto px-4 py-6">
         <h2 className="text-3xl font-semibold text-gray-800 mb-4">Dashboard</h2>
         {message && <p className="text-red-500 mb-4">{message}</p>}
-
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {applicants.map((applicant) => (
-            <div
-              key={applicant._id.$oid}
-              className="flex bg-white shadow-lg rounded-lg overflow-hidden transition-transform transform hover:scale-105"
-            >
-              {/* Trust Logo */}
-              <div className="w-1/3">
-                <img
-                  src={`${import.meta.env.VITE_API_URL}/api/files/file/${
-                    applicant.trust_logo
-                  }`}
-                  alt={`${applicant.name_of_trust} Logo`}
-                  className="object-contain h-full w-full p-2" // Use object-contain to ensure the logo is fully visible
-                />
-              </div>
-
-              {/* Card Content */}
-              <div className="w-2/3 p-4 flex flex-col justify-between">
-                <div>
-                  <h3 className="text-lg font-bold text-gray-800">
-                    {applicant.name_of_trust}
-                  </h3>
-                  <p className="text-sm text-gray-600">
-                    {applicant.head_office_address}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    Email: {applicant.email}
-                  </p>
-                  <p className="text-sm text-gray-600">
-                    Phone: {applicant.phone}
-                  </p>
-                </div>
-                {/* View Button */}
-                <button
-                  onClick={() => navigateToUserDetail(navigate, applicant)}
-                  className="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md text-sm transition-colors"
-                >
-                  View
-                </button>
-              </div>
+        {applicants.length === 0 ? (
+          <>
+            <div className="flex justify-center items-center h-64">
+              <p className="text-xl text-gray-600">
+                No pending requests at the moment.
+              </p>
             </div>
-          ))}
-        </div>
+          </>
+        ) : (
+          <>
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {applicants.map((applicant) => (
+                <div
+                  key={applicant._id.$oid}
+                  className="flex bg-white shadow-lg rounded-lg overflow-hidden transition-transform transform hover:scale-105"
+                >
+                  {/* Trust Logo */}
+                  <div className="w-1/3">
+                    <img
+                      src={`${import.meta.env.VITE_API_URL}/api/files/file/${
+                        applicant.trust_logo
+                      }`}
+                      alt={`${applicant.name_of_trust} Logo`}
+                      className="object-contain h-full w-full p-2" // Use object-contain to ensure the logo is fully visible
+                    />
+                  </div>
+
+                  {/* Card Content */}
+                  <div className="w-2/3 p-4 flex flex-col justify-between">
+                    <div>
+                      <h3 className="text-lg font-bold text-gray-800">
+                        {applicant.name_of_trust}
+                      </h3>
+                      <p className="text-sm text-gray-600">
+                        {applicant.head_office_address}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Email: {applicant.email}
+                      </p>
+                      <p className="text-sm text-gray-600">
+                        Phone: {applicant.phone}
+                      </p>
+                    </div>
+                    {/* View Button */}
+                    <button
+                      onClick={() => navigateToUserDetail(navigate, applicant)}
+                      className="mt-4 bg-blue-500 hover:bg-blue-600 text-white py-2 px-4 rounded-md text-sm transition-colors"
+                    >
+                      View
+                    </button>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </>
+        )}
       </div>
       <ContactForm />
       <Footer />
