@@ -5,7 +5,8 @@ import { useToken } from "../../context/TokenContext";
 import Navbar from "../../components/Navbar";
 import ContactForm from "../Common/Components/ContactForm";
 import Footer from "../Common/Components/Footer";
-
+import AdoptionAgreementModal from "../../components/AdoptionAgreementModal";
+import { useProfile } from "../../context/ProfileContext";
 const BookAppointment = () => {
   const { homeId } = useParams();
   const { token } = useToken();
@@ -17,8 +18,11 @@ const BookAppointment = () => {
     start_time: "",
     end_time: "",
   });
+  const [showAgreementModal, setShowAgreementModal] = useState(false);
+  const [agreementData, setAgreementData] = useState(null);
+  const { profile } = useProfile();
+  console.log("The Profile username is ", profile.username);
   const [availableSlots, setAvailableSlots] = useState([]);
-
   // Fetch available slots when date changes
   useEffect(() => {
     if (appointmentData.appointment_date) {
@@ -49,6 +53,14 @@ const BookAppointment = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (appointmentData.appointment_type === "Adoption" && !agreementData) {
+      setShowAgreementModal(true);
+      return;
+    }
+    await submitAppointment();
+  };
+
+  const submitAppointment = async () => {
     try {
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/appointments/create`,
@@ -68,7 +80,7 @@ const BookAppointment = () => {
       if (response.ok) {
         alert("Appointment booked successfully!");
         navigate("/near-me");
-      } else if (!response.ok) {
+      } else {
         alert("Something Went Wrong");
       }
     } catch (error) {
@@ -77,6 +89,11 @@ const BookAppointment = () => {
     }
   };
 
+  const handleAgreementSubmit = (data) => {
+    setAgreementData(data);
+    setShowAgreementModal(false);
+    submitAppointment();
+  };
   return (
     <>
       <Navbar />
@@ -198,6 +215,16 @@ const BookAppointment = () => {
             Book Appointment
           </button>
         </form>
+        {showAgreementModal && (
+          <AdoptionAgreementModal
+            isOpen={showAgreementModal}
+            onClose={() => setShowAgreementModal(false)}
+            onSubmit={handleAgreementSubmit}
+            username={profile?.username || ""}
+            appointmentDate={appointmentData.appointment_date}
+            timeSlot={`${appointmentData.start_time} - ${appointmentData.end_time}`}
+          />
+        )}
       </div>
       <ContactForm />
       <Footer />
