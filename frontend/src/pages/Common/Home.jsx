@@ -90,15 +90,7 @@ const Home = () => {
             <div className="relative h-screen md:h-[90vh] flex flex-col">
               <button
                 onClick={() => setShowVideo(true)}
-                className="absolute bottom-8 right-8 md:right-12 
-
-         bg-white/90 hover:bg-white text-black 
-
-         px-6 py-3 rounded-lg transition-all duration-300 
-
-         font-semibold shadow-lg z-10
-
-         flex items-center gap-2"
+                className="absolute bottom-8 right-8 md:right-12 bg-white/90 hover:bg-white text-black px-6 py-3 rounded-lg transition-all duration-300 font-semibold shadow-lg z-50 flex items-center gap-2"
               >
                 <svg
                   className="w-6 h-6"
