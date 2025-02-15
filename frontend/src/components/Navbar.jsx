@@ -127,7 +127,7 @@ const Navbar = () => {
           <div className="flex items-center">
             {/* Mobile Logo */}
             <img
-              className="h-8 w-auto block md:hidden transition-transform duration-300 transform hover:scale-110"
+              className="h-10 w-auto md:hidden transition-transform duration-300 transform hover:scale-110"
               src="https://i.imghippo.com/files/LTop8860BY.png"
               alt="Mobile Logo"
               onClick={() => navigate("/")}
@@ -135,7 +135,7 @@ const Navbar = () => {
 
             {/* Desktop Logo */}
             <img
-              className="h-24 w-auto hidden md:block transition-transform duration-300 transform hover:scale-110"
+              className="h-16 w-auto hidden md:block transition-transform duration-300 transform hover:scale-110"
               src="https://i.imghippo.com/files/MW1472mEo.png"
               alt="Desktop Logo"
               onClick={() => navigate("/")}
@@ -143,7 +143,7 @@ const Navbar = () => {
           </div>
 
           {/* Desktop Navigation */}
-          <div className="hidden sm:flex space-x-8">
+          <div className="hidden sm:flex space-x-6">
             {navigation.map((item) => (
               <Link
                 key={item.name}
@@ -151,8 +151,8 @@ const Navbar = () => {
                 className={classNames(
                   isCurrentPath(item.href)
                     ? "text-indigo-600 border-b-2 border-indigo-600"
-                    : "text-gray-500 hover:text-gray-700 hover:border-b-2 hover:border-gray-300",
-                  "px-3 py-2 text-sm font-medium transition duration-200"
+                    : "text-gray-600 hover:text-gray-800 hover:border-b-2 hover:border-gray-300",
+                  "px-3 py-2 text-sm font-semibold transition-all duration-200"
                 )}
               >
                 {item.name}
@@ -183,42 +183,47 @@ const Navbar = () => {
                 <Popover className="relative">
                   <Popover.Button className="relative focus:outline-none">
                     <BellIcon className="h-6 w-6 text-gray-500 hover:text-gray-700" />
+                    {(notificationStats.pending > 0 ||
+                      notificationStats.approved > 0 ||
+                      notificationStats.rejected > 0) && (
+                      <span className="absolute -top-1 -right-1 flex items-center justify-center h-5 w-5 rounded-full bg-red-600 text-xs font-bold text-white">
+                        {notificationStats.pending}
+                      </span>
+                    )}
                   </Popover.Button>
 
-                  <Popover.Panel className="absolute z-50 right-0 mt-2 w-full sm:w-64 bg-white rounded-lg shadow-lg border border-gray-200 p-4">
-                    <div className="space-y-2">
-                      <h3 className="text-sm sm:text-base font-medium text-gray-700 mb-2">
-                        Notification Stats
-                      </h3>
+                  <Popover.Panel className="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-lg border border-gray-200 p-4">
+                    <h3 className="text-sm font-semibold text-gray-700 mb-2">
+                      Notification Stats
+                    </h3>
 
-                      <div className="flex items-center justify-between">
-                        <span className="text-yellow-500 flex items-center">
-                          <div className="w-2 h-2 rounded-full bg-yellow-500 mr-2"></div>
-                          Pending: {notificationStats.pending || 0}
+                    <div className="space-y-1">
+                      <div className="flex justify-between items-center text-yellow-500">
+                        <span>Pending</span>
+                        <span className="font-semibold">
+                          {notificationStats.pending || 0}
                         </span>
                       </div>
-
-                      <div className="flex items-center justify-between">
-                        <span className="text-green-500 flex items-center">
-                          <div className="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
-                          Approved: {notificationStats.approved || 0}
+                      <div className="flex justify-between items-center text-green-500">
+                        <span>Approved</span>
+                        <span className="font-semibold">
+                          {notificationStats.approved || 0}
                         </span>
                       </div>
-
-                      <div className="flex items-center justify-between">
-                        <span className="text-red-500 flex items-center">
-                          <div className="w-2 h-2 rounded-full bg-red-500 mr-2"></div>
-                          Rejected: {notificationStats.rejected || 0}
+                      <div className="flex justify-between items-center text-red-500">
+                        <span>Rejected</span>
+                        <span className="font-semibold">
+                          {notificationStats.rejected || 0}
                         </span>
                       </div>
-
-                      <button
-                        onClick={() => navigate("/managerdashboard")}
-                        className="w-full mt-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors text-sm sm:text-base"
-                      >
-                        View Dashboard
-                      </button>
                     </div>
+
+                    <button
+                      onClick={() => navigate("/managerdashboard")}
+                      className="mt-2 w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-all text-sm"
+                    >
+                      View Dashboard
+                    </button>
                   </Popover.Panel>
                 </Popover>
               </div>
@@ -228,42 +233,47 @@ const Navbar = () => {
                 <Popover className="relative">
                   <Popover.Button className="relative focus:outline-none">
                     <BellIcon className="h-6 w-6 text-gray-500 hover:text-gray-700" />
+                    {(notificationStats.pending > 0 ||
+                      notificationStats.approved > 0 ||
+                      notificationStats.rejected > 0) && (
+                      <span className="absolute -top-1 -right-1 flex items-center justify-center h-5 w-5 rounded-full bg-red-600 text-xs font-bold text-white">
+                        {notificationStats.pending}
+                      </span>
+                    )}
                   </Popover.Button>
 
-                  <Popover.Panel className="absolute z-50 right-0 mt-2 w-full sm:w-64 bg-white rounded-lg shadow-lg border border-gray-200 p-4">
-                    <div className="space-y-2">
-                      <h3 className="text-sm sm:text-base font-medium text-gray-700 mb-2">
-                        Notification Stats
-                      </h3>
+                  <Popover.Panel className="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-lg border border-gray-200 p-4">
+                    <h3 className="text-sm font-semibold text-gray-700 mb-2">
+                      Notification Stats
+                    </h3>
 
-                      <div className="flex items-center justify-between">
-                        <span className="text-yellow-500 flex items-center">
-                          <div className="w-2 h-2 rounded-full bg-yellow-500 mr-2"></div>
-                          Pending: {notificationStats.pending || 0}
+                    <div className="space-y-1">
+                      <div className="flex justify-between items-center text-yellow-500">
+                        <span>Pending</span>
+                        <span className="font-semibold">
+                          {notificationStats.pending || 0}
                         </span>
                       </div>
-
-                      <div className="flex items-center justify-between">
-                        <span className="text-green-500 flex items-center">
-                          <div className="w-2 h-2 rounded-full bg-green-500 mr-2"></div>
-                          Approved: {notificationStats.approved || 0}
+                      <div className="flex justify-between items-center text-green-500">
+                        <span>Approved</span>
+                        <span className="font-semibold">
+                          {notificationStats.approved || 0}
                         </span>
                       </div>
-
-                      <div className="flex items-center justify-between">
-                        <span className="text-red-500 flex items-center">
-                          <div className="w-2 h-2 rounded-full bg-red-500 mr-2"></div>
-                          Rejected: {notificationStats.rejected || 0}
+                      <div className="flex justify-between items-center text-red-500">
+                        <span>Rejected</span>
+                        <span className="font-semibold">
+                          {notificationStats.rejected || 0}
                         </span>
                       </div>
-
-                      <button
-                        onClick={() => navigateToUserDashboard(navigate)}
-                        className="w-full mt-2 px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-colors text-sm sm:text-base"
-                      >
-                        View Dashboard
-                      </button>
                     </div>
+
+                    <button
+                      onClick={() => navigateToUserDashboard(navigate)}
+                      className="mt-2 w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-all text-sm"
+                    >
+                      View Dashboard
+                    </button>
                   </Popover.Panel>
                 </Popover>
               </div>
@@ -279,27 +289,26 @@ const Navbar = () => {
                   onClick={() => setShowProfileCard(!showProfileCard)}
                 />
                 {showProfileCard && (
-                  <div className="fixed top-16 right-4 w-full max-w-xs bg-white shadow-xl rounded-lg border border-gray-200 z-50 overflow-auto">
+                  <div className="absolute top-16 right-4 w-64 bg-white shadow-lg rounded-lg border border-gray-200 z-50">
                     {/* Profile Card Header with Image */}
-                    <div className="flex flex-col items-center justify-center border-b border-gray-200 px-4 py-4">
+                    <div className="flex flex-col items-center p-4 border-b border-gray-200">
                       <img
                         src={getProfileImage()}
                         alt="User  Profile"
-                        className="h-20 w-20 rounded-full border-2 border-gray-300"
+                        className="h-16 w-16 rounded-full border-2 border-gray-300"
                       />
-                      <div className="mt-2 text-center">
-                        <p className="text-lg font-semibold text-gray-800">
-                          {profile.username}
-                        </p>
-                        <p className="text-sm text-gray-500">{profile.email}</p>
-                      </div>
+
+                      <p className="mt-2 text-lg font-semibold text-gray-800">
+                        {profile.username}
+                      </p>
+                      <p className="text-sm text-gray-500">{profile.email}</p>
                     </div>
 
                     {/* Profile Details */}
-                    <div className="px-4 py-3 text-sm text-gray-700 space-y-2">
+                    <div className="p-3 space-y-2 text-sm text-gray-700">
                       <div className="flex justify-between">
                         <span className="font-medium">Role:</span>
-                        <span>{profile.role || "N/A"}</span>
+                        <span>{profile.role || "Guest"}</span>
                       </div>
                       <div className="flex justify-between">
                         <span className="font-medium">Joined On:</span>
@@ -338,7 +347,7 @@ const Navbar = () => {
                     {/* Logout Button */}
                     <div className="border-t border-gray-200">
                       <button
-                        className="block w-full px-4 py-2 text-left text-sm font-medium text-red-600 hover:bg-gray-100"
+                        className="w-full px-4 py-2 text-left text-sm font-medium text-red-600 hover:bg-gray-100"
                         onClick={handleLogout}
                       >
                         Log out
@@ -358,11 +367,29 @@ const Navbar = () => {
           </div>
 
           {/* Mobile Menu Button */}
-          <div className="flex sm:hidden">
+          {/* <div className="flex sm:hidden">
             <DisclosureButton className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
               <Bars3Icon className="block h-6 w-6" />
             </DisclosureButton>
-          </div>
+          </div> */}
+          <DisclosurePanel className="sm:hidden">
+            <div className="space-y-1 px-4 pb-3 pt-2 bg-white border-t border-gray-200">
+              {navigation.map((item) => (
+                <Link
+                  key={item.name}
+                  to={item.href}
+                  className={classNames(
+                    isCurrentPath(item.href)
+                      ? "bg-gray-100 text-gray-900"
+                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
+                    "block px-3 py-2 text-base font-medium rounded-md"
+                  )}
+                >
+                  {item.name}
+                </Link>
+              ))}
+            </div>
+          </DisclosurePanel>
         </div>
       </div>
 
