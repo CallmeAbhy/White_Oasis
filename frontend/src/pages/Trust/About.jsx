@@ -25,6 +25,7 @@ import {
 import { generateBrochure } from "./hooks/generateBrochure";
 import ContactForm from "../Common/Components/ContactForm";
 import Footer from "../Common/Components/Footer";
+import DistanceChecker from "./components/DistanceChecker";
 
 const SOCIAL_PLATFORMS = {
   facebook: { icon: faFacebook, name: "Facebook" },
@@ -227,6 +228,7 @@ const About = () => {
           </button>
         </div>
       </div>
+      <DistanceChecker homeAddress={home.old_age_home_address} />
       <ContactForm />
       <Footer />
     </>
