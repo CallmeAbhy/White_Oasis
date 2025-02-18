@@ -229,9 +229,15 @@ const deleteOldAgeHome = async (req, res) => {
   try {
     const { id } = req.params;
     const manager_id = req.user.id; // Get manager ID from the authenticated token
-    const manager = await Manager.findById(manager_id);
+    let manager = await Manager.findById(manager_id);
     // Find the old age home
     const oldAgeHome = await OldAgeHome.findById(id);
+
+    // If Old Age Home is Deleted by the Admin we need to handle the case of manager email
+    if (!manager && req.user.role === "admin") {
+      console.log(oldAgeHome.manager_id);
+      manager = await Manager.findById(oldAgeHome.manager_id);
+    }
 
     // Check if old age home exists
     if (!oldAgeHome) {
