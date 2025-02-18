@@ -102,7 +102,6 @@ const Navbar = () => {
     };
     fetchPendingCount();
   }, [profile, token]);
-
   const getProfileImage = () => {
     if (!profile) return null;
     return profile.role === "admin"
@@ -366,12 +365,12 @@ const Navbar = () => {
           </div>
 
           {/* Mobile Menu Button */}
-          {/* <div className="flex sm:hidden">
+          <div className="flex sm:hidden">
             <DisclosureButton className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
               <Bars3Icon className="block h-6 w-6" />
             </DisclosureButton>
-          </div> */}
-          <DisclosurePanel className="sm:hidden">
+          </div>
+          {/* <DisclosurePanel className="sm:hidden">
             <div className="space-y-1 px-4 pb-3 pt-2 bg-white border-t border-gray-200">
               {navigation.map((item) => (
                 <Link
@@ -388,7 +387,7 @@ const Navbar = () => {
                 </Link>
               ))}
             </div>
-          </DisclosurePanel>
+          </DisclosurePanel> */}
         </div>
       </div>
 
