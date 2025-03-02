@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { faEye, faEyeSlash } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { useError } from "../context/ErrorContext";
+import { useApiErrorHandler } from "../utils/apiErrorHandler";
 
 const ResetPassword = () => {
   const [email, setEmail] = useState("");
@@ -12,9 +14,16 @@ const ResetPassword = () => {
   const [showPassword, setShowPassword] = useState(false);
   const [step, setStep] = useState(1);
   const navigate = useNavigate();
+  const { showError } = useError();
+  const { handleApiError } = useApiErrorHandler();
 
   const requestOtp = async (e) => {
     e.preventDefault();
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(email)) {
+      showError("Please enter a valid email address");
+      return;
+    }
     try {
       await axios.post(
         `${import.meta.env.VITE_API_URL}/api/password-reset/request-reset`,
@@ -23,26 +32,33 @@ const ResetPassword = () => {
       alert("OTP sent to your email.");
       setStep(2);
     } catch (error) {
-      alert("Error: " + error.response.data.message);
+      handleApiError(error);
     }
   };
 
   const verifyOtp = async (e) => {
     e.preventDefault();
+    if (!otp.trim()) {
+      showError("Please enter the OTP sent to your email");
+      return;
+    }
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/password-reset/verify-otp`,
         { email, otp }
       );
       alert(response.data.message);
-      setStep(3);
     } catch (error) {
-      alert("Error: " + error.response.data.message);
+      handleApiError(error);
     }
   };
 
   const resetPassword = async (e) => {
     e.preventDefault();
+    if (!newPassword || newPassword.length < 6) {
+      showError("Password must be at least 6 characters long");
+      return;
+    }
     try {
       await axios.post(
         `${import.meta.env.VITE_API_URL}/api/password-reset/reset-password`,
@@ -53,7 +69,7 @@ const ResetPassword = () => {
         navigate("/login");
       }, 2000);
     } catch (error) {
-      alert("Error: " + error.response.data.message);
+      handleApiError(error);
     }
   };
 
@@ -118,19 +134,39 @@ const ResetPassword = () => {
           )}
 
           {step === 2 && (
-            <form onSubmit={verifyOtp} className="space-y-4">
+            <form onSubmit={verifyOtp} className="space-y-6">
               <h2 className="text-2xl font-bold text-center">Verify OTP</h2>
-              <input
-                type="text"
-                placeholder="Enter OTP"
-                value={otp}
-                onChange={(e) => setOtp(e.target.value)}
-                required
-                className="w-full px-4 py-2 border border-gray-300 rounded-md focus:outline-none focus :ring-2 focus:ring-indigo-500"
-              />
+              <div className="flex justify-center gap-2">
+                {[...Array(6)].map((_, index) => (
+                  <input
+                    key={index}
+                    type="text"
+                    maxLength="1"
+                    value={otp[index] || ""}
+                    onChange={(e) => {
+                      const newOtp = otp.padEnd(6, " ").split("");
+                      newOtp[index] = e.target.value;
+                      setOtp(newOtp.join("").trim());
+                      // Auto-focus next input
+                      if (e.target.value && index < 5) {
+                        document.getElementById(`otp-${index + 1}`).focus();
+                      }
+                    }}
+                    onKeyDown={(e) => {
+                      // Handle backspace
+                      if (e.key === "Backspace" && !otp[index] && index > 0) {
+                        document.getElementById(`otp-${index - 1}`).focus();
+                      }
+                    }}
+                    id={`otp-${index}`}
+                    className="w-12 h-14 text-center text-lg font-medium border-2 border-gray-300 rounded-lg focus:border-indigo-600 focus:ring-2 focus:ring-indigo-200 focus:outline-none transition-all duration-200 bg-gray-50 hover:bg-white shadow-sm"
+                    required
+                  />
+                ))}
+              </div>
               <button
                 type="submit"
-                className="w-full bg-indigo-600 text-white py-2 rounded-md hover:bg-indigo-700 transition-colors"
+                className="w-full bg-indigo-600 text-white py-2.5 rounded-lg hover:bg-indigo-700 transition-colors font-medium"
               >
                 Verify OTP
               </button>

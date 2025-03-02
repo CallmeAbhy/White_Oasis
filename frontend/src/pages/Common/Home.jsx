@@ -63,7 +63,14 @@ const Home = () => {
   };
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <div className="fixed inset-0 flex items-center justify-center bg-white bg-opacity-75">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-b-4 border-indigo-600 mx-auto mb-4"></div>
+          <p className="text-lg text-gray-600 font-semibold">Loading...</p>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -139,7 +146,7 @@ const Home = () => {
             </div>
 
             {/* Services Section */}
-            <div className="py-20 bg-white">
+            <div id="services" className="py-20 bg-white">
               <div className="container mx-auto px-4">
                 <h2 className="text-3xl font-bold text-center mb-16">
                   Our Services

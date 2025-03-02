@@ -3,10 +3,11 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 // import { useAuth } from "../context/AuthContext";
 import CommonFields from "./Common/CommonFields";
-import { validateEmail, validatePhone } from "../utils/Vallidator";
+import { validateForm, validateDOB } from "../utils/Vallidator";
 import ManagerForm from "./RoleWiseFields/ManagerForm";
 import UserForm from "./RoleWiseFields/UserForm";
-
+import { useApiErrorHandler } from "../utils/apiErrorHandler";
+import { useError } from "../context/ErrorContext";
 const Signup = () => {
   const [formData, setFormData] = useState({
     username: "",
@@ -37,9 +38,9 @@ const Signup = () => {
     user: { countryCode: "", stateCode: "" },
     manager: { countryCode: "", stateCode: "" },
   });
-
-  const [errorMessage, setErrorMessage] = useState("");
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const { showError } = useError();
+  const { handleApiError } = useApiErrorHandler();
   const navigate = useNavigate();
   const handleChange = (e) => {
     const { name, value } = e.target;
@@ -90,17 +91,20 @@ const Signup = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    setErrorMessage("");
+    const validationRules = {
+      username: { required: true, minLength: 3 },
+      password: { required: true, minLength: 6 },
+      email: { required: true, email: true },
+      phone: { required: true, phone: true },
+    };
+    const { isValid, errors } = validateForm(formData, validationRules);
 
-    if (!validateEmail(formData.email)) {
-      alert("Please enter a valid email address.");
+    if (!isValid) {
+      const firstError = Object.values(errors)[0];
+      showError(firstError);
       return;
     }
 
-    if (!validatePhone(formData.phone)) {
-      alert("Please enter a valid phone number (10 digits).");
-      return;
-    }
     setIsSubmitting(true);
     try {
       const formDataToSend = new FormData();
@@ -118,6 +122,12 @@ const Signup = () => {
         formDataToSend.append("userPhoto", formData.userPhoto);
         formDataToSend.append("state", formData.state);
         formDataToSend.append("dateOfBirth", formData.dateOfBirth);
+        if (validateDOB(formData.dateOfBirth)) {
+          showError(
+            "You must be at least 18 years old and the date cannot be in the future"
+          );
+          return;
+        }
       } else if (formData.role === "manager") {
         formDataToSend.append("name_of_trust", formData.name_of_trust);
         formDataToSend.append(
@@ -159,8 +169,7 @@ const Signup = () => {
         return;
       }
     } catch (error) {
-      setErrorMessage(error.response?.data?.message || "Registration failed");
-      alert(error.response?.data?.message || "Registration failed");
+      handleApiError(error);
     } finally {
       setIsSubmitting(false); // Reset loading state
     }
@@ -184,11 +193,6 @@ const Signup = () => {
         <p className="text-sm mt-2 text-[#002D74] text-center">
           If you are not a member, join us
         </p>
-
-        {/* Error Message */}
-        {errorMessage && (
-          <div className="text-red-500 text-center mt-2">{errorMessage}</div>
-        )}
 
         {/* Form Section */}
         <form className="flex flex-col gap-4 mt-4" onSubmit={handleSubmit}>
@@ -234,7 +238,6 @@ const Signup = () => {
             <option value="">Select Role</option>
             <option value="user">User</option>
             <option value="manager">Trust</option>
-            <option value="admin">Admin</option>
           </select>
 
           {/* Conditional Form Rendering */}

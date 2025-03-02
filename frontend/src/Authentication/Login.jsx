@@ -4,13 +4,16 @@ import { useNavigate } from "react-router-dom";
 import { useToken } from "../context/TokenContext";
 import CommonFields from "./Common/CommonFields";
 import { Link } from "react-router-dom";
+import { useError } from "../context/ErrorContext";
+import { useApiErrorHandler } from "../utils/apiErrorHandler";
 const Login = () => {
   const { updateToken } = useToken();
+  const { showError } = useError();
+  const { handleApiError } = useApiErrorHandler();
   const [formData, setFormData] = useState({
     username: "",
     password: "",
   });
-
   const navigate = useNavigate();
 
   const handleRegister = () => {
@@ -27,6 +30,16 @@ const Login = () => {
 
   const handleLogin = async (e) => {
     e.preventDefault();
+    if (!formData.username.trim()) {
+      showError("Username is required");
+      return;
+    }
+
+    if (!formData.password) {
+      showError("Password is required");
+      return;
+    }
+
     try {
       const formDataToSend = new FormData();
       formDataToSend.append("username", formData.username);
@@ -44,9 +57,7 @@ const Login = () => {
       updateToken(token);
       navigate(`/`);
     } catch (error) {
-      alert(
-        "Login failed: " + error.response?.data?.message || "Unknown error"
-      );
+      handleApiError(error);
     }
   };
 

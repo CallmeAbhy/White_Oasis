@@ -21,6 +21,7 @@ const navigation = [
   { name: "Home", href: "/", current: true },
   { name: "About us", href: "/about-us", current: false },
   { name: "Near Me", href: "/near-me", current: false },
+  { name: "Services", href: "/#services", current: false },
 ];
 
 const classNames = (...classes) => classes.filter(Boolean).join(" ");
@@ -43,6 +44,7 @@ const Navbar = () => {
 
   useEffect(() => {
     const fetchPendingCount = async () => {
+      if (!profile || !token) return;
       switch (profile.role) {
         case "admin":
           try {
@@ -118,6 +120,15 @@ const Navbar = () => {
     navigateToLogin(navigate);
   };
 
+  const handleNavigation = (e, href) => {
+    if (href.startsWith("/#")) {
+      e.preventDefault();
+      const element = document.querySelector(href.substring(1));
+      if (element) {
+        element.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  };
   return (
     <Disclosure as="nav" className="bg-white shadow-lg fixed w-full top-0 z-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -146,6 +157,7 @@ const Navbar = () => {
               <Link
                 key={item.name}
                 to={item.href}
+                onClick={(e) => handleNavigation(e, item.href)}
                 className={classNames(
                   isCurrentPath(item.href)
                     ? "text-indigo-600 border-b-2 border-indigo-600"
@@ -331,7 +343,7 @@ const Navbar = () => {
                     </div>
 
                     {/* Additional Settings Option for Admin */}
-                    {profile.role === "admin" && (
+                    {profile && profile.role === "admin" && (
                       <div className="border-t border-gray-200">
                         <button
                           className="block w-full px-4 py-2 text-left text-sm font-medium text-blue-600 hover:bg-gray-100"
