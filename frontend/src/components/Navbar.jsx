@@ -5,7 +5,7 @@ import {
   DisclosurePanel,
 } from "@headlessui/react";
 import { Bars3Icon, BellIcon } from "@heroicons/react/24/outline";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useProfile } from "../context/ProfileContext";
 import { useToken } from "../context/TokenContext";
@@ -21,7 +21,7 @@ const navigation = [
   { name: "Home", href: "/", current: true },
   { name: "About us", href: "/about-us", current: false },
   { name: "Near Me", href: "/near-me", current: false },
-  { name: "Services", href: "/#services", current: false },
+  { name: "Services", href: "/#services", current: false, isSpecial: true },
 ];
 
 const classNames = (...classes) => classes.filter(Boolean).join(" ");
@@ -38,9 +38,39 @@ const Navbar = () => {
   });
   const [showProfileCard, setShowProfileCard] = useState(false);
   const navigate = useNavigate();
+
   const isCurrentPath = (path) => {
     return location.pathname === path;
   };
+
+  // Improved navigateToServices function using useCallback for better performance
+  const navigateToServices = useCallback(() => {
+    const currentPath = location.pathname;
+
+    if (currentPath !== "/") {
+      // If not on home page, navigate to home page with services hash
+      navigate("/#services");
+    } else {
+      // If already on home page, just scroll to services section
+      const servicesSection = document.getElementById("services");
+      if (servicesSection) {
+        servicesSection.scrollIntoView({ behavior: "smooth" });
+      }
+    }
+  }, [location.pathname, navigate]);
+
+  // Handle hash navigation when component mounts or location changes
+  useEffect(() => {
+    if (location.pathname === "/" && location.hash === "#services") {
+      // Wait for the DOM to be fully loaded
+      setTimeout(() => {
+        const servicesSection = document.getElementById("services");
+        if (servicesSection) {
+          servicesSection.scrollIntoView({ behavior: "smooth" });
+        }
+      }, 100);
+    }
+  }, [location]);
 
   useEffect(() => {
     const fetchPendingCount = async () => {
@@ -104,6 +134,7 @@ const Navbar = () => {
     };
     fetchPendingCount();
   }, [profile, token]);
+
   const getProfileImage = () => {
     if (!profile) return null;
     return profile.role === "admin"
@@ -120,7 +151,14 @@ const Navbar = () => {
     navigateToLogin(navigate);
   };
 
-  const handleNavigation = (e, href) => {
+  // Improved handleNavigation function
+  const handleNavigation = (e, href, isSpecial) => {
+    if (isSpecial && href === "/#services") {
+      e.preventDefault();
+      navigateToServices();
+      return;
+    }
+
     if (href.startsWith("/#")) {
       e.preventDefault();
       const element = document.querySelector(href.substring(1));
@@ -129,6 +167,7 @@ const Navbar = () => {
       }
     }
   };
+
   return (
     <Disclosure as="nav" className="bg-white shadow-lg fixed w-full top-0 z-50">
       <div className="container mx-auto px-4 sm:px-6 lg:px-8">
@@ -136,7 +175,7 @@ const Navbar = () => {
           {/* Logo */}
           <div className="flex items-center">
             <img
-              className="h-10 w-auto md:hidden transition-transform duration-300 transform hover:scale-110"
+              className="h-10 w-auto md:hidden transition-transform duration-300 transform hover:scale-110 cursor-pointer"
               src="https://i.imghippo.com/files/waZ7239cew.png"
               alt="Mobile Logo"
               onClick={() => navigate("/")}
@@ -144,7 +183,7 @@ const Navbar = () => {
 
             {/* Desktop Logo */}
             <img
-              className="h-20 w-auto hidden md:block transition-transform duration-300 transform hover:scale-110"
+              className="h-20 w-auto hidden md:block transition-transform duration-300 transform hover:scale-110 cursor-pointer"
               src="https://i.imghippo.com/files/XPEy3112qw.png"
               alt="Desktop Logo"
               onClick={() => navigate("/")}
@@ -157,9 +196,11 @@ const Navbar = () => {
               <Link
                 key={item.name}
                 to={item.href}
-                onClick={(e) => handleNavigation(e, item.href)}
+                onClick={(e) => handleNavigation(e, item.href, item.isSpecial)}
                 className={classNames(
-                  isCurrentPath(item.href)
+                  isCurrentPath(item.href) ||
+                    (item.href === "/#services" &&
+                      location.hash === "#services")
                     ? "text-indigo-600 border-b-2 border-indigo-600"
                     : "text-gray-600 hover:text-gray-800 hover:border-b-2 hover:border-gray-300",
                   "px-3 py-2 text-sm font-semibold transition-all duration-200"
@@ -172,6 +213,7 @@ const Navbar = () => {
 
           {/* Notification and Profile */}
           <div className="flex items-center space-x-4">
+            {/* Rest of the code remains unchanged */}
             {profile && profile.role === "admin" && (
               <>
                 <button
@@ -382,44 +424,41 @@ const Navbar = () => {
               <Bars3Icon className="block h-6 w-6" />
             </DisclosureButton>
           </div>
-          {/* <DisclosurePanel className="sm:hidden">
-            <div className="space-y-1 px-4 pb-3 pt-2 bg-white border-t border-gray-200">
-              {navigation.map((item) => (
-                <Link
-                  key={item.name}
-                  to={item.href}
-                  className={classNames(
-                    isCurrentPath(item.href)
-                      ? "bg-gray-100 text-gray-900"
-                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
-                    "block px-3 py-2 text-base font-medium rounded-md"
-                  )}
-                >
-                  {item.name}
-                </Link>
-              ))}
-            </div>
-          </DisclosurePanel> */}
         </div>
       </div>
 
       {/* Mobile Navigation Panel */}
       <DisclosurePanel className="sm:hidden">
         <div className="space-y-1 px-2 pb-3 pt-2">
-          {navigation.map((item) => (
-            <Link
-              key={item.name}
-              to={item.href}
-              className={classNames(
-                isCurrentPath(item.href)
-                  ? "bg-gray-100 text-gray-900"
-                  : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
-                "block px-3 py-2 text-base font-medium"
-              )}
-            >
-              {item.name}
-            </Link>
-          ))}
+          {navigation.map((item) =>
+            item.isSpecial ? (
+              <button
+                key={item.name}
+                onClick={navigateToServices}
+                className={classNames(
+                  location.hash === "#services" && location.pathname === "/"
+                    ? "bg-gray-100 text-gray-900"
+                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
+                  "block w-full text-left px-3 py-2 text-base font-medium"
+                )}
+              >
+                {item.name}
+              </button>
+            ) : (
+              <Link
+                key={item.name}
+                to={item.href}
+                className={classNames(
+                  isCurrentPath(item.href)
+                    ? "bg-gray-100 text-gray-900"
+                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
+                  "block px-3 py-2 text-base font-medium"
+                )}
+              >
+                {item.name}
+              </Link>
+            )
+          )}
         </div>
       </DisclosurePanel>
     </Disclosure>
