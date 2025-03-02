@@ -44,6 +44,7 @@ const Navbar = () => {
 
   useEffect(() => {
     const fetchPendingCount = async () => {
+      if (!profile || !token) return;
       switch (profile.role) {
         case "admin":
           try {
@@ -342,7 +343,7 @@ const Navbar = () => {
                     </div>
 
                     {/* Additional Settings Option for Admin */}
-                    {profile.role === "admin" && (
+                    {profile && profile.role === "admin" && (
                       <div className="border-t border-gray-200">
                         <button
                           className="block w-full px-4 py-2 text-left text-sm font-medium text-blue-600 hover:bg-gray-100"

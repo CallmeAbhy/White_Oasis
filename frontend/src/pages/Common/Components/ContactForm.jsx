@@ -7,12 +7,17 @@ import {
   faMapMarkerAlt,
 } from "@fortawesome/free-solid-svg-icons";
 import axios from "axios";
-import { validateEmail } from "../../../utils/Vallidator";
 import { useToken } from "../../../context/TokenContext";
 import { useHome } from "../../../context/HomeContext";
+import { validateForm } from "../../../utils/Vallidator";
+import { useApiErrorHandler } from "../../../utils/apiErrorHandler";
+import { useError } from "../../../context/ErrorContext";
+
 const ContactForm = () => {
   const { token } = useToken();
   const homedata = useHome();
+  const { showError } = useError();
+  const { handleApiError } = useApiErrorHandler();
   const [formData, setFormData] = useState({
     name: "",
     email: "",
@@ -30,16 +35,20 @@ const ContactForm = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!validateEmail(formData.email)) {
-      alert("Please enter a valid email address");
+    const validationRules = {
+      name: { required: true },
+      email: { required: true, email: true },
+      subject: { required: true },
+      message: { required: true, minLength: 10 },
+    };
+
+    const { isValid, errors } = validateForm(formData, validationRules);
+
+    if (!isValid) {
+      const firstError = Object.values(errors)[0];
+      showError(firstError);
       return;
     }
-
-    if (!formData.email || !formData.subject || !formData.message) {
-      alert("Please fill in all required fields");
-      return;
-    }
-
     try {
       const response = await axios.post(
         `${import.meta.env.VITE_API_URL}/api/contact/send`,
@@ -67,12 +76,7 @@ const ContactForm = () => {
         });
       }
     } catch (error) {
-      console.error("Error sending message:", error);
-      alert(
-        error.response?.status === 400
-          ? "Please provide all required fields"
-          : "Failed to send message. Please try again."
-      );
+      handleApiError(error);
     }
   };
 
