@@ -1,6 +1,25 @@
 import PropTypes from "prop-types";
 
 export const Information = ({ formData, setFormData }) => {
+  const handleNumberChange =
+    (field, nestedField = null) =>
+    (e) => {
+      const value = e.target.value === "" ? "" : Number(e.target.value);
+      if (nestedField) {
+        setFormData({
+          ...formData,
+          [field]: {
+            ...formData[field],
+            [nestedField]: value,
+          },
+        });
+      } else {
+        setFormData({
+          ...formData,
+          [field]: value,
+        });
+      }
+    };
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 gap-4">
@@ -11,11 +30,10 @@ export const Information = ({ formData, setFormData }) => {
 
           <input
             type="number"
-            value={formData.capacity}
-            onChange={(e) =>
-              setFormData({ ...formData, capacity: Number(e.target.value) })
-            }
+            value={formData.capacity === "" ? "" : formData.capacity}
+            onChange={handleNumberChange("capacity")}
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            min="0"
             required
           />
         </div>
@@ -27,13 +45,10 @@ export const Information = ({ formData, setFormData }) => {
 
           <input
             type="number"
-            value={formData.occupied_seats}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-                occupied_seats: Number(e.target.value),
-              })
+            value={
+              formData.occupied_seats === "" ? "" : formData.occupied_seats
             }
+            onChange={handleNumberChange("occupied_seats")}
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
           />
         </div>
@@ -46,17 +61,12 @@ export const Information = ({ formData, setFormData }) => {
 
           <input
             type="number"
-            value={formData.staff_info.medical_staff}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-
-                staff_info: {
-                  ...formData.staff_info,
-                  medical_staff: Number(e.target.value),
-                },
-              })
+            value={
+              formData.staff_info.medical_staff === ""
+                ? ""
+                : formData.staff_info.medical_staff
             }
+            onChange={handleNumberChange("staff_info", "medical_staff")}
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
             required
           />
@@ -69,17 +79,12 @@ export const Information = ({ formData, setFormData }) => {
 
           <input
             type="number"
-            value={formData.staff_info.care_workers}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-
-                staff_info: {
-                  ...formData.staff_info,
-                  care_workers: Number(e.target.value),
-                },
-              })
+            value={
+              formData.staff_info.care_workers === ""
+                ? ""
+                : formData.staff_info.care_workers
             }
+            onChange={handleNumberChange("staff_info", "care_workers")}
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
             required
           />
@@ -115,18 +120,14 @@ export const Information = ({ formData, setFormData }) => {
 
           <input
             type="number"
-            value={formData.fee_structure.monthly}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-
-                fee_structure: {
-                  ...formData.fee_structure,
-                  monthly: Number(e.target.value),
-                },
-              })
+            value={
+              formData.fee_structure.monthly === ""
+                ? ""
+                : formData.fee_structure.monthly
             }
+            onChange={handleNumberChange("fee_structure", "monthly")}
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            min="0"
             required
           />
         </div>
@@ -138,18 +139,14 @@ export const Information = ({ formData, setFormData }) => {
 
           <input
             type="number"
-            value={formData.fee_structure.yearly}
-            onChange={(e) =>
-              setFormData({
-                ...formData,
-
-                fee_structure: {
-                  ...formData.fee_structure,
-                  yearly: Number(e.target.value),
-                },
-              })
+            value={
+              formData.fee_structure.yearly === ""
+                ? ""
+                : formData.fee_structure.yearly
             }
+            onChange={handleNumberChange("fee_structure", "yearly")}
             className="mt-1 block w-full p-2 border border-gray-300 rounded-md"
+            min="0"
             required
           />
         </div>
@@ -159,16 +156,22 @@ export const Information = ({ formData, setFormData }) => {
 };
 Information.propTypes = {
   formData: PropTypes.shape({
-    capacity: PropTypes.number.isRequired,
-    occupied_seats: PropTypes.number.isRequired,
+    capacity: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+      .isRequired,
+    occupied_seats: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+      .isRequired,
     staff_info: PropTypes.shape({
-      medical_staff: PropTypes.number.isRequired,
-      care_workers: PropTypes.number.isRequired,
+      medical_staff: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+        .isRequired,
+      care_workers: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+        .isRequired,
     }).isRequired,
     diet_type: PropTypes.string.isRequired,
     fee_structure: PropTypes.shape({
-      monthly: PropTypes.number.isRequired,
-      yearly: PropTypes.number.isRequired,
+      monthly: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+        .isRequired,
+      yearly: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+        .isRequired,
     }).isRequired,
   }).isRequired,
   setFormData: PropTypes.func.isRequired,

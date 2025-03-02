@@ -74,16 +74,22 @@ export const BasicInfoStep = ({ formData, handleInputChange, setFormData }) => {
           <input
             type="number"
             className="mt-1 block w-full p-3 border border-gray-300 rounded-md shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
-            value={formData.appointment_settings.duration}
+            value={
+              formData.appointment_settings.duration === ""
+                ? ""
+                : formData.appointment_settings.duration
+            }
             onChange={(e) => {
+              const value = e.target.value === "" ? "" : Number(e.target.value);
               setFormData({
                 ...formData,
                 appointment_settings: {
                   ...formData.appointment_settings,
-                  duration: Number(e.target.value),
+                  duration: value,
                 },
               });
             }}
+            min="30"
           />
         </div>
 

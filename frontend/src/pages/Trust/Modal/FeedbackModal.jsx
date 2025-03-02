@@ -3,7 +3,8 @@ import PropTypes from "prop-types";
 import { useState, useEffect } from "react";
 import { useToken } from "../../../context/TokenContext";
 import { useProfile } from "../../../context/ProfileContext";
-
+import { useError } from "../../../context/ErrorContext";
+import { useApiErrorHandler } from "../../../utils/apiErrorHandler";
 const FeedbackModal = ({ oldAgeHomeId, onClose, onSubmitSuccess }) => {
   const [rating, setRating] = useState(0);
   const [review, setReview] = useState("");
@@ -12,10 +13,22 @@ const FeedbackModal = ({ oldAgeHomeId, onClose, onSubmitSuccess }) => {
   const [showReviews, setShowReviews] = useState(false);
   const { token } = useToken();
   const { profile } = useProfile();
+  const { showError } = useError();
+  const { handleApiError } = useApiErrorHandler();
 
   useEffect(() => {
     fetchReviews();
   }, [oldAgeHomeId]);
+
+  const validateReview = (reviewText, rating) => {
+    if (rating === 0) {
+      return "Please select a rating";
+    }
+    if (rating <= 3 && (!reviewText || reviewText.trim().length < 10)) {
+      return "For ratings of 3 stars or less, please provide detailed feedback (at least 10 characters)";
+    }
+    return null;
+  };
 
   const fetchReviews = async () => {
     try {
@@ -35,6 +48,7 @@ const FeedbackModal = ({ oldAgeHomeId, onClose, onSubmitSuccess }) => {
       }
     } catch (error) {
       console.error("Error fetching reviews:", error);
+      handleApiError(error);
     }
   };
 
@@ -42,6 +56,11 @@ const FeedbackModal = ({ oldAgeHomeId, onClose, onSubmitSuccess }) => {
     e.preventDefault();
     if (!rating) {
       setError("Please select a rating");
+      return;
+    }
+    const validationError = validateReview(review, rating);
+    if (validationError) {
+      setError(validationError);
       return;
     }
 
@@ -73,10 +92,12 @@ const FeedbackModal = ({ oldAgeHomeId, onClose, onSubmitSuccess }) => {
       } else {
         const data = await response.json();
         setError(data.message);
+        showError(data.message);
       }
     } catch (error) {
       setError("Something went wrong. Please try again.");
       console.error(error);
+      handleApiError(error);
     }
   };
 
@@ -100,10 +121,12 @@ const FeedbackModal = ({ oldAgeHomeId, onClose, onSubmitSuccess }) => {
       } else {
         const data = await response.json();
         setError(data.message);
+        showError(data.message);
       }
     } catch (error) {
       setError("Error deleting review");
       console.error(error);
+      handleApiError(error);
     }
   };
 

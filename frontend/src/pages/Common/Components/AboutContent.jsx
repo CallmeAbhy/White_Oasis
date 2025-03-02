@@ -17,6 +17,13 @@ const AboutContent = ({ token, setMessage, loading, setLoading }) => {
   const navigate = useNavigate();
   const [isApiAvailable, setIsApiAvailable] = useState(false);
 
+  const validateDescription = (text) => {
+    if (!text || text.trim().length < 50) {
+      return "Description must be at least 50 characters long";
+    }
+    return null;
+  };
+
   // Check API availability on component mount
 
   useEffect(() => {
@@ -143,6 +150,15 @@ const AboutContent = ({ token, setMessage, loading, setLoading }) => {
   const handleAboutSubmit = async (e) => {
     e.preventDefault();
     setLoading(false);
+    const descError = validateDescription(aboutContent.description);
+    if (descError) {
+      setMessage(descError);
+      return;
+    }
+    if (multipleImages.length === 0) {
+      setMessage("Please upload at least one image");
+      return;
+    }
     try {
       const formData = new FormData();
       // Add multiple images
