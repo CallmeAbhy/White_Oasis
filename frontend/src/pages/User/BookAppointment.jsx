@@ -7,11 +7,14 @@ import ContactForm from "../Common/Components/ContactForm";
 import Footer from "../Common/Components/Footer";
 import AdoptionAgreementModal from "../../components/AdoptionAgreementModal";
 import { useProfile } from "../../context/ProfileContext";
-
+import { useError } from "../../context/ErrorContext";
+import { useApiErrorHandler } from "../../utils/apiErrorHandler";
 const BookAppointment = () => {
   const { homeId } = useParams();
   const { token } = useToken();
   const navigate = useNavigate();
+  const { showError } = useError();
+  const { handleApiError } = useApiErrorHandler();
   const [appointmentData, setAppointmentData] = useState({
     appointment_type: "",
     reason: "",
@@ -24,6 +27,41 @@ const BookAppointment = () => {
   const { profile } = useProfile();
   console.log("The Profile username is ", profile.username);
   const [availableSlots, setAvailableSlots] = useState([]);
+  // Add date validation
+
+  const validateAppointmentDate = (date) => {
+    const selectedDate = new Date(date);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    if (selectedDate < today) {
+      return "Please select a future date";
+    }
+    // Prevent booking more than 3 months in advance
+    const threeMonthsLater = new Date();
+    threeMonthsLater.setMonth(today.getMonth() + 3);
+    if (selectedDate > threeMonthsLater) {
+      return "Appointments can only be booked up to 3 months in advance";
+    }
+    return null;
+  };
+
+  // Add time slot validation
+  const validateTimeSlot = (start, end) => {
+    if (!start || !end) {
+      return "Please select both start and end times";
+    }
+    // Convert to minutes for comparison
+    const startParts = start.split(":");
+    const endParts = end.split(":");
+    const startMinutes = parseInt(startParts[0]) * 60 + parseInt(startParts[1]);
+    const endMinutes = parseInt(endParts[0]) * 60 + parseInt(endParts[1]);
+    // Ensure minimum appointment duration (e.g., 30 minutes)
+    if (endMinutes - startMinutes < 30) {
+      return "Appointment must be at least 30 minutes long";
+    }
+    return null;
+  };
+
   // Fetch available slots when date changes
   useEffect(() => {
     if (appointmentData.appointment_date) {
@@ -54,6 +92,28 @@ const BookAppointment = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    // Validate date
+    const dateError = validateAppointmentDate(appointmentData.appointment_date);
+    if (dateError) {
+      showError(dateError);
+      return;
+    }
+    // Validate time slot
+    const timeError = validateTimeSlot(
+      appointmentData.start_time,
+      appointmentData.end_time
+    );
+    if (timeError) {
+      showError(timeError);
+      return;
+    }
+    // Validate reason
+    if (!appointmentData.reason || appointmentData.reason.trim().length < 10) {
+      showError(
+        "Please provide a detailed reason for your appointment (at least 10 characters)"
+      );
+      return;
+    }
     if (appointmentData.appointment_type === "Adoption" && !agreementData) {
       setShowAgreementModal(true);
       return;
@@ -82,11 +142,11 @@ const BookAppointment = () => {
         alert("Appointment booked successfully!");
         navigate("/near-me");
       } else {
-        alert("Something Went Wrong");
+        handleApiError(response.statusMessage + " " + response.statusText);
       }
     } catch (error) {
       console.error("Error booking appointment:", error);
-      alert(error?.message || "Appointment not booked successfully!");
+      handleApiError(error?.message || "Appointment not booked successfully!");
     }
   };
 

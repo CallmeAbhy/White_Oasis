@@ -29,6 +29,14 @@ export const validateStep = (currentStep, formData) => {
 
     case 5:
       // Capacity and Staff Info Validation
+      if (
+        !formData.capacity ||
+        !validateCapacity(formData.capacity) ||
+        (formData.allocation &&
+          parseInt(formData.capacity) < parseInt(formData.allocation))
+      ) {
+        return false;
+      }
       return (
         formData.capacity &&
         formData.staff_info.medical_staff &&
