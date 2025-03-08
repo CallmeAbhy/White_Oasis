@@ -103,6 +103,8 @@ const createAppointment = async (req, res) => {
       end_time,
       appointment_date,
       user_profile: user,
+      adoption_details:
+        appointment_type === "Adoption" ? adoption_details : undefined,
     });
     await appointment.save();
     await sendAppointmentReq(

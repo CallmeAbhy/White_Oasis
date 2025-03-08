@@ -22,6 +22,11 @@ const BookAppointment = () => {
     appointment_date: "",
     start_time: "",
     end_time: "",
+    adoption_details: {
+      pan: "",
+      aadhar: "",
+      dob: "",
+    },
   });
   const [showAgreementModal, setShowAgreementModal] = useState(false);
   const [agreementData, setAgreementData] = useState(null);
@@ -209,6 +214,14 @@ const BookAppointment = () => {
 
   const handleAgreementSubmit = (data) => {
     setAgreementData(data);
+    setAppointmentData((prev) => ({
+      ...prev,
+      adoption_details: {
+        pan: data.panNumber,
+        aadhaar: data.aadharNumber,
+        dob: data.dateOfBirth,
+      },
+    }));
     setShowAgreementModal(false);
     submitAppointment();
   };

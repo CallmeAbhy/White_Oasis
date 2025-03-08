@@ -283,6 +283,38 @@ const ManagerDashboard = () => {
                     </label>
                     <p className="text-gray-800">{selectedUser.phone}</p>
                   </div>
+                  {/* Here is Code */}
+                  {appointments.appointment_type === "Adoption" &&
+                    appointments.adoption_details && (
+                      <>
+                        <div>
+                          <label className="font-semibold text-gray-600">
+                            PAN:
+                          </label>
+                          <p className="text-gray-800">
+                            {appointments.adoption_details.pan}
+                          </p>
+                        </div>
+                        <div>
+                          <label className="font-semibold text-gray-600">
+                            Aadhaar:
+                          </label>
+                          <p className="text-gray-800">
+                            {appointments.adoption_details.aadhaar}
+                          </p>
+                        </div>
+                        <div>
+                          <label className="font-semibold text-gray-600">
+                            Date of Birth:
+                          </label>
+                          <p className="text-gray-800">
+                            {new Date(
+                              appointments.adoption_details.dob
+                            ).toLocaleDateString()}
+                          </p>
+                        </div>
+                      </>
+                    )}
                 </div>
 
                 <div className="space-y-4">
