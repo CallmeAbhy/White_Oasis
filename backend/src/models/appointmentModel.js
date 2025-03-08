@@ -46,6 +46,26 @@ const appointmentSchema = new mongoose.Schema(
       type: Object,
       required: true,
     },
+    agreement_data: {
+      pan: {
+        type: String,
+        required: function () {
+          return this.appointment_type === "Adoption";
+        },
+      },
+      aadhaar: {
+        type: String,
+        required: function () {
+          return this.appointment_type === "Adoption";
+        },
+      },
+      dob: {
+        type: Date,
+        required: function () {
+          return this.appointment_type === "Adoption";
+        },
+      },
+    },
   },
   { timestamps: true }
 );
