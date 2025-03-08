@@ -17,6 +17,7 @@ const createAppointment = async (req, res) => {
       start_time,
       end_time,
       appointment_date,
+      adoption_details,
     } = req.body;
     let userId = req.user.id;
     const user = await User.findById(userId).select("-password");

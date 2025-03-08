@@ -217,9 +217,9 @@ const BookAppointment = () => {
     setAppointmentData((prev) => ({
       ...prev,
       adoption_details: {
-        pan: data.panNumber,
-        aadhaar: data.aadharNumber,
-        dob: data.dateOfBirth,
+        pan: data.pan,
+        aadhaar: data.aadhaar,
+        dob: data.dob,
       },
     }));
     setShowAgreementModal(false);

@@ -46,7 +46,7 @@ const appointmentSchema = new mongoose.Schema(
       type: Object,
       required: true,
     },
-    agreement_data: {
+    adoption_details: {
       pan: {
         type: String,
         required: function () {
