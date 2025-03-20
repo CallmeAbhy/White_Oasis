@@ -122,7 +122,7 @@ const Signup = () => {
         formDataToSend.append("userPhoto", formData.userPhoto);
         formDataToSend.append("state", formData.state);
         formDataToSend.append("dateOfBirth", formData.dateOfBirth);
-        if (validateDOB(formData.dateOfBirth)) {
+        if (!validateDOB(formData.dateOfBirth)) {
           showError(
             "You must be at least 18 years old and the date cannot be in the future"
           );
