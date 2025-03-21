@@ -20,7 +20,7 @@ const app = express();
 app.use(express.json());
 app.use(cors());
 initGridFS(
-  "mongodb+srv://white:wash@cluster0.4hmjb.mongodb.net/White_Orchid?retryWrites=true&w=majority&appName=Cluster0"
+  "mongodb+srv://project:pwd@cluster0.0esk3.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0"
 );
 //  Routes
 app.use("/api/files", fileRoutes);
