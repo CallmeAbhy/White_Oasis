@@ -1,3 +1,10 @@
+/* 
+@@Image
+Create a authentication folder under the images
+the path will be src/assets/images/authentication
+Add the Desktop and Mobile Compatible Image for backgroun image there
+Do as Step 2
+*/
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -6,6 +13,10 @@ import CommonFields from "./Common/CommonFields";
 import { Link } from "react-router-dom";
 import { useError } from "../context/ErrorContext";
 import { useApiErrorHandler } from "../utils/apiErrorHandler";
+/* Step 2 Import your image accordingly as shown below
+import desktopImage from "../assets/images/authentication/bg_img_desktop.jpg";
+import mobileImage from "../assets/images/authentication/bg_img_mobile.jpg";
+ */
 const Login = () => {
   const { updateToken } = useToken();
   const { showError } = useError();
@@ -66,6 +77,8 @@ const Login = () => {
       className="bg-gray-50 min-h-screen flex items-center justify-center px-4 sm:px-6"
       style={{
         backgroundImage: `url('https://storage.googleapis.com/a1aa/image/6b1a82a1-b6b6-4003-ae6f-815a0e875b31.jpeg')`,
+        // Step 3 uncomment the below line and comment the above line
+        // backgroundImage: `url(${desktopImage})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}
@@ -128,6 +141,8 @@ const Login = () => {
         <div className="hidden md:block w-1/2">
           <img
             src="https://images.unsplash.com/photo-1616606103915-dea7be788566?ixlib=rb-1.2.1&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1887&q=80"
+            // Step 4 uncomment the below line and comment the above line
+            // src={mobileImage}
             alt="Login Visual"
             className="rounded-2xl object-cover h-full"
           />

@@ -1,4 +1,11 @@
 // src/components/Navbar.jsx
+/* 
+@@Image
+Create a logo folder under the images
+the path will be src/assets/images/logo
+Add the Desktop and Mobile Compatible Image for logo there
+Do as Step 2
+*/
 import {
   Disclosure,
   DisclosureButton,
@@ -16,7 +23,12 @@ import {
   navigateToPanel,
   navigateToUserDashboard,
 } from "../utils/navigationUtils";
-
+/* 
+Step 2: Import the Desktop and Mobile Image
+import DesktopImage from "../assets/images/logo/Desktop.png";
+import MobileImage from "../assets/images/logo/Mobile.png";
+See the Step 3
+ */
 const navigation = [
   { name: "Home", href: "/", current: true },
   { name: "About us", href: "/about-us", current: false },
@@ -177,6 +189,8 @@ const Navbar = () => {
             <img
               className="h-10 w-auto md:hidden transition-transform duration-300 transform hover:scale-110 cursor-pointer"
               src="https://i.imghippo.com/files/waZ7239cew.png"
+              // Step 3 : Uncomment the given line and comment the above line
+              // src={MobileImage}
               alt="Mobile Logo"
               onClick={() => navigate("/")}
             />
@@ -185,6 +199,8 @@ const Navbar = () => {
             <img
               className="h-20 w-auto hidden md:block transition-transform duration-300 transform hover:scale-110 cursor-pointer"
               src="https://i.imghippo.com/files/XPEy3112qw.png"
+              // Step 3 : Uncomment the given line and comment the above line
+              // src={DesktopImage}
               alt="Desktop Logo"
               onClick={() => navigate("/")}
             />

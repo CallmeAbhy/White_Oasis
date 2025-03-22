@@ -2,7 +2,14 @@ import { useState, useEffect } from "react";
 import axios from "axios";
 import Navbar from "../../components/Navbar";
 import Footer from "../Common/Components/Footer";
-
+/* 
+@@Image
+Create a about folder under the images
+the path will be src/assets/images/about
+Add the Gif image to the folder you want to show in about us page
+Import in given manner once inserted accordingly
+*/
+// import GIF from "../../assets/images/about/flowers.gif";
 const AboutUsAndGallery = () => {
   const [content, setContent] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -38,7 +45,9 @@ const AboutUsAndGallery = () => {
           <div className="relative h-[60vh] lg:h-[80vh] overflow-hidden">
             <div className="absolute inset-0">
               <img
-                src="https://images.squarespace-cdn.com/content/5f94b6a1a0c1755ee867eefc/1686008313631-VVXOIGKB0P6ND78ZKID6/orcid+in+white+frame+red+max+plus.gif?format=1500w&content-type=image%2Fgif" // Replace with your GIF URL
+                src="https://images.squarespace-cdn.com/content/5f94b6a1a0c1755ee867eefc/1686008313631-VVXOIGKB0P6ND78ZKID6/orcid+in+white+frame+red+max+plus.gif?format=1500w&content-type=image%2Fgif"
+                // Step 2 uncomment given line and comment the above line
+                // src={GIF}
                 alt="About Us Hero"
                 className="w-full h-full object-cover"
               />
