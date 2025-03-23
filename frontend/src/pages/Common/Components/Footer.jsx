@@ -20,7 +20,9 @@ const Footer = () => {
       <div className="container mx-auto px-6 md:px-12 py-10 md:py-16">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div>
-            <h3 className="text-xl font-bold mb-4">White Oasis</h3>
+            <h3 className="text-xl font-bold mb-4">
+              मातृ देवो भव। पितृ देवो भव।
+            </h3>
             <p className="text-gray-400 mb-6">{homedata.subtitle}</p>
             <div className="flex space-x-4">
               {homedata.facebook && (
@@ -113,7 +115,8 @@ const Footer = () => {
         </div>
         <div className="border-t border-gray-800 mt-12 pt-6 text-center md:text-left">
           <p className="text-gray-400">
-            © {new Date().getFullYear()} White Oasis. All rights reserved.
+            © {new Date().getFullYear()} मातृ देवो भव। पितृ देवो भव।. All rights
+            reserved.
           </p>
         </div>
       </div>

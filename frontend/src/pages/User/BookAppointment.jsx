@@ -24,7 +24,7 @@ const BookAppointment = () => {
     end_time: "",
     adoption_details: {
       pan: "",
-      aadhar: "",
+      aadhaar: "",
       dob: "",
     },
   });
@@ -184,6 +184,7 @@ const BookAppointment = () => {
 
   const submitAppointment = async () => {
     try {
+      console.log("The Adoption Details are: ", appointmentData);
       const response = await fetch(
         `${import.meta.env.VITE_API_URL}/api/appointments/create`,
         {
@@ -195,6 +196,14 @@ const BookAppointment = () => {
           body: JSON.stringify({
             ...appointmentData,
             old_age_home_id: homeId,
+            adoption_details:
+              appointmentData.appointment_type === "Adoption"
+                ? {
+                    pan: appointmentData.adoption_details.pan,
+                    aadhaar: appointmentData.adoption_details.aadhaar,
+                    dob: appointmentData.adoption_details.dob,
+                  }
+                : undefined,
           }),
         }
       );

@@ -1,10 +1,10 @@
 Based on the provided information and repository content, I'll help create a comprehensive README.md file in the requested format:
 
-# White Oasis
+# MDBPDB
 
 ## Project Overview
 
-White Oasis is a full-stack web application built with React (frontend) and Node.js/Express (backend). The project uses MongoDB for data storage and includes features for file handling, authentication, and various content management capabilities.
+MDBPDB is a full-stack web application built with React (frontend) and Node.js/Express (backend). The project uses MongoDB for data storage and includes features for file handling, authentication, and various content management capabilities.
 
 ## Tech Stack
 

@@ -1,3 +1,8 @@
+/* 
+@@Image
+Do Same as Login.jsx
+Do as Step 2
+*/
 import { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
@@ -8,6 +13,9 @@ import ManagerForm from "./RoleWiseFields/ManagerForm";
 import UserForm from "./RoleWiseFields/UserForm";
 import { useApiErrorHandler } from "../utils/apiErrorHandler";
 import { useError } from "../context/ErrorContext";
+/* Step 2 Import your image accordingly as shown below
+import desktopImage from "../assets/images/authentication/bg_img_desktop.jpg";
+ */
 const Signup = () => {
   const [formData, setFormData] = useState({
     username: "",
@@ -181,6 +189,8 @@ const Signup = () => {
       style={{
         backgroundImage:
           "url('https://storage.googleapis.com/a1aa/image/6b1a82a1-b6b6-4003-ae6f-815a0e875b31.jpeg')",
+        // Step 2 uncomment given line and comment the above line
+        // backgroundImage: `url(${desktopImage})`,
         backgroundSize: "cover",
         backgroundPosition: "center",
       }}

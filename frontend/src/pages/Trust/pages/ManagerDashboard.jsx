@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, Link } from "react-router-dom";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import {
   faCalendar,
@@ -13,7 +13,36 @@ import { useToken } from "../../../context/TokenContext";
 import { useProfile } from "../../../context/ProfileContext";
 import ContactForm from "../../Common/Components/ContactForm";
 import Footer from "../../Common/Components/Footer";
-import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
+// Agreement Details Component
+const AgreementDetails = ({ agreementData }) => {
+  if (!agreementData || Object.keys(agreementData).length === 0) return null;
+
+  return (
+    <div className="mt-6 border-t pt-4">
+      <h4 className="text-lg font-semibold text-gray-800 mb-3">
+        Agreement Details
+      </h4>
+      <div className="space-y-3">
+        <div>
+          <label className="font-medium text-gray-600">PAN:</label>
+          <p className="text-gray-800">{agreementData.pan}</p>
+        </div>
+        <div>
+          <label className="font-medium text-gray-600">Aadhaar:</label>
+          <p className="text-gray-800">{agreementData.aadhaar}</p>
+        </div>
+        <div>
+          <label className="font-medium text-gray-600">Date of Birth:</label>
+          <p className="text-gray-800">
+            {new Date(agreementData.dob).toLocaleDateString()}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
+};
+
 const ManagerDashboard = () => {
   const [activeTab, setActiveTab] = useState("Pending");
   const [appointments, setAppointments] = useState([]);
@@ -23,6 +52,7 @@ const ManagerDashboard = () => {
   const [showUserInfoModal, setShowUserInfoModal] = useState(false);
   const [selectedAppointment, setSelectedAppointment] = useState(null);
   const [selectedUser, setSelectedUser] = useState(null);
+  const [agreementData, setAgreementData] = useState(null);
   const { token } = useToken();
   const navigate = useNavigate();
   const { profile } = useProfile();
@@ -37,23 +67,21 @@ const ManagerDashboard = () => {
     }
   }, [profile, navigate, token]);
 
-  // Fetch appointments based on status
+  // Fetch appointments
   useEffect(() => {
     const fetchAppointments = async () => {
-      if (profile && profile.role === "manager") {
+      if (profile?.role === "manager") {
         try {
           const response = await fetch(
             `${
               import.meta.env.VITE_API_URL
             }/api/appointments/pending/${activeTab}`,
             {
-              headers: {
-                Authorization: `Bearer ${token}`,
-              },
+              headers: { Authorization: `Bearer ${token}` },
             }
           );
           const data = await response.json();
-          setAppointments(data.appointments);
+          setAppointments(data.appointments || []);
         } catch (e) {
           console.error("Error Fetching Appointments", e);
           setMessage("Error loading appointments");
@@ -94,9 +122,10 @@ const ManagerDashboard = () => {
     }
   };
 
-  const openUserInfoModal = (user) => {
+  const openUserInfoModal = (user, agreement) => {
     setShowFeedbackModal(false);
     setSelectedUser(user);
+    setAgreementData(agreement);
     setShowUserInfoModal(true);
   };
 
@@ -118,36 +147,36 @@ const ManagerDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gray-100">
+    <div className="min-h-screen bg-gray-50">
       <Navbar />
-      <div className="container mx-auto px-4 py-6">
-        <div className="flex justify-between items-center mb-6">
-          <h2 className="text-3xl font-semibold text-gray-800">
+      <div className="container mx-auto px-4 py-8">
+        <div className="flex flex-col sm:flex-row justify-between items-center mb-8">
+          <h2 className="text-2xl md:text-3xl font-bold text-gray-900">
             Manager Dashboard
           </h2>
-          <div className="bg-white px-4 py-2 rounded-lg shadow">
-            <span className="font-medium text-gray-600">
+          <div className="mt-4 sm:mt-0 bg-white px-4 py-2 rounded-lg shadow-sm">
+            <span className="font-medium text-gray-700">
               {activeTab} Appointments: {appointments.length}
             </span>
           </div>
         </div>
 
         {message && (
-          <div className="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded mb-4">
+          <div className="mb-6 p-4 bg-red-100 border border-red-300 text-red-800 rounded-lg">
             {message}
           </div>
         )}
 
         {/* Tabs */}
-        <div className="flex space-x-4 mb-6">
+        <div className="flex flex-wrap gap-3 mb-8">
           {tabs.map((tab) => (
             <button
               key={tab}
               onClick={() => setActiveTab(tab)}
-              className={`px-4 py-2 rounded-lg font-medium transition-colors ${
+              className={`px-5 py-2 rounded-lg font-medium transition-all duration-200 ${
                 activeTab === tab
-                  ? "bg-blue-500 text-white"
-                  : "bg-white text-gray-600 hover:bg-gray-50"
+                  ? "bg-indigo-600 text-white shadow-md"
+                  : "bg-white text-gray-700 hover:bg-gray-100 border border-gray-200"
               }`}
             >
               {tab}
@@ -156,76 +185,80 @@ const ManagerDashboard = () => {
         </div>
 
         {appointments.length === 0 ? (
-          <div className="text-center text-gray-500 py-8">
+          <div className="text-center text-gray-600 py-12">
             No {activeTab.toLowerCase()} appointments found.
           </div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
             {appointments.map((appointment) => (
               <div
                 key={appointment._id}
-                className="bg-white rounded-lg shadow-lg p-6"
+                className="bg-white rounded-xl shadow-md p-6 hover:shadow-lg transition-shadow"
               >
                 <div className="flex items-center mb-4">
                   <FontAwesomeIcon
                     icon={faCalendar}
-                    className="text-blue-500 mr-2"
+                    className="text-indigo-600 mr-2"
                   />
-                  <h3 className="text-lg font-bold text-gray-800">
+                  <h3 className="text-lg font-semibold text-gray-900">
                     Appointment Details
                   </h3>
                 </div>
 
-                <div className="space-y-2 mb-4">
-                  <p className="text-sm text-gray-600">
+                <div className="space-y-3 text-sm text-gray-700">
+                  <p>
                     <span className="font-medium">Date:</span>{" "}
                     {new Date(
                       appointment.appointment_date
                     ).toLocaleDateString()}
                   </p>
-                  <p className="text-sm text-gray-600">
+                  <p>
                     <span className="font-medium">Time:</span>{" "}
                     {appointment.start_time} - {appointment.end_time}
                   </p>
-                  <p className="text-sm text-gray-600">
+                  <p>
                     <span className="font-medium">Type:</span>{" "}
                     {appointment.appointment_type}
                   </p>
-                  <p className="text-sm text-gray-600">
+                  <p>
                     <span className="font-medium">Reason:</span>{" "}
                     {appointment.reason}
                   </p>
                   {(activeTab === "Approved" || activeTab === "Rejected") && (
-                    <p className="text-sm text-gray-600">
+                    <p>
                       <span className="font-medium">Feedback:</span>{" "}
                       {appointment.feedback}
                     </p>
                   )}
                 </div>
 
-                <div className="flex space-x-2">
+                <div className="flex flex-wrap gap-3 mt-4">
                   <button
-                    onClick={() => openUserInfoModal(appointment.user_profile)}
-                    className="flex items-center justify-center bg-blue-500 hover:bg-blue-600 text-white px-4 py-2 rounded-md text-sm transition-colors"
+                    onClick={() =>
+                      openUserInfoModal(
+                        appointment.user_profile,
+                        appointment.adoption_details
+                      )
+                    }
+                    className="flex items-center bg-indigo-600 text-white px-4 py-2 rounded-lg hover:bg-indigo-700 transition-colors"
                   >
                     <FontAwesomeIcon icon={faUser} className="mr-2" />
-                    View User Info
+                    View User
                   </button>
-
                   {activeTab === "Pending" && (
                     <>
                       <button
                         onClick={() =>
                           handleAppointmentStatus(appointment._id, "Approved")
                         }
-                        className="flex items-center justify-center bg-green-500 hover:bg-green-600 text-white px-4 py-2 rounded-md text-sm transition-colors"
+                        className="flex items-center bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors"
                       >
                         <FontAwesomeIcon icon={faCheck} className="mr-2" />
                         Approve
                       </button>
                       <button
                         onClick={() => openFeedbackModal(appointment)}
-                        className="flex items-center justify-center bg-red-500 hover:bg-red-600 text-white px-4 py-2 rounded-md text-sm transition-colors"
+                        className="flex items-center bg-red-600 text-white px-4 py-2 rounded-lg hover:bg-red-700 transition-colors"
                       >
                         <FontAwesomeIcon icon={faTimes} className="mr-2" />
                         Reject
@@ -240,108 +273,68 @@ const ManagerDashboard = () => {
 
         {/* User Info Modal */}
         {showUserInfoModal && selectedUser && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg p-6 w-full max-w-2xl">
-              <div className="flex justify-between items-center mb-4">
-                <h3 className="text-xl font-bold text-gray-800">
+          <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-xl p-6 w-full max-w-3xl max-h-[90vh] overflow-y-auto">
+              <div className="flex justify-between items-center mb-6">
+                <h3 className="text-xl font-bold text-gray-900">
                   User Information
                 </h3>
                 <button
                   onClick={closeUserInfoModal}
-                  className="text-gray-500 hover:text-gray-700"
+                  className="text-gray-600 hover:text-gray-800"
                 >
-                  <FontAwesomeIcon icon={faTimes} />
+                  <FontAwesomeIcon icon={faTimes} size="lg" />
                 </button>
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-4">
+                  <img
+                    src={`${import.meta.env.VITE_API_URL}/api/files/file/${
+                      selectedUser.userPhoto
+                    }`}
+                    alt="User Photo"
+                    className="w-28 h-28 rounded-full object-cover border-4 border-indigo-500"
+                  />
                   <div>
-                    <img
-                      src={`${import.meta.env.VITE_API_URL}/api/files/file/${
-                        selectedUser.userPhoto
-                      }`}
-                      alt="User Photo"
-                      className="w-32 h-32 rounded-full object-cover border-4 border-blue-500"
-                    />
-                  </div>
-                  <div>
-                    <label className="font-semibold text-gray-600">
+                    <label className="font-medium text-gray-600">
                       Username:
                     </label>
                     <p className="text-gray-800">{selectedUser.username}</p>
                   </div>
                   <div>
-                    <label className="font-semibold text-gray-600">
-                      Email:
-                    </label>
+                    <label className="font-medium text-gray-600">Email:</label>
                     <p className="text-gray-800">{selectedUser.email}</p>
                   </div>
                   <div>
-                    <label className="font-semibold text-gray-600">
-                      Phone:
-                    </label>
+                    <label className="font-medium text-gray-600">Phone:</label>
                     <p className="text-gray-800">{selectedUser.phone}</p>
                   </div>
-                  {/* Here is Code */}
-                  {appointments.appointment_type === "Adoption" &&
-                    appointments.adoption_details && (
-                      <>
-                        <div>
-                          <label className="font-semibold text-gray-600">
-                            PAN:
-                          </label>
-                          <p className="text-gray-800">
-                            {appointments.adoption_details.pan}
-                          </p>
-                        </div>
-                        <div>
-                          <label className="font-semibold text-gray-600">
-                            Aadhaar:
-                          </label>
-                          <p className="text-gray-800">
-                            {appointments.adoption_details.aadhaar}
-                          </p>
-                        </div>
-                        <div>
-                          <label className="font-semibold text-gray-600">
-                            Date of Birth:
-                          </label>
-                          <p className="text-gray-800">
-                            {new Date(
-                              appointments.adoption_details.dob
-                            ).toLocaleDateString()}
-                          </p>
-                        </div>
-                      </>
-                    )}
                 </div>
 
                 <div className="space-y-4">
                   <div>
-                    <label className="font-semibold text-gray-600">
+                    <label className="font-medium text-gray-600">
                       Address:
                     </label>
                     <p className="text-gray-800">{selectedUser.address}</p>
                   </div>
                   <div>
-                    <label className="font-semibold text-gray-600">City:</label>
+                    <label className="font-medium text-gray-600">City:</label>
                     <p className="text-gray-800">{selectedUser.city}</p>
                   </div>
                   <div>
-                    <label className="font-semibold text-gray-600">
-                      State:
-                    </label>
+                    <label className="font-medium text-gray-600">State:</label>
                     <p className="text-gray-800">{selectedUser.state}</p>
                   </div>
                   <div>
-                    <label className="font-semibold text-gray-600">
+                    <label className="font-medium text-gray-600">
                       Country:
                     </label>
                     <p className="text-gray-800">{selectedUser.country}</p>
                   </div>
                   <div>
-                    <label className="font-semibold text-gray-600">
+                    <label className="font-medium text-gray-600">
                       Government ID:
                     </label>
                     <Link
@@ -350,7 +343,7 @@ const ManagerDashboard = () => {
                       }`}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="text-blue-500 hover:text-blue-700 underline"
+                      className="text-indigo-600 hover:text-indigo-800 underline"
                     >
                       View Document
                     </Link>
@@ -358,10 +351,12 @@ const ManagerDashboard = () => {
                 </div>
               </div>
 
+              <AgreementDetails agreementData={agreementData} />
+
               <div className="mt-6 flex justify-end">
                 <button
                   onClick={closeUserInfoModal}
-                  className="bg-gray-500 hover:bg-gray-600 text-white px-4 py-2 rounded-md"
+                  className="bg-gray-600 text-white px-5 py-2 rounded-lg hover:bg-gray-700 transition-colors"
                 >
                   Close
                 </button>
@@ -372,26 +367,28 @@ const ManagerDashboard = () => {
 
         {/* Feedback Modal */}
         {showFeedbackModal && (
-          <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
-            <div className="bg-white rounded-lg p-6 w-full max-w-md">
+          <div className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center p-4 z-50">
+            <div className="bg-white rounded-xl p-6 w-full max-w-md">
               <div className="flex items-center mb-4">
                 <FontAwesomeIcon
                   icon={faComments}
-                  className="text-blue-500 mr-2"
+                  className="text-indigo-600 mr-2"
                 />
-                <h3 className="text-lg font-bold">Rejection Feedback</h3>
+                <h3 className="text-lg font-semibold text-gray-900">
+                  Rejection Feedback
+                </h3>
               </div>
               <textarea
                 value={feedback}
                 onChange={(e) => setFeedback(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-md mb-4"
+                className="w-full p-3 border border-gray-300 rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-indigo-500"
                 rows="4"
                 placeholder="Enter reason for rejection..."
               />
-              <div className="flex justify-end space-x-2">
+              <div className="flex justify-end gap-3">
                 <button
                   onClick={closeFeedbackModal}
-                  className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-md transition-colors"
+                  className="px-4 py-2 text-gray-700 hover:bg-gray-100 rounded-lg transition-colors"
                 >
                   Cancel
                 </button>
@@ -399,7 +396,7 @@ const ManagerDashboard = () => {
                   onClick={() =>
                     handleAppointmentStatus(selectedAppointment._id, "Rejected")
                   }
-                  className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600 transition-colors"
+                  className="px-4 py-2 bg-red-600 text-white rounded-lg hover:bg-red-700 transition-colors"
                 >
                   Submit
                 </button>
@@ -414,4 +411,7 @@ const ManagerDashboard = () => {
   );
 };
 
+AgreementDetails.propTypes = {
+  agreementData: PropTypes.object,
+};
 export default ManagerDashboard;
