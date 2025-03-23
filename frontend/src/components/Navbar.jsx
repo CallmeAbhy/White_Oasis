@@ -1,4 +1,13 @@
 // src/components/Navbar.jsx
+
+/* 
+@@Image
+Create a logo folder under the images
+the path will be src/assets/images/logo
+Add the Desktop and Mobile Compatible Image for logo there
+Do as Step 2
+*/
+
 import {
   Disclosure,
   DisclosureButton,
@@ -11,9 +20,9 @@ import { useProfile } from "../context/ProfileContext";
 import { useToken } from "../context/TokenContext";
 import { Popover, Transition } from "@headlessui/react";
 import { Fragment } from "react";
+/* Step 2: Import the Desktop and Mobile Image
 import DesktopImage from "../assets/images/logo/Desktop.png";
-import MobileImage from "../assets/images/logo/Mobile.png";
-
+import MobileImage from "../assets/images/logo/Mobile.png"; */
 const navigation = [
   { name: "Home", href: "/", current: true },
   { name: "About us", href: "/about-us", current: false },
@@ -166,12 +175,16 @@ const Navbar = () => {
                 <Link to="/">
                   <img
                     className="h-10 w-auto md:hidden transition-transform hover:scale-105 duration-300"
-                    src={MobileImage}
+                    src="https://i.imghippo.com/files/waZ7239cew.png"
+                    // Step 3 : Uncomment the given line and comment the above line
+                    // src={MobileImage}
                     alt="Mobile Logo"
                   />
                   <img
                     className="hidden md:block h-12 w-auto transition-transform hover:scale-105 duration-300"
-                    src={DesktopImage}
+                    src="https://i.imghippo.com/files/XPEy3112qw.png"
+                    // Step 3 : Uncomment the given line and comment the above line
+                    // src={DesktopImage}
                     alt="Desktop Logo"
                   />
                 </Link>
