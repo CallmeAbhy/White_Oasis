@@ -173,7 +173,7 @@ const DistanceChecker = ({ homeAddress }) => {
         )}&format=json&limit=1`,
         {
           headers: {
-            "User-Agent": "White Oasis Application",
+            "User-Agent": "MDBPDB Application",
           },
         }
       );
@@ -192,7 +192,7 @@ const DistanceChecker = ({ homeAddress }) => {
         )}&format=json&limit=1`,
         {
           headers: {
-            "User-Agent": "White Oasis Application",
+            "User-Agent": "MDBPDB Application",
           },
         }
       );

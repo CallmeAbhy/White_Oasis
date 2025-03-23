@@ -55,7 +55,7 @@ const AboutUsAndGallery = () => {
             </div>
             <div className="relative container mx-auto px-4 sm:px-6 lg:px-8 h-full flex items-center justify-center text-center">
               <h1 className="text-3xl sm:text-4xl md:text-5xl lg:text-6xl font-extrabold text-white leading-tight max-w-3xl">
-                About White Oasis
+                About MDBPDB
               </h1>
             </div>
           </div>

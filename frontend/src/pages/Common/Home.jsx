@@ -194,7 +194,7 @@ const Home = () => {
                 </div>
               </div>
             </div>
-
+            {/* https://share.synthesia.io/embeds/videos/bfd135ac-0ab9-400e-93d7-c513cc4530fd */}
             {/* Video Section */}
             <div className="bg-gray-100 py-20">
               <div className="container mx-auto px-4">
@@ -210,11 +210,14 @@ const Home = () => {
                     }}
                   >
                     <iframe
-                      src="https://share.synthesia.io/embeds/videos/bfd135ac-0ab9-400e-93d7-c513cc4530fd"
-                      loading="lazy"
-                      title="Synthesia video player - Your AI video"
-                      allowFullScreen
-                      allow="encrypted-media; fullscreen;"
+                      width="560"
+                      height="315"
+                      src="https://www.youtube.com/embed/m9CBQULyx7g?si=ETAeZ_pcDjWcbKjA"
+                      title="YouTube video player"
+                      frameBorder="0"
+                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                      referrerPolicy="strict-origin-when-cross-origin"
+                      allowfullscreen
                       style={{
                         position: "absolute",
                         width: "100%",
@@ -227,11 +230,10 @@ const Home = () => {
                         overflow: "hidden",
                       }}
                     ></iframe>
-                  </div>{" "}
+                  </div>
                 </div>
               </div>
             </div>
-
             {/* Contact Form Section */}
             <ContactForm />
 
