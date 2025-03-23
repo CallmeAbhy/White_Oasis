@@ -1,34 +1,19 @@
 // src/components/Navbar.jsx
-/* 
-@@Image
-Create a logo folder under the images
-the path will be src/assets/images/logo
-Add the Desktop and Mobile Compatible Image for logo there
-Do as Step 2
-*/
 import {
   Disclosure,
   DisclosureButton,
   DisclosurePanel,
 } from "@headlessui/react";
-import { Bars3Icon, BellIcon } from "@heroicons/react/24/outline";
+import { Bars3Icon, BellIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import { useState, useEffect, useCallback } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import { useProfile } from "../context/ProfileContext";
 import { useToken } from "../context/TokenContext";
-import PropTypes from "prop-types";
-import { Popover } from "@headlessui/react";
-import {
-  navigateToLogin,
-  navigateToPanel,
-  navigateToUserDashboard,
-} from "../utils/navigationUtils";
-/* 
-Step 2: Import the Desktop and Mobile Image
+import { Popover, Transition } from "@headlessui/react";
+import { Fragment } from "react";
 import DesktopImage from "../assets/images/logo/Desktop.png";
 import MobileImage from "../assets/images/logo/Mobile.png";
-See the Step 3
- */
+
 const navigation = [
   { name: "Home", href: "/", current: true },
   { name: "About us", href: "/about-us", current: false },
@@ -36,34 +21,25 @@ const navigation = [
   { name: "Services", href: "/#services", current: false, isSpecial: true },
 ];
 
-const classNames = (...classes) => classes.filter(Boolean).join(" ");
-
 const Navbar = () => {
   const { profile, setProfile } = useProfile();
-  const location = useLocation();
   const { token, updateToken } = useToken();
+  const [activePanel, setActivePanel] = useState(null);
   const [pendingCount, setPendingCount] = useState(0);
   const [notificationStats, setNotificationStats] = useState({
     pending: 0,
     approved: 0,
     rejected: 0,
   });
-  const [showProfileCard, setShowProfileCard] = useState(false);
   const navigate = useNavigate();
+  const location = useLocation();
 
-  const isCurrentPath = (path) => {
-    return location.pathname === path;
-  };
+  const isCurrentPath = (path) => location.pathname === path;
 
-  // Improved navigateToServices function using useCallback for better performance
   const navigateToServices = useCallback(() => {
-    const currentPath = location.pathname;
-
-    if (currentPath !== "/") {
-      // If not on home page, navigate to home page with services hash
+    if (location.pathname !== "/") {
       navigate("/#services");
     } else {
-      // If already on home page, just scroll to services section
       const servicesSection = document.getElementById("services");
       if (servicesSection) {
         servicesSection.scrollIntoView({ behavior: "smooth" });
@@ -71,10 +47,8 @@ const Navbar = () => {
     }
   }, [location.pathname, navigate]);
 
-  // Handle hash navigation when component mounts or location changes
   useEffect(() => {
     if (location.pathname === "/" && location.hash === "#services") {
-      // Wait for the DOM to be fully loaded
       setTimeout(() => {
         const servicesSection = document.getElementById("services");
         if (servicesSection) {
@@ -83,68 +57,83 @@ const Navbar = () => {
       }, 100);
     }
   }, [location]);
-
   useEffect(() => {
-    const fetchPendingCount = async () => {
-      if (!profile || !token) return;
-      switch (profile.role) {
-        case "admin":
-          try {
-            const response = await fetch(
+    const fetchNotificationStats = async () => {
+      if (!profile || !token) {
+        setPendingCount(0);
+        setNotificationStats({ pending: 0, approved: 0, rejected: 0 });
+        return;
+      }
+
+      try {
+        switch (profile.role) {
+          case "admin": {
+            const adminResponse = await fetch(
               `${import.meta.env.VITE_API_URL}/api/admin/pending-managers`,
               { headers: { Authorization: `Bearer ${token}` } }
             );
-            const data = await response.json();
-            setPendingCount(data.length);
-          } catch (e) {
-            console.error("Error Fetching the Pending Managers", e);
+            const adminData = await adminResponse.json();
+            setPendingCount(adminData.length || 0);
+            setNotificationStats({
+              pending: adminData.length || 0,
+              approved: 0,
+              rejected: 0,
+            });
+            break;
           }
-          break;
-        case "manager":
-          try {
-            const response = await fetch(
+
+          case "manager": {
+            const managerResponse = await fetch(
               `${
                 import.meta.env.VITE_API_URL
               }/api/appointments/home/notification/count`,
               { headers: { Authorization: `Bearer ${token}` } }
             );
-            const data = await response.json();
-            if (data.success) {
+            const managerData = await managerResponse.json();
+            if (managerData.success) {
               setNotificationStats({
-                pending: data.counts.pending,
-                approved: data.counts.approved,
-                rejected: data.counts.rejected,
+                pending: managerData.counts.pending || 0,
+                approved: managerData.counts.approved || 0,
+                rejected: managerData.counts.rejected || 0,
               });
+              setPendingCount(managerData.counts.pending || 0);
             }
-          } catch (error) {
-            console.error("Error Fetching the Pending Appointments", error);
+            break;
           }
-          break;
-        case "user":
-          try {
-            const response = await fetch(
+
+          case "user": {
+            const userResponse = await fetch(
               `${
                 import.meta.env.VITE_API_URL
               }/api/appointments/notifications/count`,
               { headers: { Authorization: `Bearer ${token}` } }
             );
-            const data = await response.json();
-            if (data.success) {
+            const userData = await userResponse.json();
+            if (userData.success) {
               setNotificationStats({
-                pending: data.counts.pending,
-                approved: data.counts.approved,
-                rejected: data.counts.rejected,
+                pending: userData.counts.pending || 0,
+                approved: userData.counts.approved || 0,
+                rejected: userData.counts.rejected || 0,
               });
+              setPendingCount(userData.counts.pending || 0);
             }
-          } catch (error) {
-            console.error("Error Fetching the Pending Approval", error);
+            break;
           }
-          break;
-        default:
-          break;
+
+          default: {
+            setPendingCount(0);
+            setNotificationStats({ pending: 0, approved: 0, rejected: 0 });
+            break;
+          }
+        }
+      } catch (error) {
+        console.error(`Error fetching ${profile.role} notifications:`, error);
+        setPendingCount(0);
+        setNotificationStats({ pending: 0, approved: 0, rejected: 0 });
       }
     };
-    fetchPendingCount();
+
+    fetchNotificationStats();
   }, [profile, token]);
 
   const getProfileImage = () => {
@@ -160,329 +149,233 @@ const Navbar = () => {
     updateToken(null);
     setProfile(null);
     localStorage.removeItem("hasSkippedIntroVideo");
-    navigateToLogin(navigate);
+    navigate("/login");
   };
 
-  // Improved handleNavigation function
-  const handleNavigation = (e, href, isSpecial) => {
-    if (isSpecial && href === "/#services") {
-      e.preventDefault();
-      navigateToServices();
-      return;
-    }
-
-    if (href.startsWith("/#")) {
-      e.preventDefault();
-      const element = document.querySelector(href.substring(1));
-      if (element) {
-        element.scrollIntoView({ behavior: "smooth" });
-      }
-    }
+  const togglePanel = (panel) => {
+    setActivePanel(activePanel === panel ? null : panel);
   };
 
   return (
     <Disclosure as="nav" className="bg-white shadow-lg fixed w-full top-0 z-50">
-      <div className="container mx-auto px-4 sm:px-6 lg:px-8">
-        <div className="flex h-16 items-center justify-between">
-          {/* Logo */}
-          <div className="flex items-center">
-            <img
-              className="h-10 w-auto md:hidden transition-transform duration-300 transform hover:scale-110 cursor-pointer"
-              src="https://i.imghippo.com/files/waZ7239cew.png"
-              // Step 3 : Uncomment the given line and comment the above line
-              // src={MobileImage}
-              alt="Mobile Logo"
-              onClick={() => navigate("/")}
-            />
-
-            {/* Desktop Logo */}
-            <img
-              className="h-20 w-auto hidden md:block transition-transform duration-300 transform hover:scale-110 cursor-pointer"
-              src="https://i.imghippo.com/files/XPEy3112qw.png"
-              // Step 3 : Uncomment the given line and comment the above line
-              // src={DesktopImage}
-              alt="Desktop Logo"
-              onClick={() => navigate("/")}
-            />
-          </div>
-
-          {/* Desktop Navigation */}
-          <div className="hidden sm:flex space-x-6">
-            {navigation.map((item) => (
-              <Link
-                key={item.name}
-                to={item.href}
-                onClick={(e) => handleNavigation(e, item.href, item.isSpecial)}
-                className={classNames(
-                  isCurrentPath(item.href) ||
-                    (item.href === "/#services" &&
-                      location.hash === "#services")
-                    ? "text-indigo-600 border-b-2 border-indigo-600"
-                    : "text-gray-600 hover:text-gray-800 hover:border-b-2 hover:border-gray-300",
-                  "px-3 py-2 text-sm font-semibold transition-all duration-200"
-                )}
-              >
-                {item.name}
-              </Link>
-            ))}
-          </div>
-
-          {/* Notification and Profile */}
-          <div className="flex items-center space-x-4">
-            {/* Rest of the code remains unchanged */}
-            {profile && profile.role === "admin" && (
-              <>
-                <button
-                  className="relative focus:outline-none"
-                  onClick={() => navigate("/dashboard")}
-                >
-                  <BellIcon className="h-6 w-6 text-gray-500 hover:text-gray-700" />
-                  {pendingCount > 0 && (
-                    <span className="absolute -top-1 -right-1 flex items-center justify-center h-5 w-5 rounded-full bg-red-600 text-xs font-bold text-white">
-                      {pendingCount}
-                    </span>
-                  )}
-                </button>
-              </>
-            )}
-
-            {profile && profile.role === "manager" && (
-              <div className="relative">
-                <Popover className="relative">
-                  <Popover.Button className="relative focus:outline-none">
-                    <BellIcon className="h-6 w-6 text-gray-500 hover:text-gray-700" />
-                    {(notificationStats.pending > 0 ||
-                      notificationStats.approved > 0 ||
-                      notificationStats.rejected > 0) && (
-                      <span className="absolute -top-1 -right-1 flex items-center justify-center h-5 w-5 rounded-full bg-red-600 text-xs font-bold text-white">
-                        {notificationStats.pending}
-                      </span>
-                    )}
-                  </Popover.Button>
-
-                  <Popover.Panel className="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-lg border border-gray-200 p-4">
-                    <h3 className="text-sm font-semibold text-gray-700 mb-2">
-                      Notification Stats
-                    </h3>
-
-                    <div className="space-y-1">
-                      <div className="flex justify-between items-center text-yellow-500">
-                        <span>Pending</span>
-                        <span className="font-semibold">
-                          {notificationStats.pending || 0}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center text-green-500">
-                        <span>Approved</span>
-                        <span className="font-semibold">
-                          {notificationStats.approved || 0}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center text-red-500">
-                        <span>Rejected</span>
-                        <span className="font-semibold">
-                          {notificationStats.rejected || 0}
-                        </span>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() => navigate("/managerdashboard")}
-                      className="mt-2 w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-all text-sm"
-                    >
-                      View Dashboard
-                    </button>
-                  </Popover.Panel>
-                </Popover>
+      {({ open }) => (
+        <>
+          <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div className="flex h-16 items-center justify-between">
+              <div className="flex-shrink-0">
+                <Link to="/">
+                  <img
+                    className="h-10 w-auto md:hidden transition-transform hover:scale-105 duration-300"
+                    src={MobileImage}
+                    alt="Mobile Logo"
+                  />
+                  <img
+                    className="hidden md:block h-12 w-auto transition-transform hover:scale-105 duration-300"
+                    src={DesktopImage}
+                    alt="Desktop Logo"
+                  />
+                </Link>
               </div>
-            )}
-            {profile && profile.role === "user" && (
-              <div className="relative">
-                <Popover className="relative">
-                  <Popover.Button className="relative focus:outline-none">
-                    <BellIcon className="h-6 w-6 text-gray-500 hover:text-gray-700" />
-                    {(notificationStats.pending > 0 ||
-                      notificationStats.approved > 0 ||
-                      notificationStats.rejected > 0) && (
-                      <span className="absolute -top-1 -right-1 flex items-center justify-center h-5 w-5 rounded-full bg-red-600 text-xs font-bold text-white">
-                        {notificationStats.pending}
-                      </span>
-                    )}
-                  </Popover.Button>
 
-                  <Popover.Panel className="absolute right-0 mt-2 w-72 bg-white rounded-lg shadow-lg border border-gray-200 p-4">
-                    <h3 className="text-sm font-semibold text-gray-700 mb-2">
-                      Notification Stats
-                    </h3>
-
-                    <div className="space-y-1">
-                      <div className="flex justify-between items-center text-yellow-500">
-                        <span>Pending</span>
-                        <span className="font-semibold">
-                          {notificationStats.pending || 0}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center text-green-500">
-                        <span>Approved</span>
-                        <span className="font-semibold">
-                          {notificationStats.approved || 0}
-                        </span>
-                      </div>
-                      <div className="flex justify-between items-center text-red-500">
-                        <span>Rejected</span>
-                        <span className="font-semibold">
-                          {notificationStats.rejected || 0}
-                        </span>
-                      </div>
-                    </div>
-
-                    <button
-                      onClick={() => navigateToUserDashboard(navigate)}
-                      className="mt-2 w-full px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition-all text-sm"
-                    >
-                      View Dashboard
-                    </button>
-                  </Popover.Panel>
-                </Popover>
+              <div className="hidden lg:flex items-center space-x-8">
+                {navigation.map((item) => (
+                  <Link
+                    key={item.name}
+                    to={item.href}
+                    onClick={(e) =>
+                      (item.isSpecial && e.preventDefault()) ||
+                      navigateToServices()
+                    }
+                    className={`relative px-1 py-2 text-sm font-medium transition-all duration-200 ${
+                      isCurrentPath(item.href) ||
+                      (item.href === "/#services" &&
+                        location.hash === "#services")
+                        ? "text-indigo-600 after:absolute after:bottom-0 after:left-0 after:w-full after:h-0.5 after:bg-indigo-600"
+                        : "text-gray-700 hover:text-indigo-600 hover:after:absolute hover:after:bottom-0 hover:after:left-0 hover:after:w-full hover:after:h-0.5 hover:after:bg-indigo-200"
+                    }`}
+                  >
+                    {item.name}
+                  </Link>
+                ))}
               </div>
-            )}
 
-            {/* Profile Section */}
-            {profile ? (
-              <div className="relative">
-                <img
-                  src={getProfileImage()}
-                  alt="Profile"
-                  className="h-8 w-8 rounded-full cursor-pointer"
-                  onClick={() => setShowProfileCard(!showProfileCard)}
-                />
-                {showProfileCard && (
-                  <div className="absolute top-16 right-4 w-64 bg-white shadow-lg rounded-lg border border-gray-200 z-50">
-                    {/* Profile Card Header with Image */}
-                    <div className="flex flex-col items-center p-4 border-b border-gray-200">
-                      <img
-                        src={getProfileImage()}
-                        alt="User  Profile"
-                        className="h-16 w-16 rounded-full border-2 border-gray-300"
-                      />
-
-                      <p className="mt-2 text-lg font-semibold text-gray-800">
-                        {profile.username}
-                      </p>
-                      <p className="text-sm text-gray-500">{profile.email}</p>
-                    </div>
-
-                    {/* Profile Details */}
-                    <div className="p-3 space-y-2 text-sm text-gray-700">
-                      <div className="flex justify-between">
-                        <span className="font-medium">Role:</span>
-                        <span>{profile.role || "Guest"}</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span className="font-medium">Joined On:</span>
-                        <span>
-                          {profile.createdAt
-                            ? new Date(profile.createdAt).toLocaleDateString()
-                            : "Not Available"}
-                        </span>
-                      </div>
-                      {profile.location && (
-                        <div className="flex justify-between">
-                          <span className="font-medium">Location:</span>
-                          <span>{profile.location}</span>
-                        </div>
-                      )}
-                      {profile.organization && (
-                        <div className="flex justify-between">
-                          <span className="font-medium">Organization:</span>
-                          <span>{profile.organization}</span>
-                        </div>
-                      )}
-                    </div>
-
-                    {/* Additional Settings Option for Admin */}
-                    {profile && profile.role === "admin" && (
-                      <div className="border-t border-gray-200">
-                        <button
-                          className="block w-full px-4 py-2 text-left text-sm font-medium text-blue-600 hover:bg-gray-100"
-                          onClick={() => navigateToPanel(navigate)}
-                        >
-                          Settings
-                        </button>
-                      </div>
-                    )}
-
-                    {/* Logout Button */}
-                    <div className="border-t border-gray-200">
-                      <button
-                        className="w-full px-4 py-2 text-left text-sm font-medium text-red-600 hover:bg-gray-100"
-                        onClick={handleLogout}
+              <div className="flex items-center space-x-4">
+                {profile && (
+                  <>
+                    <Popover className="relative">
+                      <Popover.Button
+                        onClick={() => togglePanel("notifications")}
+                        className="p-1 rounded-full text-gray-600 hover:text-gray-800 focus:outline-none"
                       >
-                        Log out
-                      </button>
-                    </div>
-                  </div>
+                        <BellIcon className="h-6 w-6" />
+                        {pendingCount > 0 && (
+                          <span className="absolute top-0 right-0 h-2 w-2 rounded-full bg-red-500" />
+                        )}
+                      </Popover.Button>
+                      <Transition
+                        show={activePanel === "notifications"}
+                        as={Fragment}
+                        enter="transition ease-out duration-200"
+                        enterFrom="opacity-0 translate-y-1"
+                        enterTo="opacity-100 translate-y-0"
+                        leave="transition ease-in duration-150"
+                        leaveFrom="opacity-100 translate-y-0"
+                        leaveTo="opacity-0 translate-y-1"
+                      >
+                        <Popover.Panel className="absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-xl p-4 z-50 border border-gray-100">
+                          <h3 className="text-sm font-semibold text-gray-900 mb-3">
+                            Notifications
+                          </h3>
+                          <div className="space-y-3 text-sm">
+                            <div className="flex justify-between text-yellow-600">
+                              <span>Pending</span>
+                              <span>{notificationStats.pending}</span>
+                            </div>
+                            {profile.role !== "admin" && (
+                              <>
+                                <div className="flex justify-between text-green-600">
+                                  <span>Approved</span>
+                                  <span>{notificationStats.approved}</span>
+                                </div>
+                                <div className="flex justify-between text-red-600">
+                                  <span>Rejected</span>
+                                  <span>{notificationStats.rejected}</span>
+                                </div>
+                              </>
+                            )}
+                          </div>
+                          <button
+                            onClick={() =>
+                              navigate(
+                                profile.role === "admin"
+                                  ? "/dashboard"
+                                  : profile.role === "manager"
+                                  ? "/managerdashboard"
+                                  : "/UserDashboard"
+                              )
+                            }
+                            className="mt-4 w-full py-2 bg-indigo-600 text-white rounded-lg hover:bg-indigo-700 transition-colors text-sm"
+                          >
+                            View Dashboard
+                          </button>
+                        </Popover.Panel>
+                      </Transition>
+                    </Popover>
+
+                    <Popover className="relative">
+                      <Popover.Button
+                        onClick={() => togglePanel("profile")}
+                        className="focus:outline-none"
+                      >
+                        <img
+                          src={getProfileImage()}
+                          alt="Profile"
+                          className="h-8 w-8 rounded-full border-2 border-gray-200 hover:border-indigo-300 transition-colors"
+                        />
+                      </Popover.Button>
+                      <Transition
+                        show={activePanel === "profile"}
+                        as={Fragment}
+                        enter="transition ease-out duration-200"
+                        enterFrom="opacity-0 translate-y-1"
+                        enterTo="opacity-100 translate-y-0"
+                        leave="transition ease-in duration-150"
+                        leaveFrom="opacity-100 translate-y-0"
+                        leaveTo="opacity-0 translate-y-1"
+                      >
+                        <Popover.Panel className="absolute right-0 mt-2 w-72 bg-white rounded-xl shadow-xl p-4 z-50 border border-gray-100">
+                          <div className="flex items-center space-x-3">
+                            <img
+                              src={getProfileImage()}
+                              alt="Profile"
+                              className="h-12 w-12 rounded-full border-2 border-indigo-100"
+                            />
+                            <div>
+                              <p className="text-sm font-semibold text-gray-900">
+                                {profile.username}
+                              </p>
+                              <p className="text-xs text-gray-500">
+                                {profile.email}
+                              </p>
+                            </div>
+                          </div>
+                          <div className="mt-4 space-y-2 text-sm text-gray-600">
+                            <div className="flex justify-between">
+                              <span>Role:</span>
+                              <span className="font-medium">
+                                {profile.role}
+                              </span>
+                            </div>
+                            <div className="flex justify-between">
+                              <span>Joined:</span>
+                              <span className="font-medium">
+                                {new Date(
+                                  profile.createdAt
+                                ).toLocaleDateString()}
+                              </span>
+                            </div>
+                          </div>
+                          {profile.role === "admin" && (
+                            <button
+                              onClick={() => navigate("/panel")}
+                              className="w-full mt-4 py-2 text-sm text-indigo-600 hover:bg-indigo-50 rounded-lg transition-colors"
+                            >
+                              Settings
+                            </button>
+                          )}
+                          <button
+                            onClick={handleLogout}
+                            className="w-full mt-2 py-2 text-sm text-red-600 hover:bg-red-50 rounded-lg transition-colors"
+                          >
+                            Logout
+                          </button>
+                        </Popover.Panel>
+                      </Transition>
+                    </Popover>
+                  </>
                 )}
+                {!profile && (
+                  <Link
+                    to="/login"
+                    className="text-sm font-medium text-gray-700 hover:text-indigo-600 transition-colors"
+                  >
+                    Log in
+                  </Link>
+                )}
+                <DisclosureButton className="lg:hidden p-2 rounded-full text-gray-600 hover:text-gray-800">
+                  {open ? (
+                    <XMarkIcon className="h-6 w-6" />
+                  ) : (
+                    <Bars3Icon className="h-6 w-6" />
+                  )}
+                </DisclosureButton>
               </div>
-            ) : (
-              <Link
-                to="/login"
-                className="text-sm font-medium text-gray-500 hover:text-gray-700"
-              >
-                Log in
-              </Link>
-            )}
+            </div>
           </div>
 
-          {/* Mobile Menu Button */}
-          <div className="flex sm:hidden">
-            <DisclosureButton className="inline-flex items-center justify-center rounded-md p-2 text-gray-400 hover:bg-gray-100 hover:text-gray-600">
-              <Bars3Icon className="block h-6 w-6" />
-            </DisclosureButton>
-          </div>
-        </div>
-      </div>
-
-      {/* Mobile Navigation Panel */}
-      <DisclosurePanel className="sm:hidden">
-        <div className="space-y-1 px-2 pb-3 pt-2">
-          {navigation.map((item) =>
-            item.isSpecial ? (
-              <button
-                key={item.name}
-                onClick={navigateToServices}
-                className={classNames(
-                  location.hash === "#services" && location.pathname === "/"
-                    ? "bg-gray-100 text-gray-900"
-                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
-                  "block w-full text-left px-3 py-2 text-base font-medium"
-                )}
-              >
-                {item.name}
-              </button>
-            ) : (
-              <Link
-                key={item.name}
-                to={item.href}
-                className={classNames(
-                  isCurrentPath(item.href)
-                    ? "bg-gray-100 text-gray-900"
-                    : "text-gray-600 hover:bg-gray-50 hover:text-gray-900",
-                  "block px-3 py-2 text-base font-medium"
-                )}
-              >
-                {item.name}
-              </Link>
-            )
-          )}
-        </div>
-      </DisclosurePanel>
+          <DisclosurePanel className="lg:hidden">
+            <div className="px-2 pt-2 pb-3 space-y-1 bg-white border-t border-gray-100">
+              {navigation.map((item) => (
+                <DisclosureButton
+                  key={item.name}
+                  as={item.isSpecial ? "button" : Link}
+                  to={!item.isSpecial ? item.href : undefined}
+                  onClick={item.isSpecial ? navigateToServices : undefined}
+                  className={`block w-full text-left px-3 py-2 text-base font-medium ${
+                    isCurrentPath(item.href)
+                      ? "text-indigo-600 bg-indigo-50"
+                      : "text-gray-700 hover:text-indigo-600 hover:bg-indigo-50"
+                  } rounded-md transition-colors`}
+                >
+                  {item.name}
+                </DisclosureButton>
+              ))}
+            </div>
+          </DisclosurePanel>
+        </>
+      )}
     </Disclosure>
   );
-};
-
-Navbar.propTypes = {
-  profile: PropTypes.object,
 };
 
 export default Navbar;
