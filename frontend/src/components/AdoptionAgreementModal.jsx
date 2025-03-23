@@ -82,7 +82,7 @@ const AdoptionAgreementModal = ({
             <br />
             Dated: {today}
             <br />
-            Between: {username} and White Orchid Old Age Home
+            Between: {username} and MDBPDB Old Age Home
           </p>
           <p className="text-gray-700 text-sm font-medium bg-indigo-50 p-2 rounded-md">
             Appointment: {appointmentDate} | Time: {timeSlot}
