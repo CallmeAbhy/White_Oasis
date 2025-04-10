@@ -5,12 +5,21 @@ import { useToken } from "../../../context/TokenContext";
 import { useProfile } from "../../../context/ProfileContext";
 import { useError } from "../../../context/ErrorContext";
 import { useApiErrorHandler } from "../../../utils/apiErrorHandler";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import {
+  faChevronLeft,
+  faChevronRight,
+} from "@fortawesome/free-solid-svg-icons";
+
 const FeedbackModal = ({ oldAgeHomeId, onClose, onSubmitSuccess }) => {
   const [rating, setRating] = useState(0);
   const [review, setReview] = useState("");
   const [error, setError] = useState("");
   const [reviews, setReviews] = useState([]);
   const [showReviews, setShowReviews] = useState(false);
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
   const { token } = useToken();
   const { profile } = useProfile();
   const { showError } = useError();
@@ -21,9 +30,7 @@ const FeedbackModal = ({ oldAgeHomeId, onClose, onSubmitSuccess }) => {
   }, [oldAgeHomeId]);
 
   const validateReview = (reviewText, rating) => {
-    if (rating === 0) {
-      return "Please select a rating";
-    }
+    if (rating === 0) return "Please select a rating";
     if (rating <= 3 && (!reviewText || reviewText.trim().length < 10)) {
       return "For ratings of 3 stars or less, please provide detailed feedback (at least 10 characters)";
     }
@@ -45,6 +52,7 @@ const FeedbackModal = ({ oldAgeHomeId, onClose, onSubmitSuccess }) => {
       if (response.ok) {
         const data = await response.json();
         setReviews(data.num_review || []);
+        setCurrentPage(1); // Reset to first page when fetching new reviews
       }
     } catch (error) {
       console.error("Error fetching reviews:", error);
@@ -54,10 +62,6 @@ const FeedbackModal = ({ oldAgeHomeId, onClose, onSubmitSuccess }) => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    if (!rating) {
-      setError("Please select a rating");
-      return;
-    }
     const validationError = validateReview(review, rating);
     if (validationError) {
       setError(validationError);
@@ -147,10 +151,20 @@ const FeedbackModal = ({ oldAgeHomeId, onClose, onSubmitSuccess }) => {
     ));
   };
 
+  // Pagination logic
+  const totalPages = Math.ceil(reviews.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentReviews = reviews.slice(startIndex, endIndex);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+  };
+
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
-      <div className="bg-white w-full max-w-md p-6 rounded-lg shadow-lg transform transition-all">
-        <div className="flex justify-between items-center mb-4">
+      <div className="bg-white w-full max-w-md p-6 rounded-lg shadow-lg transform transition-all max-h-[90vh] overflow-y-auto">
+        <div className="flex justify-between items-center mb-4 sticky top-0 bg-white z-10 pb-2">
           <h3 className="text-xl font-semibold text-gray-800">
             {showReviews ? "Reviews" : "Submit Your Feedback"}
           </h3>
@@ -167,35 +181,72 @@ const FeedbackModal = ({ oldAgeHomeId, onClose, onSubmitSuccess }) => {
             {reviews.length === 0 ? (
               <p className="text-gray-500 text-center">No reviews yet</p>
             ) : (
-              reviews.map((review, index) => (
-                <div
-                  key={index}
-                  className="bg-gray-50 p-4 rounded-lg shadow-sm border border-gray-200"
-                >
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <div className="flex items-center space-x-2">
-                        <span className="font-medium text-gray-800">
-                          {review.username}
-                        </span>
-                        <div className="flex">{renderStars(review.rating)}</div>
+              <>
+                {currentReviews.map((review, index) => (
+                  <div
+                    key={index}
+                    className="bg-gray-50 p-4 rounded-lg shadow-sm border border-gray-200"
+                  >
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <div className="flex items-center space-x-2">
+                          <span className="font-medium text-gray-800">
+                            {review.username}
+                          </span>
+                          <div className="flex">
+                            {renderStars(review.rating)}
+                          </div>
+                        </div>
+                        <p className="text-gray-600 mt-2">{review.review}</p>
+                        <p className="text-sm text-gray-400 mt-1">
+                          {new Date(review.timestamp).toLocaleDateString()}
+                        </p>
                       </div>
-                      <p className="text-gray-600 mt-2">{review.review}</p>
-                      <p className="text-sm text-gray-400 mt-1">
-                        {new Date(review.timestamp).toLocaleDateString()}
-                      </p>
+                      {canDeleteReview(review.username) && (
+                        <button
+                          onClick={() => handleDeleteReview(review._id)}
+                          className="text-red-500 hover:text-red-600"
+                        >
+                          Delete
+                        </button>
+                      )}
                     </div>
-                    {canDeleteReview(review.username) && (
-                      <button
-                        onClick={() => handleDeleteReview(review._id)}
-                        className="text-red-500 hover:text-red-600"
-                      >
-                        Delete
-                      </button>
-                    )}
                   </div>
-                </div>
-              ))
+                ))}
+                {totalPages > 1 && (
+                  <div className="flex justify-center items-center gap-2 mt-4">
+                    <button
+                      onClick={() => handlePageChange(currentPage - 1)}
+                      disabled={currentPage === 1}
+                      className="px-3 py-1 bg-gray-100 rounded-lg disabled:opacity-50 hover:bg-gray-200"
+                    >
+                      <FontAwesomeIcon icon={faChevronLeft} />
+                    </button>
+                    {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                      (page) => (
+                        <button
+                          key={page}
+                          onClick={() => handlePageChange(page)}
+                          className={`px-3 py-1 rounded-lg ${
+                            currentPage === page
+                              ? "bg-blue-600 text-white"
+                              : "bg-gray-100 hover:bg-gray-200"
+                          }`}
+                        >
+                          {page}
+                        </button>
+                      )
+                    )}
+                    <button
+                      onClick={() => handlePageChange(currentPage + 1)}
+                      disabled={currentPage === totalPages}
+                      className="px-3 py-1 bg-gray-100 rounded-lg disabled:opacity-50 hover:bg-gray-200"
+                    >
+                      <FontAwesomeIcon icon={faChevronRight} />
+                    </button>
+                  </div>
+                )}
+              </>
             )}
             <button
               type="button"

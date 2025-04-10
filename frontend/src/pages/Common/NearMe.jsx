@@ -12,6 +12,8 @@ import {
   faComment,
   faPhone,
   faCalendarCheck,
+  faChevronLeft,
+  faChevronRight,
 } from "@fortawesome/free-solid-svg-icons";
 import { navigatetoAppointment } from "../../utils/navigationUtils";
 import ContactForm from "./Components/ContactForm";
@@ -24,16 +26,18 @@ const NearMe = () => {
     state: "",
     city: "",
   });
+  const [currentPage, setCurrentPage] = useState(1);
+  const itemsPerPage = 5;
+
   const [showQRModal, setShowQRModal] = useState(false);
   const [selectedUpiId, setSelectedUpiId] = useState(null);
   const [showFeedbackModal, setShowFeedbackModal] = useState(false);
   const [selectedHomeId, setSelectedHomeId] = useState(null);
   const { profile } = useProfile();
-  console.log(profile);
   const { token } = useToken();
-  console.log(token);
   const [loading, setLoading] = useState(true);
   const navigate = useNavigate();
+
   const fetchOldAgeHomes = async () => {
     try {
       const response = await fetch(
@@ -47,6 +51,7 @@ const NearMe = () => {
       setLoading(false);
     }
   };
+
   useEffect(() => {
     fetchOldAgeHomes();
   }, [token]);
@@ -57,18 +62,17 @@ const NearMe = () => {
       ...prev,
       [name]: value,
     }));
+    setCurrentPage(1);
   };
-  const handleContactClick = (home) => {
-    navigate(`/about/${home._id}`, {
-      state: home, // Pass the entire home object
-    });
-  };
-  // Add this function to handle feedback modal refresh
-  const handleFeedbackSuccess = () => {
-    // Refresh the old age homes data
 
+  const handleContactClick = (home) => {
+    navigate(`/about/${home._id}`, { state: home });
+  };
+
+  const handleFeedbackSuccess = () => {
     fetchOldAgeHomes();
   };
+
   const handleAppointmentClick = (homeId) => {
     navigatetoAppointment(navigate, homeId);
   };
@@ -90,6 +94,16 @@ const NearMe = () => {
     );
   });
 
+  const totalPages = Math.ceil(filteredHomes.length / itemsPerPage);
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+  const currentHomes = filteredHomes.slice(startIndex, endIndex);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
+
   const handleDelete = async (homeId) => {
     try {
       const response = await fetch(
@@ -109,210 +123,210 @@ const NearMe = () => {
       console.error("Error deleting old age home:", error);
     }
   };
+
   const renderActionButtons = (home) => {
-    if (!token) {
-      return (
-        <div className="flex items-center justify-center">
-          <button
-            onClick={() => navigate("/login")}
-            className="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600 transition"
-          >
-            Login to Access Features
-          </button>
-        </div>
-      );
-    }
+    if (!token) return null; // No buttons shown if not logged in
+
     return (
-      <>
-        <div className="flex flex-col items-center space-y-4">
+      <div className="flex flex-col gap-3">
+        <button
+          onClick={() => handleContactClick(home)}
+          className="w-10 h-10 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 transition"
+          title="Contact"
+        >
+          <FontAwesomeIcon icon={faPhone} />
+        </button>
+        {home.old_age_home_upi_id && (
           <button
-            onClick={() => handleContactClick(home)}
-            className="flex items-center justify-center w-10 h-10 bg-blue-100 text-blue-600 rounded-full hover:bg-blue-200 transition"
-            title="Contact"
+            onClick={() => {
+              setSelectedUpiId(home.old_age_home_upi_id);
+              setShowQRModal(true);
+            }}
+            className="w-10 h-10 bg-green-100 text-green-600 rounded-full hover:bg-green-200 transition"
+            title="Donate"
           >
-            <FontAwesomeIcon icon={faPhone} />
+            <FontAwesomeIcon icon={faCircleDollarToSlot} />
           </button>
-          {home.old_age_home_upi_id && (
-            <button
-              onClick={() => {
-                setSelectedUpiId(home.old_age_home_upi_id);
-                setShowQRModal(true);
-              }}
-              className="flex items-center justify-center w-10 h-10 bg-green-100 text-green-600 rounded-full hover:bg-green-200 transition"
-              title="Donate"
-            >
-              <FontAwesomeIcon icon={faCircleDollarToSlot} />
-            </button>
-          )}
-          {(profile?.role === "user" || profile?.role === "admin") && (
-            <button
-              onClick={() => {
-                setSelectedHomeId(home._id);
-                setShowFeedbackModal(true);
-              }}
-              className="flex items-center justify-center w-10 h-10 bg-purple-100 text-purple-600 rounded-full hover:bg-purple-200 transition"
-              title="Leave Feedback"
-            >
-              <FontAwesomeIcon icon={faComment} />
-            </button>
-          )}
-          {profile?.role === "user" && (
-            <button
-              className="flex items-center justify-center w-10 h-10 bg-yellow-100 text-yellow-600 rounded-full hover:bg-yellow-200 transition"
-              title="Take Appointment"
-              onClick={() => handleAppointmentClick(home._id)}
-            >
-              <FontAwesomeIcon icon={faCalendarCheck} />
-            </button>
-          )}
-          {(profile?.role === "manager" &&
-            profile._id === home.manager_id._id) ||
-          profile?.role === "admin" ? (
-            <button
-              onClick={() => handleDelete(home._id)}
-              className="flex items-center justify-center w-10 h-10 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition"
-              title="Delete"
-            >
-              <FontAwesomeIcon icon={faTrash} />
-            </button>
-          ) : null}
-        </div>
-      </>
+        )}
+        {(profile?.role === "user" || profile?.role === "admin") && (
+          <button
+            onClick={() => {
+              setSelectedHomeId(home._id);
+              setShowFeedbackModal(true);
+            }}
+            className="w-10 h-10 bg-purple-100 text-purple-600 rounded-full hover:bg-purple-200 transition"
+            title="Feedback"
+          >
+            <FontAwesomeIcon icon={faComment} />
+          </button>
+        )}
+        {profile?.role === "user" && (
+          <button
+            onClick={() => handleAppointmentClick(home._id)}
+            className="w-10 h-10 bg-yellow-100 text-yellow-600 rounded-full hover:bg-yellow-200 transition"
+            title="Appointment"
+          >
+            <FontAwesomeIcon icon={faCalendarCheck} />
+          </button>
+        )}
+        {(profile?.role === "manager" && profile._id === home.manager_id._id) ||
+        profile?.role === "admin" ? (
+          <button
+            onClick={() => handleDelete(home._id)}
+            className="w-10 h-10 bg-red-100 text-red-600 rounded-full hover:bg-red-200 transition"
+            title="Delete"
+          >
+            <FontAwesomeIcon icon={faTrash} />
+          </button>
+        ) : null}
+      </div>
     );
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 relative">
+    <div className="min-h-screen bg-gray-50">
       <Navbar />
-
-      <div className="container mx-auto px-6 py-12">
-        {/* Title */}
-        <h1 className="text-4xl mt-4 font-extrabold text-center text-blue-700 mb-10 tracking-wide">
+      <div className="container mt-6 mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        <h1 className="text-3xl md:text-4xl font-bold text-center text-gray-800 mb-10 ">
           Old Age Homes Near Me
         </h1>
 
-        {/* Filters */}
-        {profile?.role === "manager" && (
+        {/* Hide manager features if not logged in */}
+        {token && profile?.role === "manager" && (
           <div className="text-center mb-8">
             <button
               onClick={() => navigate("/create-old-age-home")}
-              className="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition duration-300 shadow-lg"
+              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition"
             >
-              Add New Old Age Home
+              Add New Home
             </button>
           </div>
         )}
 
-        <div className="bg-white p-6 rounded-xl shadow-lg mb-10 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
-          <input
-            type="text"
-            name="country"
-            placeholder="Filter by Country"
-            value={filters.country}
-            onChange={handleFilterChange}
-            className="w-full px-4 py-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          />
-          <input
-            type="text"
-            name="state"
-            placeholder="Filter by State"
-            value={filters.state}
-            onChange={handleFilterChange}
-            className="w-full px-4 py-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          />
-          <input
-            type="text"
-            name="city"
-            placeholder="Filter by City"
-            value={filters.city}
-            onChange={handleFilterChange}
-            className="w-full px-4 py-3 border rounded-lg shadow-sm focus:ring-2 focus:ring-blue-500 focus:outline-none"
-          />
-        </div>
-
-        {/* Loader */}
-        {loading ? (
-          <div className="flex justify-center items-center py-10">
-            <div className="animate-spin rounded-full h-16 w-16 border-t-4 border-blue-500"></div>
-          </div>
-        ) : filteredHomes.length === 0 ? (
-          <>
-            <div className="text-center py-10">
-              <div className="bg-white p-8 rounded-lg shadow-lg inline-block">
-                <h2 className="text-2xl font-semibold text-gray-800 mb-4">
-                  No Old Age Homes Found
-                </h2>
-
-                <p className="text-gray-600">
-                  We could not find any old age homes matching your search
-                  criteria.
-                </p>
-
-                {filters.country || filters.state || filters.city ? (
-                  <p className="text-gray-500 mt-2">
-                    Try adjusting your filters to see more results.
-                  </p>
-                ) : null}
-              </div>
-            </div>
-          </>
-        ) : (
-          <div className="space-y-6">
-            {filteredHomes.map((home) => (
-              <div
-                key={home._id}
-                className="flex items-center bg-white rounded-lg shadow-lg hover:shadow-xl transition-shadow duration-300 p-6"
-              >
-                {/* Left Section: Trust Logo */}
-                <div className="w-24 h-24 flex-shrink-0 rounded-full overflow-hidden border border-gray-300">
-                  <img
-                    src={`${import.meta.env.VITE_API_URL}/api/files/file/${
-                      home.manager_id.trust_logo
-                    }`}
-                    alt="Trust Logo"
-                    className="object-cover w-full h-full"
-                  />
-                </div>
-
-                {/* Middle Section: Home Info */}
-                <div className="flex-1 px-6">
-                  <h2 className="text-lg font-semibold text-gray-800">
-                    {home.old_age_home_name}
-                  </h2>
-                  <div className="text-sm text-gray-600 mt-2">
-                    <p>
-                      <span className="font-medium">City:</span>{" "}
-                      {home.old_age_home_city}
-                    </p>
-                    <p>
-                      <span className="font-medium">State:</span>{" "}
-                      {home.old_age_home_state}
-                    </p>
-                    <p>
-                      <span className="font-medium">Country:</span>{" "}
-                      {home.old_age_home_country}
-                    </p>
-                    <p>
-                      <span className="font-medium">Address:</span>{" "}
-                      {home.old_age_home_address}
-                    </p>
-                    <p className="mt-2">
-                      <span className="font-medium">Rating:</span>{" "}
-                      {home.avg_rating.toFixed(1)} ⭐ ({home.num_review.length}{" "}
-                      reviews)
-                    </p>
-                  </div>
-                </div>
-
-                {/* Right Section: Actions */}
-                {renderActionButtons(home)}
-              </div>
+        {/* Show filters only if logged in */}
+        {token && (
+          <div className="bg-white p-4 sm:p-6 rounded-lg shadow-md mb-10 grid grid-cols-1 md:grid-cols-3 gap-4">
+            {["country", "state", "city"].map((field) => (
+              <input
+                key={field}
+                type="text"
+                name={field}
+                placeholder={`Filter by ${
+                  field.charAt(0).toUpperCase() + field.slice(1)
+                }`}
+                value={filters[field]}
+                onChange={handleFilterChange}
+                className="w-full px-4 py-2 border rounded-lg focus:ring-2 focus:ring-blue-500 focus:outline-none"
+              />
             ))}
           </div>
         )}
 
-        {/* Modals */}
-        {showQRModal && selectedUpiId && (
+        {loading ? (
+          <div className="flex justify-center py-10">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-4 border-blue-500"></div>
+          </div>
+        ) : !token ? (
+          <div className="text-center py-10 bg-white rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold text-gray-800 mb-2">
+              Please Login
+            </h2>
+            <p className="text-gray-600 mb-4">
+              You need to login to access old age home features and listings.
+            </p>
+            <button
+              onClick={() => navigate("/login")}
+              className="bg-blue-500 text-white px-6 py-2 rounded-lg hover:bg-blue-600 transition"
+            >
+              Login to Access
+            </button>
+          </div>
+        ) : filteredHomes.length === 0 ? (
+          <div className="text-center py-10 bg-white rounded-lg shadow-md">
+            <h2 className="text-xl font-semibold text-gray-800 mb-2">
+              No Results Found
+            </h2>
+            <p className="text-gray-600">
+              Adjust your filters to find old age homes.
+            </p>
+          </div>
+        ) : (
+          <>
+            <div className="grid gap-6">
+              {currentHomes.map((home) => (
+                <div
+                  key={home._id}
+                  className="bg-white rounded-lg shadow-md p-4 sm:p-6 flex flex-col sm:flex-row items-center gap-4 hover:shadow-lg transition"
+                >
+                  <div className="w-20 h-20 sm:w-24 sm:h-24 flex-shrink-0">
+                    <img
+                      src={`${import.meta.env.VITE_API_URL}/api/files/file/${
+                        home.manager_id.trust_logo
+                      }`}
+                      alt="Trust Logo"
+                      className="w-full h-full object-cover rounded-full border border-gray-200"
+                    />
+                  </div>
+                  <div className="flex-1 text-center sm:text-left">
+                    <h2 className="text-xl font-semibold text-gray-800">
+                      {home.old_age_home_name}
+                    </h2>
+                    <div className="text-gray-600 mt-2 space-y-1">
+                      <p>
+                        {home.old_age_home_city}, {home.old_age_home_state}
+                      </p>
+                      <p>{home.old_age_home_country}</p>
+                      <p>{home.old_age_home_address}</p>
+                      <p className="text-yellow-600">
+                        {home.avg_rating.toFixed(1)} ⭐ (
+                        {home.num_review.length} reviews)
+                      </p>
+                    </div>
+                  </div>
+                  <div className="flex-shrink-0">
+                    {renderActionButtons(home)}
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {totalPages > 1 && (
+              <div className="flex justify-center items-center gap-2 mt-8">
+                <button
+                  onClick={() => handlePageChange(currentPage - 1)}
+                  disabled={currentPage === 1}
+                  className="px-3 py-2 bg-gray-100 rounded-lg disabled:opacity-50 hover:bg-gray-200"
+                >
+                  <FontAwesomeIcon icon={faChevronLeft} />
+                </button>
+                {Array.from({ length: totalPages }, (_, i) => i + 1).map(
+                  (page) => (
+                    <button
+                      key={page}
+                      onClick={() => handlePageChange(page)}
+                      className={`px-3 py-2 rounded-lg ${
+                        currentPage === page
+                          ? "bg-blue-600 text-white"
+                          : "bg-gray-100 hover:bg-gray-200"
+                      }`}
+                    >
+                      {page}
+                    </button>
+                  )
+                )}
+                <button
+                  onClick={() => handlePageChange(currentPage + 1)}
+                  disabled={currentPage === totalPages}
+                  className="px-3 py-2 bg-gray-100 rounded-lg disabled:opacity-50 hover:bg-gray-200"
+                >
+                  <FontAwesomeIcon icon={faChevronRight} />
+                </button>
+              </div>
+            )}
+          </>
+        )}
+
+        {token && showQRModal && selectedUpiId && (
           <QRCodeModal
             upiId={selectedUpiId}
             onClose={() => {
@@ -321,7 +335,7 @@ const NearMe = () => {
             }}
           />
         )}
-        {showFeedbackModal && selectedHomeId && (
+        {token && showFeedbackModal && selectedHomeId && (
           <FeedbackModal
             oldAgeHomeId={selectedHomeId}
             onClose={() => {
@@ -332,7 +346,6 @@ const NearMe = () => {
           />
         )}
       </div>
-
       <ContactForm />
       <Footer />
     </div>
