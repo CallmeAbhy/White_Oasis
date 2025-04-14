@@ -48,6 +48,7 @@ const ResetPassword = () => {
         { email, otp }
       );
       alert(response.data.message);
+      setStep(3);
     } catch (error) {
       handleApiError(error);
     }
