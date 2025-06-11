@@ -45,7 +45,7 @@ const AboutUsAndGallery = () => {
           <div className="relative h-[60vh] lg:h-[80vh] overflow-hidden">
             <div className="absolute inset-0">
               <img
-                src="https://images.squarespace-cdn.com/content/5f94b6a1a0c1755ee867eefc/1686008313631-VVXOIGKB0P6ND78ZKID6/orcid+in+white+frame+red+max+plus.gif?format=1500w&content-type=image%2Fgif"
+                src="About us img.jpg"
                 // Step 2 uncomment given line and comment the above line
                 // src={GIF}
                 alt="About Us Hero"

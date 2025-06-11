@@ -175,14 +175,14 @@ const Navbar = () => {
                 <Link to="/">
                   <img
                     className="h-10 w-auto md:hidden transition-transform hover:scale-105 duration-300"
-                    src="https://i.imghippo.com/files/waZ7239cew.png"
+                    src="Mobile.png"
                     // Step 3 : Uncomment the given line and comment the above line
                     // src={MobileImage}
                     alt="Mobile Logo"
                   />
                   <img
                     className="hidden md:block h-12 w-auto transition-transform hover:scale-105 duration-300"
-                    src="https://i.imghippo.com/files/XPEy3112qw.png"
+                    src="Desktop.png"
                     // Step 3 : Uncomment the given line and comment the above line
                     // src={DesktopImage}
                     alt="Desktop Logo"
