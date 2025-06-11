@@ -10,7 +10,7 @@ export const ErrorProvider = ({ children }) => {
     setError(message);
     setIsVisible(true);
 
-    if (timeout) {
+    if (timeout) {   
       setTimeout(() => {
         setIsVisible(false);
       }, timeout);

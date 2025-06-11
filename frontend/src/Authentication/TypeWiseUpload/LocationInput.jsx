@@ -168,6 +168,10 @@ const LocationInput = ({
         onChange={handleInputChange}
         onKeyDown={handleKeyDown}
         onFocus={handleFocus}
+
+
+
+        
         placeholder={placeholder}
         required={required}
         className={inputclassname}
