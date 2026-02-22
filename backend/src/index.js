@@ -19,9 +19,7 @@ const app = express();
 // Middleware
 app.use(express.json());
 app.use(cors());
-initGridFS(
-  "mongodb+srv://white:wash@cluster0.4hmjb.mongodb.net/White_Orchid?retryWrites=true&w=majority&appName=Cluster0"
-);
+initGridFS(process.env.URL);
 //  Routes
 app.use("/api/files", fileRoutes);
 app.use("/api/auth", authRoutes);
